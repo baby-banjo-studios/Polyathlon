@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1541361560282358039}
   - component: {fileID: -1642807551822451036}
-  - component: {fileID: 6005481138903517752}
   - component: {fileID: 3654834314107392906}
   m_Layer: 5
   m_Name: GridEntry
@@ -56,23 +55,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 698803bbb13eee246b36139f584f887e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nameText: {fileID: 3789337731505157332}
-  thumbnail: {fileID: 6246487515138341475}
-  targetParent: {fileID: 6796026497172771235}
-  radioButtonParent: {fileID: 747312289418296436}
-  radioButtonCheck: {fileID: 1273152336449517766}
---- !u!114 &6005481138903517752
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 49724076867862006}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
   m_Navigation:
     m_Mode: 3
     m_WrapAround: 0
@@ -83,9 +65,9 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_HighlightedColor: {r: 0.18823427, g: 0.8243398, b: 0.8867924, a: 1}
+    m_PressedColor: {r: 0.0141509175, g: 0.3932386, b: 1, a: 1}
+    m_SelectedColor: {r: 0.21095572, g: 1, b: 0.18396229, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
@@ -101,10 +83,12 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 6246487515138341475}
-  m_OnClick:
-    m_PersistentCalls:
-      m_Calls: []
+  m_TargetGraphic: {fileID: 1543634221528972272}
+  nameText: {fileID: 3789337731505157332}
+  thumbnail: {fileID: 6246487515138341475}
+  targetParent: {fileID: 6796026497172771235}
+  radioButtonParent: {fileID: 747312289418296436}
+  radioButtonCheck: {fileID: 1273152336449517766}
 --- !u!114 &3654834314107392906
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -132,7 +116,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1632384164741136635
 RectTransform:
   m_ObjectHideFlags: 0
@@ -171,7 +155,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &3381813229611200268
 RectTransform:
   m_ObjectHideFlags: 0

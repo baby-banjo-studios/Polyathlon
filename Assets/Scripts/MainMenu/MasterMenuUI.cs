@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class MasterMenuUI : MonoBehaviour
 {
@@ -28,6 +29,7 @@ public class MasterMenuUI : MonoBehaviour
     
     private bool inputSchemeRegistered = false;
     public List<MainMenuPlayer> players;
+    private Dictionary<EventSystem, MainMenuPlayer> eventSystemToPlayer;
 
     private RaceSettings raceSettings;
 
@@ -40,6 +42,8 @@ public class MasterMenuUI : MonoBehaviour
     {
         previousMenus = new Stack<MenuMode>();
         raceSettings = FindAnyObjectByType<RaceSettings>();
+
+        eventSystemToPlayer = new Dictionary<EventSystem, MainMenuPlayer>();
 
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
@@ -157,6 +161,8 @@ public class MasterMenuUI : MonoBehaviour
     {
         player.PlayerNum = GetNextPlayerNum();
 
+        eventSystemToPlayer[player.PlayerEventSystem] = player;
+
         AnyKeyPressed(scheme);
         players.Add(player);
         if (currentMode == MenuMode.CharacterSelect)
@@ -168,6 +174,15 @@ public class MasterMenuUI : MonoBehaviour
     public void RemovePlayer(MainMenuPlayer player)
     {
         players.Remove(player);
+    }
+
+    public MainMenuPlayer GetPlayerFromEventSystem(EventSystem eventSystem)
+    {
+        if (eventSystemToPlayer.TryGetValue(eventSystem, out MainMenuPlayer player))
+        {
+            return player;
+        }
+        return null;
     }
 
     private int GetNextPlayerNum()

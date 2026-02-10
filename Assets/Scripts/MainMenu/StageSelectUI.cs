@@ -159,7 +159,7 @@ public class StageSelectUI : BaseMenuUI
     private void AddStage(StageRegistry stage)
     {
         GridEntry entry = Instantiate(entryTemplate, entryParent);
-        entry.Initialize(stage, stage.displayName, stage.icon, 1, 0); // TODO get row index
+        entry.Initialize(stage, stage.displayName, stage.icon, 1, 0, null); // TODO get row index
         entries.Add(entry);
         if (firstSelectable == null)
         {

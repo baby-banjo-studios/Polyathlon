@@ -39,6 +39,8 @@ public class GalleryUI : BaseMenuUI
 
     [SerializeField]
     protected Button backButton, fileExplorerButton, deleteButton, yesButton, noButton;
+    [SerializeField]
+    protected Selectable detailPhotoSelectable;
 
     [SerializeField]
     protected GameObject gridView, detailsView;
@@ -97,6 +99,8 @@ public class GalleryUI : BaseMenuUI
         rowBounds = new List<Vector2>();
 
         allSnapshotsLoaded = false;
+
+        SetState(GalleryState.GridView);
     }
 
     protected override void Start()
@@ -123,10 +127,14 @@ public class GalleryUI : BaseMenuUI
         {
             StartCoroutine(LoadSnapshotCoroutine());
         }
-        else if (gridEntriesOrdered.Count == 0)
+        else 
         {
-            emptyGalleryDisplayObj.SetActive(true);
-            selector.gameObject.SetActive(false);
+            SetState(GalleryState.GridView);
+            if (gridEntriesOrdered.Count == 0)
+            {
+                emptyGalleryDisplayObj.SetActive(true);
+                selector.gameObject.SetActive(false);
+            }
         }
 
     }
@@ -142,16 +150,19 @@ public class GalleryUI : BaseMenuUI
                     currentlyDisplayingGridEntry = null;
                     gridView.SetActive(true);   
                     SetDeleteMode(false);
+
                 }
                 break;
             case GalleryState.DetailsView:
                 {
                     detailsView.SetActive(true);   
+                    detailPhotoSelectable.Select();
                 }
                 break;
 
         }
         currState = newState;
+        UpdateButtonNavigation();
     }
 
     public void BackButtonClicked()
@@ -201,44 +212,12 @@ public class GalleryUI : BaseMenuUI
             {
                 case GalleryState.GridView:
                     {
-                        if (selector.selectedEntry != null && !selector.Locked)
-                        {
-                            UnityEngine.UI.Selectable nextButton = null;
-                            if (input.x > 0)
-                            {
-                                nextButton = selector.selectedEntry.Button.FindSelectableOnRight();
-                            }
-                            else if (input.x < 0)
-                            {
-                                nextButton = selector.selectedEntry.Button.FindSelectableOnLeft();
-                            }
-                            else if (input.y > 0)
-                            {
-                                nextButton = selector.selectedEntry.Button.FindSelectableOnUp();
-                            }
-                            else if (input.y < 0)
-                            {
-                                nextButton = selector.selectedEntry.Button.FindSelectableOnDown();
-                            }
 
-                            if (nextButton != null)
-                            {
-                                GridEntry nextEntry = nextButton.GetComponent<GridEntry>();
-                                if (nextEntry != null)
-                                {
-                                    selector.selectedEntry.RemoveSelector(selector);
-                                    selector.selectedEntry = nextEntry;
-                                    selector.selectedEntry.AddSelector(selector, false);
-                                    selectedGridRow = nextEntry.RowIdx;
-                                    ScrollToRow(selectedGridRow);
-                                }    
-                            }
-                        }
                     }
                     break;
                 case GalleryState.DetailsView:
                     {
-                        if (input.x != 0)
+                        if (EventSystem.current.currentSelectedGameObject == detailPhotoSelectable.gameObject && input.x != 0)
                         {
                             NavigateDetail((int)input.x);
                         }  
@@ -303,11 +282,6 @@ public class GalleryUI : BaseMenuUI
         Submit(player);
     }    
 
-    protected void LoadSnapshots()
-    {
-
-    }
-
     protected void NavigateDetail(int dir)
     {
         currentDetailIdx = currentDetailIdx + dir;
@@ -370,7 +344,7 @@ public class GalleryUI : BaseMenuUI
                 yield return asyncResult;
                 //GridEntry gridEntry = Instantiate(gridEntryTemplate, gridParent);
                 GridEntry gridEntry = asyncResult.Result[0];
-                gridEntry.Initialize(null, "", thumbnailSprite, 1, photoCount / gridLayoutGroup.constraintCount);
+                gridEntry.Initialize(null, "", thumbnailSprite, 1, photoCount / gridLayoutGroup.constraintCount, OnGridEntrySelected);
                 if (mainMenuUI.PrimaryControlScheme == ControlScheme.Keyboard)
                 {
                     gridEntry.SetMouseSelector(selector);
@@ -433,6 +407,108 @@ public class GalleryUI : BaseMenuUI
             selector.gameObject.SetActive(false);
         }
 
+        UpdateButtonNavigation();
+        Debug.Log(EventSystem.current.currentSelectedGameObject);
+    }
+
+    protected void OnGridEntrySelected(GridEntry gridEntry, BaseEventData eventData)
+    {
+        MainMenuPlayer player = eventData.currentInputModule.GetComponent<MainMenuPlayer>();
+        if (player.IsPrimary())
+        {
+            selector.selectedEntry.RemoveSelector(selector);
+            selector.selectedEntry = gridEntry;
+            selector.selectedEntry.AddSelector(selector, false);
+            selectedGridRow = gridEntry.RowIdx;
+            ScrollToRow(selectedGridRow);
+        }
+    }
+
+    protected void UpdateButtonNavigation()
+    {
+        switch (currState)
+        {
+            case GalleryState.GridView:
+                {
+                    Selectable firstGridEntry = null;                    
+                    if (gridEntriesOrdered.Count >0)
+                    {
+                        firstGridEntry = gridEntriesOrdered[0];    
+                    }
+                    Navigation backNav = new Navigation();
+                    backNav.mode = Navigation.Mode.Explicit;
+                    backNav.selectOnRight = fileExplorerButton;
+                    backNav.selectOnDown = firstGridEntry;
+                    backButton.navigation = backNav;
+
+                    Selectable secondToLastGridEntryInFirstRow = null;
+                    if (gridEntriesOrdered.Count >= gridLayoutGroup.constraintCount - 1)
+                    {
+                        secondToLastGridEntryInFirstRow = gridEntriesOrdered[gridLayoutGroup.constraintCount - 2];    
+                    }
+                    else if (gridEntriesOrdered.Count > 0)
+                    {
+                        secondToLastGridEntryInFirstRow = gridEntriesOrdered[gridEntriesOrdered.Count - 1];
+                    }
+                    Navigation fileNav = new Navigation();
+                    fileNav.mode = Navigation.Mode.Explicit;
+                    fileNav.selectOnLeft = backButton;
+                    fileNav.selectOnRight = deleteButton;
+                    fileNav.selectOnDown = secondToLastGridEntryInFirstRow;
+                    fileExplorerButton.navigation = fileNav;
+
+                    Selectable lastGridEntryInFirstRow = null;
+                    if (gridEntriesOrdered.Count >= gridLayoutGroup.constraintCount)
+                    {
+                        lastGridEntryInFirstRow = gridEntriesOrdered[gridLayoutGroup.constraintCount - 1];    
+                    }
+                    else if (gridEntriesOrdered.Count > 0)
+                    {
+                        lastGridEntryInFirstRow = gridEntriesOrdered[gridEntriesOrdered.Count - 1];
+                    }
+                    Navigation deleteNav = new Navigation();
+                    deleteNav.mode = Navigation.Mode.Explicit;
+                    deleteNav.selectOnLeft = fileExplorerButton;
+                    deleteNav.selectOnDown = lastGridEntryInFirstRow;
+                    deleteButton.navigation = deleteNav;
+
+                    if (gridEntriesOrdered.Count > 0)
+                    {
+                        if (currentDetailIdx < 0)
+                        {
+                            gridEntriesOrdered[0].Select();
+                        }
+                        else
+                        {
+                            gridEntriesOrdered[currentDetailIdx].Select();
+                        }
+                    }
+                }
+                break;
+            case GalleryState.DetailsView:
+                {
+                    Navigation backNav = new Navigation();
+                    backNav.mode = Navigation.Mode.Explicit;
+                    backNav.selectOnRight = fileExplorerButton;
+                    backNav.selectOnDown = detailPhotoSelectable;
+                    backButton.navigation = backNav;
+                    
+                    Navigation fileNav = new Navigation();
+                    fileNav.mode = Navigation.Mode.Explicit;
+                    fileNav.selectOnLeft = backButton;
+                    fileNav.selectOnRight = deleteButton;
+                    fileNav.selectOnDown = detailPhotoSelectable;
+                    fileExplorerButton.navigation = fileNav;
+
+                    Navigation deleteNav = new Navigation();
+                    deleteNav.mode = Navigation.Mode.Explicit;
+                    deleteNav.selectOnLeft = fileExplorerButton;
+                    deleteNav.selectOnDown = detailPhotoSelectable;
+                    deleteButton.navigation = deleteNav;
+                }
+                break;
+
+        }
     }
 
     protected IEnumerator ChangeLoadingText()
@@ -643,6 +719,7 @@ public class GalleryUI : BaseMenuUI
             {
                 deleteConfirmText.text = String.Format("Are you sure you want to delete this photo?");
             }
+            noButton.Select();
         }
         deleteConfirmPanel.SetActive(enable);
     }

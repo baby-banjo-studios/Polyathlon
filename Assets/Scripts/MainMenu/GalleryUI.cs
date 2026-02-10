@@ -552,7 +552,7 @@ public class GalleryUI : BaseMenuUI
         currentlyDisplayingGridEntry = entry;
         SetState(GalleryState.DetailsView);
 
-        LoadTextureFromFileAsync(pd.fullImageInfo.FullName);
+        _ = LoadTextureFromFileAsync(pd.fullImageInfo.FullName);
     }
 
     protected async Task<Texture2D> LoadTextureFromFileAsync(string filepath)

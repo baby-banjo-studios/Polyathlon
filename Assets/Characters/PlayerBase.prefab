@@ -1153,7 +1153,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74dcc19c2eaf76140b2bfda59c6b8abd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Wheeler
-  maxSpeed: 0
+  maxSpeed: 10
   acceleration: 0
   angularSpeed: 0
   itemDropPoint: {fileID: 1265897368244378925}
@@ -1461,7 +1461,7 @@ PrefabInstance:
     - target: {fileID: 2962416683747405903, guid: 7c7b00cd2293bcb47a1b58fef57ddb51,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 2962416683747405903, guid: 7c7b00cd2293bcb47a1b58fef57ddb51,
         type: 3}

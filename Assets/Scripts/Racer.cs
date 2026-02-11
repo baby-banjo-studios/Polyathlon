@@ -77,7 +77,7 @@ public class Racer : MonoBehaviour
 
     protected virtual void Update()
     {
-        if (!dead && RaceManager.IsRaceActive)
+        if (!dead && RaceManager.IsRaceActive && !RaceManager.IsPaused)
         {
             movement.AddMovement(move.x, move.y);
         }

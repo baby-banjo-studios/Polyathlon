@@ -260,7 +260,7 @@ public class PolypediaUI : BaseMenuUI
         foreach (T entry in entries)
         {
             GridEntry gridEntry = Instantiate(gridEntryTemplate, gridParent);
-            gridEntry.Initialize(entry, entry.DisplayName, entry.Thumbnail, 1);
+            gridEntry.Initialize(entry, entry.DisplayName, entry.Thumbnail, 1, 0); // TODO get row index
             if (mainMenuUI.PrimaryControlScheme == ControlScheme.Keyboard)
             {
                 gridEntry.SetMouseSelector(selector);
@@ -270,8 +270,9 @@ public class PolypediaUI : BaseMenuUI
 
         if (currentEntries.Count > 0)
         {
-            currentEntries[0].AddSelector(selector, true);
+            Canvas.ForceUpdateCanvases();
             selector.selectedEntry = currentEntries[0];
+            selector.selectedEntry.AddSelector(selector, false);    // TODO warp=true is broken
         }
     }
 

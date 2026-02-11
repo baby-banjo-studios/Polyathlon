@@ -9,23 +9,27 @@ public class PlayerController : Racer
     public float mouseLookSensisitivity = 15;
     public float arrowKeysLookSensitivity = 20;
     private float keyboardSchemeSensitivity;
-    private Vector2 look;
+    private Vector2 look; 
 
     private InputActions inputActions;
     private PlayerInput playerInput;
+    private ControlScheme controlScheme;
+    public ControlScheme ControlScheme { get => controlScheme; }
     private UI ui;
     private VFX vfx;
     private bool canMove;
     private bool canLook = true;
     private int playerNumber = -1;
 
+    private PhotoModeController photoModeController;
+    private InputActionMap prevActionMap;
 
     /* -------------- INPUT EVENTS ---------------- */
 
     // Running
     public void OnRunningMovement(InputAction.CallbackContext ctx)
     {
-        if (canMove)
+        if (canMove && !RaceManager.IsPaused)
         {
             if (ctx.performed)
                 move = ctx.ReadValue<Vector2>();
@@ -36,7 +40,7 @@ public class PlayerController : Racer
 
     public void OnRunningLook(InputAction.CallbackContext ctx)
     {
-        if (canLook)
+        if (canLook && !RaceManager.IsPaused)
         {
             if (ctx.performed)
                 look = ctx.ReadValue<Vector2>() * (ctx.control.device is Gamepad ? Time.deltaTime * gamepadLookSensititvity : keyboardSchemeSensitivity);
@@ -47,7 +51,7 @@ public class PlayerController : Racer
 
     public void OnRunningJump(InputAction.CallbackContext ctx)
     {
-        if (canMove)
+        if (canMove && !RaceManager.IsPaused)
         {
             if (ctx.performed)
                 movement.Jump(true);
@@ -58,15 +62,18 @@ public class PlayerController : Racer
 
     public void OnUseItem(InputAction.CallbackContext ctx)
     {
-        if (RaceManager.RespawnOnUse)
+        if (!RaceManager.IsPaused)
         {
-            RaceManager.RespawnPlayer(this);
-        }
-        else if (!dead && canMove && item != null)
-        {
-            if (ctx.performed)
+            if (RaceManager.RespawnOnUse)
             {
-                item.Use(this);
+                RaceManager.RespawnPlayer(this);
+            }
+            else if (!dead && canMove && item != null)
+            {
+                if (ctx.performed)
+                {
+                    item.Use(this);
+                }
             }
         }
     }
@@ -74,7 +81,7 @@ public class PlayerController : Racer
     // Swimming
     public void OnSwimmingMovement(InputAction.CallbackContext ctx)
     {
-        if (canMove)
+        if (canMove && !RaceManager.IsPaused)
         {
             if (ctx.performed)
                 move = ctx.ReadValue<Vector2>();
@@ -85,7 +92,7 @@ public class PlayerController : Racer
 
     public void OnSwimmingLook(InputAction.CallbackContext ctx)
     {
-        if (canLook)
+        if (canLook && !RaceManager.IsPaused)
         {
             if (ctx.performed)
                 look = ctx.ReadValue<Vector2>() * (ctx.control.device is Gamepad ? Time.deltaTime * gamepadLookSensititvity : keyboardSchemeSensitivity);
@@ -108,7 +115,7 @@ public class PlayerController : Racer
     // Biking
     public void OnBikingMovement(InputAction.CallbackContext ctx)
     {
-        if (canMove)
+        if (canMove && !RaceManager.IsPaused)
         {
             if (ctx.performed)
                 move = ctx.ReadValue<Vector2>();
@@ -119,7 +126,7 @@ public class PlayerController : Racer
 
     public void OnBikingLook(InputAction.CallbackContext ctx)
     {
-        if (canLook)
+        if (canLook && !RaceManager.IsPaused)
         {
             if (ctx.performed)
                 look = ctx.ReadValue<Vector2>() * (ctx.control.device is Gamepad ? Time.deltaTime * gamepadLookSensititvity : keyboardSchemeSensitivity);
@@ -142,7 +149,7 @@ public class PlayerController : Racer
     // Jetpacking
     public void OnJetpackingMovement(InputAction.CallbackContext ctx)
     {
-        if (canMove)
+        if (canMove && !RaceManager.IsPaused)
         {
             if (ctx.performed)
                 move = ctx.ReadValue<Vector2>();
@@ -153,7 +160,7 @@ public class PlayerController : Racer
 
     public void OnJetpackingLook(InputAction.CallbackContext ctx)
     {
-        if (canLook)
+        if (canLook && !RaceManager.IsPaused)
         {
             if (ctx.performed)
                 look = ctx.ReadValue<Vector2>() * (ctx.control.device is Gamepad ? Time.deltaTime * gamepadLookSensititvity : keyboardSchemeSensitivity);
@@ -164,7 +171,7 @@ public class PlayerController : Racer
 
     public void OnJetpackingJump(InputAction.CallbackContext ctx)
     {
-        if (canMove)
+        if (canMove && !RaceManager.IsPaused)
         {
             if (ctx.performed)
                 movement.Jump(true);
@@ -176,7 +183,7 @@ public class PlayerController : Racer
     // Gliding
     public void OnGlidingMovement(InputAction.CallbackContext ctx)
     {
-        if (canMove)
+        if (canMove && !RaceManager.IsPaused)
         {
             if (ctx.performed)
                 move = ctx.ReadValue<Vector2>();
@@ -187,7 +194,7 @@ public class PlayerController : Racer
 
     public void OnGlidingLook(InputAction.CallbackContext ctx)
     {
-        if (canLook)
+        if (canLook && !RaceManager.IsPaused)
         {
             if (ctx.performed)
                 look = ctx.ReadValue<Vector2>() * (ctx.control.device is Gamepad ? Time.deltaTime * gamepadLookSensititvity : keyboardSchemeSensitivity);
@@ -198,7 +205,7 @@ public class PlayerController : Racer
 
     public void OnGlidingJump(InputAction.CallbackContext ctx)
     {
-        if (canMove)
+        if (canMove && !RaceManager.IsPaused)
         {
             if (ctx.performed)
                 movement.Jump(true);
@@ -243,17 +250,162 @@ public class PlayerController : Racer
     
     public void OnFinishAnyKeyPressed(InputAction.CallbackContext ctx)
     {
-        Debug.Log("OnFinishAnyKeyPressed now!");
-        RaceManager.ReturnToMenu();
+        if (!RaceManager.IsPaused)
+        {
+            Debug.Log("OnFinishAnyKeyPressed now!");
+            RaceManager.ReturnToMenu();
+        }
     }
 
     // This is only for exiting training while using a gamepad
-    public void OnStartButton(InputAction.CallbackContext ctx)
+    public void OnPause(InputAction.CallbackContext ctx)
     {
-        if (RaceManager.IsTrainingCourse)
-            RaceManager.ReturnToMenu();
+        if (ctx.performed == true && !isFinished)
+        {
+            // if (RaceManager.IsTrainingCourse)
+            //     RaceManager.ReturnToMenu();
+            RaceManager.TogglePause(this);
+        }
     }
 
+    public void OnPhotoModeMovement(InputAction.CallbackContext ctx)
+    {
+        if (photoModeController != null)
+        {            
+            if (ctx.performed)
+            {
+                photoModeController.MoveXZ = ctx.ReadValue<Vector2>();
+            }
+            else if (ctx.canceled)
+            {
+                photoModeController.MoveXZ = Vector2.zero;
+            }
+        }
+    }
+
+    public void OnPhotoModeUp(InputAction.CallbackContext ctx)
+    {
+        if (photoModeController != null)
+        {            
+            if (ctx.performed)
+            {
+                photoModeController.MoveUp = ctx.ReadValue<float>();
+            }
+            else if (ctx.canceled)
+            {
+                photoModeController.MoveUp = 0f;
+            }
+        }
+    }
+
+    public void OnPhotoModeDown(InputAction.CallbackContext ctx)
+    {
+        if (photoModeController != null)
+        {            
+            if (ctx.performed)
+            {
+                photoModeController.MoveDown = ctx.ReadValue<float>();
+            }
+            else if (ctx.canceled)
+            {
+                photoModeController.MoveDown = 0f;
+            }
+        }
+    }
+
+    public void OnPhotoModeLook(InputAction.CallbackContext ctx)
+    {
+        if (photoModeController != null)
+        {            
+            if (ctx.performed)
+            {
+                Vector2 s = ctx.ReadValue<Vector2>();
+                photoModeController.Look = s * (ctx.control.device is Gamepad ? Time.unscaledDeltaTime * gamepadLookSensititvity : keyboardSchemeSensitivity);
+            }
+            else if (ctx.canceled)
+            {
+                photoModeController.Look = Vector2.zero;
+            }
+        }
+    }
+
+    public void OnPhotoModeTakePhoto(InputAction.CallbackContext ctx)
+    {
+        if (photoModeController != null)
+        {
+            if (ctx.performed)
+            {
+                photoModeController.TakeSnapshot();
+            }        
+        }
+    }
+
+    public void OnPhotoModeCycleResolution(InputAction.CallbackContext ctx)
+    {
+        if (photoModeController != null)
+        {
+            if (ctx.performed)
+            {
+                photoModeController.CycleResolution();
+            }        
+        }
+    }
+
+    public void OnPhotoModeCycleAspectRatio(InputAction.CallbackContext ctx)
+    {
+        if (photoModeController != null)
+        {
+            if (ctx.performed)
+            {
+                photoModeController.CycleAspectRatio();
+            }        
+        }
+    }
+
+    public void OnPhotoModeHideUI(InputAction.CallbackContext ctx)
+    {
+        if (photoModeController != null)
+        {
+            if (ctx.performed)
+            {
+                photoModeController.HideUI();
+            }        
+        }
+    }
+
+    public void OnPausedNavigate(InputAction.CallbackContext ctx)
+    {
+        if (RaceManager.IsPaused)
+        {
+            if (ctx.performed)
+            {
+                ui.OnNavigate(ctx.ReadValue<Vector2>());
+            }
+        }
+    }
+    public void OnPausedSubmit(InputAction.CallbackContext ctx)
+    {
+        if (RaceManager.IsPaused)
+        {
+            if (ctx.performed)
+            {
+                ui.OnSubmit();
+            }
+        }
+    }
+
+    public void OnPausedCancel(InputAction.CallbackContext ctx)
+    {
+        if (RaceManager.IsPaused)
+        {
+            if (ctx.performed)
+            {
+                ui.OnCancel();
+            }
+        }
+    }
+
+    
 
     protected override void Awake() 
     {
@@ -261,12 +413,14 @@ public class PlayerController : Racer
 
         playerInput = GetComponent<PlayerInput>();
         vfx = GetComponentInChildren<VFX>();
+        ui = transform.GetComponentInChildren<UI>();
         //inputActions = new InputActions();
         //inputActions.Debug.Exit.performed += ctx => Application.Quit();
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         keyboardSchemeSensitivity = mouseLookSensisitivity;
+        controlScheme = ((InputControlScheme)playerInput.user.controlScheme).name == "Gamepad" ? ControlScheme.Gamepad : ControlScheme.Keyboard;
     }
 
     protected override void Start() 
@@ -280,7 +434,6 @@ public class PlayerController : Racer
             m.enabled = false;
             m.CameraController = cameraController;
         }
-        ui = transform.GetComponentInChildren<UI>();
 
         base.Start();
         movement.enabled = false;
@@ -300,7 +453,10 @@ public class PlayerController : Racer
             keyboardSchemeSensitivity = mouseLookSensisitivity;
         }
         base.Update();
-        movement.RotateCamera(look.x, look.y);
+        if (!RaceManager.IsPaused)
+        {
+            movement.RotateCamera(look.x, look.y);
+        }
     }
 
     public void SetPlayerNumber(int newNum)
@@ -372,6 +528,96 @@ public class PlayerController : Racer
     public override void SetTarget(Transform target)
     {
         vfx.SetTarget(target);
+    }
+
+    public void SetPlayerIndex(int playerIndex, int maxPlayers)
+    {
+        ui.SetScale(playerIndex, maxPlayers);
+        cameraController.SetScale(playerIndex, maxPlayers);
+    }
+
+    public void OnGameStateChanged(GameState prevState, bool isPlayerInControl)
+    {
+        switch (RaceManager.CurrentGameState)
+        {
+            case GameState.Normal:
+                {
+                    if (prevActionMap != null)
+                    {
+                        playerInput.currentActionMap = prevActionMap;
+                        prevActionMap = null;
+                    }
+                    ui.SetGameHUD(true);
+                    ui.SetPauseMenu(false);
+                    EnablePhotoMode(false);
+                    Cursor.visible = false;
+                    Cursor.lockState = CursorLockMode.Locked;
+                    Cursor.visible = false;
+                }
+                break;
+            case GameState.Paused:
+                {
+                    if (prevState == GameState.Normal)
+                    {
+                        prevActionMap = playerInput.currentActionMap;
+                    }
+                    if (isPlayerInControl)
+                    {
+                        playerInput.currentActionMap = playerInput.actions.actionMaps[11];  // Paused
+                    }
+                    ui.SetGameHUD(true);
+                    EnablePhotoMode(false);
+                    ui.SetPauseMenu(isPlayerInControl);
+                    if (controlScheme == ControlScheme.Keyboard)
+                    {
+                        if (isPlayerInControl)
+                        {
+                            Cursor.visible = true;
+                            Cursor.lockState = CursorLockMode.Confined;
+                            Cursor.visible = true;
+                        }
+                        else
+                        {
+                            Cursor.visible = false;
+                            Cursor.lockState = CursorLockMode.Locked;
+                            Cursor.visible = false;
+                        }
+                    }
+                }
+                break;
+            case GameState.PhotoMode:
+                {
+                    ui.SetGameHUD(false);
+                    ui.SetPauseMenu(false);
+                    EnablePhotoMode(isPlayerInControl);
+                    Cursor.visible = false;
+                    Cursor.lockState = CursorLockMode.Locked;
+                    Cursor.visible = false;
+                }
+                break;
+        }
+    }
+
+    public void EnablePhotoMode(bool enable)
+    {
+        if (enable)
+        {
+            photoModeController = RaceManager.PhotoModeController;
+            photoModeController.SetActive(true);
+            photoModeController.SetStartingPosition(cameraController);
+            photoModeController.SetControlScheme(playerInput);
+            playerInput.currentActionMap = playerInput.actions.actionMaps[10];  // Greenscreen
+            cameraController.gameObject.SetActive(false);
+        }
+        else
+        {
+            if (photoModeController != null)
+            {
+                photoModeController.SetActive(false);
+                photoModeController = null;
+            }
+            cameraController.gameObject.SetActive(true);
+        }
     }
 
     protected override IEnumerator SpeedBoost(float magnitude, float duration)

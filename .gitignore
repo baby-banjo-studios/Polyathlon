@@ -15,6 +15,7 @@
 /[Aa]ssets/Imports/EasyRoads3D/html/
 /[Aa]ssets/Imports/Paid/
 /[Aa]ssets/Imports/Paid.meta
+/[Aa]ssets/[Ss]napshots/
 
 /[Uu]ser[Ss]ettings/
 
@@ -69,3 +70,4 @@ crashlytics-build.properties
 debug.log
 /UserSettings
 /.vscode
+/[Aa]ssets/[Ss]napshots.meta

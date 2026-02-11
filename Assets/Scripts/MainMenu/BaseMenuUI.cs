@@ -31,7 +31,7 @@ public class BaseMenuUI : MonoBehaviour
     protected virtual void OnEnable()
     {
         receivedFirstNavEvent = false;
-        if (mainMenuUI.PrimaryControlScheme == ControlScheme.Gamepad)
+        if (mainMenuUI.PrimaryControlScheme == ControlScheme.Gamepad && firstSelectable != null)
         {
             firstSelectable.Select();
         }

@@ -7,6 +7,12 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
 
+public enum GameState
+{
+    Normal,
+    Paused,
+    PhotoMode
+}
 
 public class RaceManager : MonoBehaviour
 {
@@ -18,12 +24,15 @@ public class RaceManager : MonoBehaviour
 
     private List<(Racer, int, float)> positions;
     private List<(Racer, float)> finalPositions;
-    private float time;
-
+    private float elapsedTime;
+    private GameState gameState;
+    private PlayerController playerWhoPausedTheGame = null;
+    private PhotoModeController photoModeController;
     private bool isRaceActive = false;
     private static bool canLoadMenu = true;
 
     private Racer[] racers;
+    private List<PlayerController> playerControllers;
     private int racersAlreadyFinished;
     private int realPlayersInRace;
 
@@ -39,8 +48,12 @@ public class RaceManager : MonoBehaviour
 
     private GameObject contingencyItems;
 
-    public static float Time { get => instance.time; }
+    public static float ElapsedTime { get => instance.elapsedTime; }
     public static bool IsRaceActive { get => instance.isRaceActive; }
+    public static GameState CurrentGameState { get => instance.gameState; }
+    public static bool IsPaused { get => instance.gameState == GameState.Paused; }
+    public static bool IsPhotoMode { get => instance.gameState == GameState.PhotoMode; }
+    public static PhotoModeController PhotoModeController { get => instance.photoModeController; }
     public GameObject raceCourseTester;
     public bool dontAddRacers = false; // use this for non-racing test scenes
     [SerializeField]
@@ -49,7 +62,17 @@ public class RaceManager : MonoBehaviour
     private bool respawnOnUse = false;
     public static bool IsTrainingCourse { get => instance.isTrainingCourse; } // use this for training scenes
     public static bool RespawnOnUse { get => instance.respawnOnUse; } // use this for training scenes
-    public static LootTable CurrLootTable { get => instance.raceSettings.lootTable; }
+    public static LootTable CurrLootTable
+    {
+        get
+        {
+            if (instance.raceSettings != null)
+            {
+                return instance.raceSettings.lootTable;   
+            }
+            return null;
+        }
+    }
 
     private bool testRun = false;
 
@@ -57,6 +80,12 @@ public class RaceManager : MonoBehaviour
     {
         instance = this;
         
+        photoModeController = FindAnyObjectByType<PhotoModeController>();
+        if (photoModeController == null)
+        {
+            Debug.LogWarning("Photo Mode Controller not found, players will not be able to enter photo mode");
+        }
+
         if (!dontAddRacers)
         {
             // race starter code
@@ -107,8 +136,8 @@ public class RaceManager : MonoBehaviour
                     PlayerController playerRacer = newPlayer.GetComponent<PlayerController>();
                     playerRacer.name = playerChoices[i].character.displayName + " (P" + (playerChoices[i].playerNumber + 1) + ")";
                     playerRacer.SetPlayerNumber(playerChoices[i].playerNumber);
-
-                    newPlayer.GetComponentInChildren<UI>().SetScale(i, playerChoices.Count);
+                    playerRacer.SetPlayerIndex(i, playerChoices.Count);
+                    //newPlayer.GetComponentInChildren<UI>().SetScale(i, playerChoices.Count);
 
                     // remove excess audio listeners
                     if (i > 0)
@@ -129,6 +158,7 @@ public class RaceManager : MonoBehaviour
                 testPlayer.position = startingPositions[npcChoices.Count].position;
                 testPlayer.rotation = startingPositions[npcChoices.Count].rotation;
                 realPlayersInRace = 1;
+
             }
             //Destroy(raceSettings.gameObject);
         }
@@ -140,6 +170,15 @@ public class RaceManager : MonoBehaviour
         positions = new List<(Racer, int, float)>(racers.Length);
         finalPositions = new List<(Racer, float)>(racers.Length);
         
+        playerControllers = new List<PlayerController>();
+        foreach (Racer racer in racers)
+        {
+            if (racer is PlayerController player)
+            {
+                playerControllers.Add(player);
+            }
+        }
+
         if (!isTrainingCourse)
         {
             foreach(Racer r in racers)
@@ -168,10 +207,10 @@ public class RaceManager : MonoBehaviour
 
     private void Update()
     {
-        if (!Application.isEditor && Input.GetKey(KeyCode.Escape))
-        {
-            ReturnToMenu();
-        }
+        // if (!Application.isEditor && Input.GetKey(KeyCode.Escape))
+        // {
+        //     ReturnToMenu();
+        // }
         // update positions of racers (1st, 2nd...)
         if (isRaceActive && !isTrainingCourse)
         {
@@ -186,7 +225,7 @@ public class RaceManager : MonoBehaviour
             positions.Sort((a, b) => (b.Item2.CompareTo(a.Item2) == 0 ? a.Item3.CompareTo(b.Item3) : b.Item2.CompareTo(a.Item2)));
 
             // update time
-            time += UnityEngine.Time.deltaTime;
+            elapsedTime += UnityEngine.Time.deltaTime;
         }
     }
 
@@ -220,7 +259,7 @@ public class RaceManager : MonoBehaviour
     {
         Debug.Log("racer " + racer);
         instance.racersAlreadyFinished++;
-        instance.finalPositions.Add((racer, instance.time + extraTime));
+        instance.finalPositions.Add((racer, instance.elapsedTime + extraTime));
         if (racer is PlayerController)
         {
             instance.realPlayersInRace--;
@@ -236,6 +275,76 @@ public class RaceManager : MonoBehaviour
                 instance.StartCoroutine(instance.DisplayScores());
             }
         }
+    }
+
+    public static void SetGameState(GameState newState)
+    {
+        GameState prevState = instance.gameState;
+        instance.gameState = newState;
+        switch (newState)
+        {
+            case GameState.Normal:
+                {
+                    Time.timeScale = 1f;
+                }
+                break;
+            case GameState.Paused:
+                {
+                    Time.timeScale = 0f;
+                }
+                break;
+            case GameState.PhotoMode:
+                {
+                    Time.timeScale = 0f;
+                }
+                break;
+        }
+        foreach (PlayerController pc in instance.playerControllers)
+        {
+            pc.OnGameStateChanged(prevState, pc == instance.playerWhoPausedTheGame);
+        }
+    }
+
+    public static bool TogglePause(PlayerController playerAttemptingToTogglePause)
+    {
+        if (instance.playerWhoPausedTheGame != null && playerAttemptingToTogglePause != instance.playerWhoPausedTheGame)
+        {
+            return false;
+        }    
+
+        switch (instance.gameState)
+        {
+            case GameState.Normal:
+                {
+                    instance.playerWhoPausedTheGame = playerAttemptingToTogglePause;
+                    SetGameState(GameState.Paused);
+                }
+                break;
+            case GameState.Paused:
+                {
+                    instance.playerWhoPausedTheGame = null;
+                    SetGameState(GameState.Normal);
+                }
+                break;
+            case GameState.PhotoMode:
+                {
+                    SetGameState(GameState.Paused);
+                }
+                break;
+        }
+        return true;
+    }
+
+    public static bool TogglePhotoMode()
+    {
+        if (IsPaused && instance.photoModeController != null)
+        {
+            // instance.isPhotoMode = !instance.isPhotoMode;
+            // instance.playerWhoPausedTheGame.EnablePhotoMode(IsPhotoMode, instance.photoModeController);
+            SetGameState(GameState.PhotoMode);
+            return true;
+        }
+        return false;
     }
 
     public static int GetPosition(Racer racer)

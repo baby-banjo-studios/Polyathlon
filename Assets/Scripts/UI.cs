@@ -3,10 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.EventSystems;
 
 //[RequireComponent(typeof(Racer))]
 public class UI : MonoBehaviour
 {
+    [SerializeField]
+    private GameObject gameHUD;
+    [SerializeField]
+    private GameObject pauseMenu;
+
+    [SerializeField]
+    protected Selectable firstSelectable;
 
     public TextMeshProUGUI positionText;
     public TextMeshProUGUI timeText;
@@ -27,6 +35,7 @@ public class UI : MonoBehaviour
     private bool isPrimaryUI;
     private static UI primaryUI;
     private static bool isPrimaryTaken = false;
+    private Vector2 maxScreenSize;
 
     private void Awake()
     {
@@ -41,7 +50,14 @@ public class UI : MonoBehaviour
         isPrimaryUI = true; // solve this bug later its 4:04 AM
         isPrimaryTaken = true;
 
+        pauseMenu.SetActive(false);
+
         SetSpeedUnit((SpeedUnits)PlayerPrefs.GetInt(PlayerPrefsKeys.SPEED_UNITS, 0));
+
+        if (TryGetComponent(out CanvasScaler canvasScaler))
+        {
+            maxScreenSize = canvasScaler.referenceResolution;
+        }
     }
 
     // Start is called before the first frame update
@@ -81,7 +97,7 @@ public class UI : MonoBehaviour
                     positionText.text = pos + "th";
                     break;
             }
-            timeText.text = FormatTime(RaceManager.Time);
+            timeText.text = FormatTime(RaceManager.ElapsedTime);
         }
 
         SetSpeed(racer.Speed);
@@ -89,26 +105,34 @@ public class UI : MonoBehaviour
 
     public void SetScale(int player, int maxPlayers)
     {
+
         if (maxPlayers == 1)
         {
-            // do nothing
+            scaleTransform.anchorMax = new Vector2(0.5f, 0.5f);
+            scaleTransform.anchorMin = new Vector2(0.5f, 0.5f);
+            scaleTransform.anchoredPosition = new Vector3(0, 0, 0);
+            scaleTransform.localScale = new Vector3(1, 1, 1);
+            scaleTransform.sizeDelta = new Vector2(maxScreenSize.x, maxScreenSize.y);
         }
         else if (maxPlayers < 3)
         {
             switch (player)
             {
                 case 0:
+                    scaleTransform.pivot = new Vector2(0, 0.5f);
                     scaleTransform.anchorMax = new Vector2(0, 0.5f);
                     scaleTransform.anchorMin = new Vector2(0, 0.5f);
-                    scaleTransform.anchoredPosition = new Vector3(0, scaleTransform.sizeDelta.y / 2, 0);
                     break;
                 case 1:
+                    scaleTransform.pivot = new Vector2(1, 0.5f);
                     scaleTransform.anchorMax = new Vector2(1, 0.5f);
                     scaleTransform.anchorMin = new Vector2(1, 0.5f);
-                    scaleTransform.anchoredPosition = new Vector3(-scaleTransform.sizeDelta.x / 2, scaleTransform.sizeDelta.y / 2, 0);
                     break;
             }
-            scaleTransform.sizeDelta = new Vector2(scaleTransform.sizeDelta.x / 2 , scaleTransform.sizeDelta.y);
+            scaleTransform.anchoredPosition = new Vector3(0, 0, 0);
+            scaleTransform.localScale = new Vector3(1, 1, 1);
+            scaleTransform.sizeDelta = new Vector2(maxScreenSize.x / 2, maxScreenSize.y);
+            //scaleTransform.localScale = new Vector3(0.5f, 1, 1);
 
         }
         else
@@ -137,8 +161,10 @@ public class UI : MonoBehaviour
                     break;
 
             }
-            scaleTransform.localScale = new Vector3(0.5f, 0.5f, 1);
             scaleTransform.anchoredPosition = new Vector3(0, 0, 0);
+            scaleTransform.localScale = new Vector3(0.5f, 0.5f, 1);
+            scaleTransform.sizeDelta = new Vector2(maxScreenSize.x, maxScreenSize.y);
+            //scaleTransform.sizeDelta = new Vector2(scaleTransform.sizeDelta.x / 2, scaleTransform.sizeDelta.y / 2);
         }
     }
 
@@ -252,6 +278,75 @@ public class UI : MonoBehaviour
             break;
         }
         speedValueText.text = convertedSpeed.ToString("F0");
+    }
+
+    public void SetPauseMenu(bool active)
+    {
+        pauseMenu.SetActive(active);
+        if (active)
+        {
+            // receivedFirstNavEvent = false;
+            if (((PlayerController)racer).ControlScheme == ControlScheme.Gamepad)
+            {
+                firstSelectable.Select();
+            }
+            else
+            {
+                EventSystem.current.sendNavigationEvents = false;
+                EventSystem.current.SetSelectedGameObject(null);
+                //Debug.Log("NO nav events");
+            }
+        }
+    }
+
+    public void SetGameHUD(bool active)
+    {
+        gameHUD.SetActive(active);
+    }
+
+    public void OnResume()
+    {
+        RaceManager.TogglePause((PlayerController)racer);
+    }
+
+    public void OnPhotoMode()
+    {
+        RaceManager.TogglePhotoMode();
+        // if (RaceManager.TogglePhotoMode())
+        // {
+        //     pauseMenu.SetActive(!RaceManager.IsPhotoMode);
+        //     gameHUD.SetActive(!RaceManager.IsPhotoMode);
+        // }
+    }
+
+    public void OnReturnToMenu()
+    {        
+        if (RaceManager.TogglePause((PlayerController)racer))
+        {
+            RaceManager.ReturnToMenu();
+        }
+    }
+
+    public void OnNavigate(Vector2 input)
+    {
+        if (EventSystem.current.currentSelectedGameObject == null)
+        {
+            firstSelectable.Select();
+            EventSystem.current.sendNavigationEvents = false;
+        }
+    }
+    public void OnSubmit()
+    {
+        if (EventSystem.current.currentSelectedGameObject.TryGetComponent(out Button button))
+        {
+            button.onClick.Invoke();
+        }
+    }
+
+    public void OnCancel()
+    {
+        // TODO revisit when nested menus added
+        OnResume();
     }
 
     private IEnumerator StartRace()

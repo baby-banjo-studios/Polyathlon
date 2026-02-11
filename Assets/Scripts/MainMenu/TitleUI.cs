@@ -53,6 +53,11 @@ public class TitleUI : BaseMenuUI
         mainMenuUI.TransitionToMode(MenuMode.Polypedia);
     }
 
+    public void OnGalleryClicked()
+    {
+        mainMenuUI.TransitionToMode(MenuMode.Gallery);
+    }
+
     public void OnCreditsClicked()
     {
         mainMenuUI.TransitionToMode(MenuMode.Credits);

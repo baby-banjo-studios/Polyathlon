@@ -412,11 +412,6 @@ PrefabInstance:
       propertyPath: movementOptions.Array.size
       value: 6
       objectReference: {fileID: 0}
-    - target: {fileID: 3190700637880018911, guid: 2382e88df05e92747b9fa2f02a91f09c,
-        type: 3}
-      propertyPath: 'movementOptions.Array.data[5]'
-      value: 
-      objectReference: {fileID: 2314873259245976667}
     - target: {fileID: 4920240814365522520, guid: 2382e88df05e92747b9fa2f02a91f09c,
         type: 3}
       propertyPath: m_AnchorMax.y
@@ -529,18 +524,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1083dbdbaad6e2842bec6b23aedd92bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &2314873259245976667 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1155798523090281784, guid: 2382e88df05e92747b9fa2f02a91f09c,
-    type: 3}
-  m_PrefabInstance: {fileID: 3470635206390552931}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5302197194769693007}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 74dcc19c2eaf76140b2bfda59c6b8abd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Wheeler
 --- !u!4 &5302197194769693001 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8772761477247295530, guid: 2382e88df05e92747b9fa2f02a91f09c,

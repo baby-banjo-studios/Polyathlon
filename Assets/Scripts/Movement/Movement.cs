@@ -120,7 +120,10 @@ public abstract class Movement : MonoBehaviour
     /*  moves the player rigidbody */
     public virtual void AddMovement(float forward, float right)
     {
-        actualVelocity = Vector3.Lerp(actualVelocity, (transform.position - playerPosition) / Time.deltaTime, Time.deltaTime * 10);
+        if (Time.deltaTime > 0)
+        {
+            actualVelocity = Vector3.Lerp(actualVelocity, (transform.position - playerPosition) / Time.deltaTime, Time.deltaTime * 10);
+        }
         playerPosition = transform.position;
     }
 

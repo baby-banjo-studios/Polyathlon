@@ -8,6 +8,7 @@ public enum MenuMode
     TrainingSelect,
     Settings,
     Polypedia,
+    Gallery,
     Credits,
     Invalid,
 }

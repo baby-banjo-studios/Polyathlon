@@ -22,6 +22,8 @@ public class MasterMenuUI : MonoBehaviour
     [SerializeField]
     private BaseMenuUI polypediaUI;
     [SerializeField]
+    private BaseMenuUI galleryUI;
+    [SerializeField]
     private BaseMenuUI creditsUI;
     
     private bool inputSchemeRegistered = false;
@@ -66,6 +68,7 @@ public class MasterMenuUI : MonoBehaviour
         trainingSelectUI.gameObject.SetActive(false);
         settingsUI.gameObject.SetActive(false);
         polypediaUI.gameObject.SetActive(false);
+        galleryUI.gameObject.SetActive(false);
         creditsUI.gameObject.SetActive(false);
 
         if (currentMode != MenuMode.Invalid)
@@ -109,6 +112,11 @@ public class MasterMenuUI : MonoBehaviour
             case MenuMode.Polypedia:
             {
                 currentMenu = polypediaUI;
+            }
+            break;
+            case MenuMode.Gallery:
+            {
+                currentMenu = galleryUI;
             }
             break;
             case MenuMode.Credits:

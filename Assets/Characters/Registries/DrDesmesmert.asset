@@ -17,6 +17,7 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: b749570b033c57f4bab06994c8e946d4, type: 3}
   screenshots:
   - {fileID: 21300000, guid: 4d4af78d51e3e694eabe3cb0178a2571, type: 3}
+  - {fileID: 21300000, guid: b13b290fadd60ee45ae1effe85ede006, type: 3}
   playerObj: {fileID: 3671070984082133612, guid: 6e8efc6cf6460e54e9d9c6e315557336,
     type: 3}
   npcObj: {fileID: 366549194424597015, guid: 37918d907d77470418ae42c5bd0e7752, type: 3}

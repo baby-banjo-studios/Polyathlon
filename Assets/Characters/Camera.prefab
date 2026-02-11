@@ -65,7 +65,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.3
-  far clip plane: 1350
+  far clip plane: 2000
   field of view: 60
   orthographic: 0
   orthographic size: 5
@@ -144,6 +144,7 @@ MonoBehaviour:
     m_Bits: 563
   zoomedOutFOV: 75
   camera: {fileID: 6156198436851047728}
+  vfxCam: {fileID: 3222331886798531970}
 --- !u!1 &8383303214427071507
 GameObject:
   m_ObjectHideFlags: 0
@@ -208,7 +209,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.3
-  far clip plane: 1350
+  far clip plane: 2000
   field of view: 60
   orthographic: 0
   orthographic size: 5

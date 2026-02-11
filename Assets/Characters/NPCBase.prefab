@@ -162,18 +162,6 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 7009027189904246568}
   m_SourcePrefab: {fileID: 100100000, guid: b876125315b763f439a49a003d6689be, type: 3}
---- !u!114 &2902981620721202156 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7782244971731621812, guid: b876125315b763f439a49a003d6689be,
-    type: 3}
-  m_PrefabInstance: {fileID: 4920570680035058776}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4754766360082052856}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 74dcc19c2eaf76140b2bfda59c6b8abd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Wheeler
 --- !u!114 &3496138067757726277 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: -806804065813373411, guid: b876125315b763f439a49a003d6689be,
@@ -218,13 +206,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: 
   movementMode: 0
+  prevMovementMode: 0
   movementOptions:
   - {fileID: 4754766360082052857}
   - {fileID: 5580459858832922255}
   - {fileID: 3496138067757726277}
   - {fileID: 4754766360082052863}
   - {fileID: 4754766360082052832}
-  - {fileID: 2902981620721202156}
+  - {fileID: 7475953526108043406}
   characterMesh: {fileID: 0}
   hips: {fileID: 0}
   place: 0
@@ -293,3 +282,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dbf05f26788d0ea4da2c44adfae139cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &7475953526108043406 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2591413572169800918, guid: b876125315b763f439a49a003d6689be,
+    type: 3}
+  m_PrefabInstance: {fileID: 4920570680035058776}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4754766360082052856}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 74dcc19c2eaf76140b2bfda59c6b8abd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Wheeler

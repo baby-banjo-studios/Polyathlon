@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-
+    
     const float defaultXMin = -40f;
     const float defaultXMax = 60f;
 
@@ -14,11 +14,15 @@ public class CameraController : MonoBehaviour
 
     private Quaternion cameraRotation;
     private Vector3 cameraOffset;
+    public Vector3 ActualCameraPosition { get => cameraTransform.position; }
+
     [SerializeField]
     private float zoomedOutFOV = 75f;
     private float zoomTime = 0.25f;
     [SerializeField] 
     private new Camera camera;
+    [SerializeField]
+    private Camera vfxCam;
 
     private int invert = -1;
     private float sensitivity = 0.10f;
@@ -42,7 +46,61 @@ public class CameraController : MonoBehaviour
         defaultFOV = camera.fieldOfView;
         ResetXMinMax();
     }
- 
+
+    public void SetScale(int player, int maxPlayers)
+    {
+
+        if (maxPlayers == 1)
+        {
+            camera.rect = new Rect(0f, 0f, 1f, 1f);
+            vfxCam.rect = new Rect(0f, 0f, 1f, 1f);
+        }
+        else if (maxPlayers < 3)
+        {
+            switch (player)
+            {
+                case 0:
+                    camera.rect = new Rect(0f, 0f, 0.5f, 1f);
+                    vfxCam.rect = new Rect(0f, 0f, 0.5f, 1f);
+                    break;
+                case 1:
+                    camera.rect = new Rect(0.5f, 0f, 0.5f, 1f);
+                    vfxCam.rect = new Rect(0.5f, 0f, 0.5f, 1f);
+                    break;
+            }
+        }
+        else
+        {
+            switch (player)
+            {
+                case 0:
+                    camera.rect = new Rect(0f, 0.5f, 0.5f, 0.5f);
+                    vfxCam.rect = new Rect(0f, 0.5f, 0.5f, 0.5f);
+                    break;
+                case 1:
+                    camera.rect = new Rect(0.5f, 0f, 0.5f, 0.5f);
+                    vfxCam.rect = new Rect(0.5f, 0f, 0.5f, 0.5f);
+                    break;
+                case 2:
+                    camera.rect = new Rect(0f, 0f, 0.5f, 0.5f);
+                    vfxCam.rect = new Rect(0f, 0f, 0.5f, 0.5f);
+                    break;
+                case 3:
+                    camera.rect = new Rect(0f, 0.5f, 0.5f, 0.5f);
+                    vfxCam.rect = new Rect(0f, 0.5f, 0.5f, 0.5f);
+                    break;
+
+            }
+        }
+    }
+
+    public void SetRotation(Quaternion newRotation)
+    {
+        cameraRotation.x = newRotation.eulerAngles.x;
+        cameraRotation.y = newRotation.eulerAngles.y;
+        transform.rotation = newRotation;
+    }
+
     /*  rotates the camera with the given rotation values */
     public void Rotate(float xRot, float yRot)
     {

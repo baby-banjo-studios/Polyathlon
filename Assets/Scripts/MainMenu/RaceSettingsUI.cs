@@ -55,6 +55,10 @@ public class RaceSettingsUI : BaseMenuUI
                 {
                     raceSelectSpinner.Navigate(input.x > 0);
                 }
+                else if (EventSystem.current.currentSelectedGameObject == itemTypeSpinner.gameObject)
+                {
+                    itemTypeSpinner.Navigate(input.x > 0);
+                }
                 else if (EventSystem.current.currentSelectedGameObject == cpuDiffSpinner.gameObject)
                 {
                     cpuDiffSpinner.Navigate(input.x > 0);

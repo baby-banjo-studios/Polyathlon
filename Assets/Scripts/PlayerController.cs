@@ -606,7 +606,7 @@ public class PlayerController : Racer
             photoModeController.SetActive(true);
             photoModeController.SetStartingPosition(cameraController);
             photoModeController.SetControlScheme(playerInput);
-            playerInput.currentActionMap = playerInput.actions.actionMaps[10];  // Greenscreen
+            playerInput.currentActionMap = playerInput.actions.actionMaps[11];  // Greenscreen
             cameraController.gameObject.SetActive(false);
         }
         else

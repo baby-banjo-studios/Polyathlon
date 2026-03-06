@@ -28,10 +28,6 @@ public class SettingsUI : BaseMenuUI
         masterVolSlider.value = PlayerPrefs.GetFloat(PlayerPrefsKeys.MASTER_VOL, 1f);
         sfxVolSlider.value = PlayerPrefs.GetFloat(PlayerPrefsKeys.SOUNDS_VOL, 1f);
         musicVolSlider.value = PlayerPrefs.GetFloat(PlayerPrefsKeys.MUSIC_VOL, 1f);
-
-        mixer.SetFloat("masterVol", masterVolSlider.value);
-        mixer.SetFloat("musicVol", musicVolSlider.value);
-        mixer.SetFloat("soundsVol", sfxVolSlider.value);
     }
 
     protected override void Start()
@@ -50,6 +46,19 @@ public class SettingsUI : BaseMenuUI
             QualitySettings.SetQualityLevel((int)quality);
             qualitySpinner.SkipToValue(description);
         }
+    }
+
+    // need these to be loaded immediately
+    public void LoadPrefs()
+    {
+        mixer.SetFloat("masterVol", PlayerPrefs.GetFloat(PlayerPrefsKeys.MASTER_VOL, 1f));
+        mixer.SetFloat("soundsVol", PlayerPrefs.GetFloat(PlayerPrefsKeys.SOUNDS_VOL, 1f));
+        mixer.SetFloat("musicVol", PlayerPrefs.GetFloat(PlayerPrefsKeys.MUSIC_VOL, 1f));
+        foreach (UI ui in FindObjectsByType<UI>(FindObjectsSortMode.None))
+        {
+            ui.SetSpeedUnit((SpeedUnits)PlayerPrefs.GetInt(PlayerPrefsKeys.SPEED_UNITS, 0));
+        }
+        QualitySettings.SetQualityLevel(PlayerPrefs.GetInt(PlayerPrefsKeys.QUALITY_LEVEL, 0));
     }
 
     public override void Navigate(MainMenuPlayer player, Vector2 input)

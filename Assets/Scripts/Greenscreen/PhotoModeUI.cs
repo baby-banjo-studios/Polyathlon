@@ -51,7 +51,6 @@ public class PhotoModeUI : MonoBehaviour
         currentAspectRatio = PhotoModeAspectRatio.Free;
         SetResolutionText(currentResolution);
         SetAspectRatioText(currentAspectRatio);
-        RedrawBorders();
 
         transparent = new Color(1f, 1f, 1f, 0f);
         opaque = new Color(1f, 1f, 1f, 1f);
@@ -66,6 +65,7 @@ public class PhotoModeUI : MonoBehaviour
         bottomShutter.color = transparent;        
         topShutter.rectTransform.sizeDelta = new Vector2(topShutter.rectTransform.sizeDelta.x, 0f);
         bottomShutter.rectTransform.sizeDelta = new Vector2(bottomShutter.rectTransform.sizeDelta.x, 0f);
+        RedrawBorders();
     }
 
     public void UpdateControlsText(PlayerInput playerInput)
@@ -339,17 +339,41 @@ public class PhotoModeUI : MonoBehaviour
     {
         Vector2Int widthHeight = GetPhotoDimensions();
         
-        float ratio = widthHeight.x / (float)widthHeight.y;
+        float photoRatio = widthHeight.x / (float)widthHeight.y;
 
-        topBorder.anchoredPosition = new Vector2(0f, Screen.height / 2f); 
-        topBorder.sizeDelta = new Vector2(Screen.height * ratio, 5f);
-        bottomBorder.anchoredPosition = new Vector2(0f, -Screen.height / 2f);
-        bottomBorder.sizeDelta = new Vector2(Screen.height * ratio, 5f);
-        
-        leftBorder.anchoredPosition = new Vector2(-ratio * Screen.height / 2f, 0f); 
-        leftBorder.sizeDelta = new Vector2(5f, Screen.height); 
-        rightBorder.anchoredPosition = new Vector2(ratio * Screen.height / 2f, 0f); 
-        rightBorder.sizeDelta = new Vector2(5f, Screen.height);
+        RectTransform parentRect = borderParent.GetComponent<RectTransform>();
+        float parentWidth  = parentRect.rect.width;
+        float parentHeight = parentRect.rect.height;
 
+        float parentRatio = parentWidth / parentHeight;
+
+        float frameWidth;
+        float frameHeight;
+
+        if (photoRatio > parentRatio)
+        {
+            // Fit to width
+            frameWidth  = parentWidth;
+            frameHeight = parentWidth / photoRatio;
+        }
+        else
+        {
+            // Fit to height
+            frameHeight = parentHeight;
+            frameWidth  = parentHeight * photoRatio;
+        }
+
+        float halfW = frameWidth * 0.5f;
+        float halfH = frameHeight * 0.5f;
+
+        topBorder.anchoredPosition = new Vector2(0f, halfH);
+        topBorder.sizeDelta = new Vector2(frameWidth, 5f);
+        bottomBorder.anchoredPosition = new Vector2(0f, -halfH);
+        bottomBorder.sizeDelta = new Vector2(frameWidth, 5f);
+
+        leftBorder.anchoredPosition = new Vector2(-halfW, 0f);
+        leftBorder.sizeDelta = new Vector2(5f, frameHeight);
+        rightBorder.anchoredPosition = new Vector2(halfW, 0f);
+        rightBorder.sizeDelta = new Vector2(5f, frameHeight);
     }
 }

@@ -122,7 +122,7 @@ public class GreenscreenController : MonoBehaviour
     public void TakeSnapshot(int height, int width)
     {
         snapCam.SetResolution(width, height);
-        snapCam.TakeSnapshot();
+        snapCam.TakeSnapshot(false);
     }
 
     public void ToggleMode()

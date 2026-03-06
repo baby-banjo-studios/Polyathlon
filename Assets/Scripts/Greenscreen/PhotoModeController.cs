@@ -70,7 +70,7 @@ public class PhotoModeController : MonoBehaviour
     {
         Vector2Int widthHeight = ui.GetPhotoDimensions();
         snapshotCamera.SetResolution(widthHeight.x, widthHeight.y);
-        snapshotCamera.TakeSnapshot();
+        snapshotCamera.TakeSnapshot(true);
         ui.TakeSnapshot();
     }
 

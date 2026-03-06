@@ -37,8 +37,7 @@ public class BaseMenuUI : MonoBehaviour
         }
         else
         {
-            EventSystem.current.sendNavigationEvents = false;
-            EventSystem.current.SetSelectedGameObject(null);
+            //EventSystem.current.SetSelectedGameObject(null);
             //Debug.Log("NO nav events");
         }
     }
@@ -58,11 +57,6 @@ public class BaseMenuUI : MonoBehaviour
         if (EventSystem.current.currentSelectedGameObject == null)
         {
             firstSelectable.Select();
-            EventSystem.current.sendNavigationEvents = false;
-        }
-        else if (!EventSystem.current.sendNavigationEvents)
-        {
-            EventSystem.current.sendNavigationEvents = true;
         }
     }
 

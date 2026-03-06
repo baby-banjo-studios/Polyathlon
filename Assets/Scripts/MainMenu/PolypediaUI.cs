@@ -260,7 +260,7 @@ public class PolypediaUI : BaseMenuUI
         foreach (T entry in entries)
         {
             GridEntry gridEntry = Instantiate(gridEntryTemplate, gridParent);
-            gridEntry.Initialize(entry, entry.DisplayName, entry.Thumbnail, 1, 0); // TODO get row index
+            gridEntry.Initialize(entry, entry.DisplayName, entry.Thumbnail, 1, 0, null); // TODO get row index
             if (mainMenuUI.PrimaryControlScheme == ControlScheme.Keyboard)
             {
                 gridEntry.SetMouseSelector(selector);

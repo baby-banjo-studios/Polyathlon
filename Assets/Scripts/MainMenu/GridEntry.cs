@@ -1,10 +1,11 @@
+using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class GridEntry : MonoBehaviour, IPointerEnterHandler
+public class GridEntry : Selectable, IPointerEnterHandler
 {
     [SerializeField]
     protected TextMeshProUGUI nameText;
@@ -17,6 +18,7 @@ public class GridEntry : MonoBehaviour, IPointerEnterHandler
     protected Selectable button;
     protected List<Selector> currentSelectors; // TODO change to dict w/ max cap???
     protected Selector mouseSelector;   // special selector for the player who is using a mouse
+    protected Action<GridEntry, BaseEventData> selectedCallback;
 
     [SerializeField]
     protected GameObject radioButtonParent, radioButtonCheck;
@@ -27,16 +29,18 @@ public class GridEntry : MonoBehaviour, IPointerEnterHandler
     public int RowIdx { get; private set; }
     public bool IsChecked { get; private set; }
 
-    protected virtual void Awake()
+    protected override void Awake()
     {
-        button = GetComponent<Selectable>();   
+        base.Awake();
+        button = GetComponent<Selectable>();
 
         currentSelectors = new List<Selector>();
         targets = new List<RectTransform>();
     }
 
-    protected virtual void Start()
+    protected override void Start()
     {
+        base.Start();
         foreach (Transform target in targetParent)
         {
             target.gameObject.SetActive(false);
@@ -44,12 +48,13 @@ public class GridEntry : MonoBehaviour, IPointerEnterHandler
         EnableRadioButton(false);
     }
 
-    public virtual void Initialize(ScriptableObject registry, string name, Sprite image, int maxTargets, int rowIndex)
+    public virtual void Initialize(ScriptableObject registry, string name, Sprite image, int maxTargets, int rowIndex, Action<GridEntry, BaseEventData> selectedCallback)
     {
         this.registry = registry;
         nameText.text = name;
         thumbnail.sprite = image;
         RowIdx = rowIndex;
+        this.selectedCallback = selectedCallback;
 
         for (int i = 0; i < maxTargets; i++)
         {
@@ -64,8 +69,9 @@ public class GridEntry : MonoBehaviour, IPointerEnterHandler
         LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)targetParent);
     }
 
-    public void Reset()
+    public new void Reset()
     {
+        base.Reset();
         currentSelectors.Clear();
         Redraw(true);
     }
@@ -88,10 +94,11 @@ public class GridEntry : MonoBehaviour, IPointerEnterHandler
         mouseSelector = selector;
     }
 
-    public void OnPointerEnter(PointerEventData _)
+    public override void OnPointerEnter(PointerEventData eventData)
     {
         if (mouseSelector != null)
         {
+            base.OnPointerEnter(eventData);
             mouseSelector.InterruptMove();
 
             if (mouseSelector.selectedEntry != null && mouseSelector.selectedEntry != this && !mouseSelector.Locked)
@@ -100,6 +107,15 @@ public class GridEntry : MonoBehaviour, IPointerEnterHandler
                 mouseSelector.selectedEntry = this;
                 AddSelector(mouseSelector, false);
             }
+        }
+    }
+
+    public override void OnSelect(BaseEventData eventData)
+    {
+        base.OnSelect(eventData);
+        if (selectedCallback != null)
+        {
+            selectedCallback(this, eventData);
         }
     }
 

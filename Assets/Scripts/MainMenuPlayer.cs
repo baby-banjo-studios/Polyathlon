@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using TMPro;
+using UnityEngine.EventSystems;
 
 public class MainMenuPlayer : MonoBehaviour
 {
@@ -22,6 +23,7 @@ public class MainMenuPlayer : MonoBehaviour
     
     public int PlayerNum { get; set; }
     public ControlScheme ControlScheme { get => controlScheme; }
+    public EventSystem PlayerEventSystem { get => GetComponent<EventSystem>(); }
     public InputDevice[] InputDevices { get => playerInput.devices.ToArray(); }
     private void Awake()
     {
@@ -47,36 +49,51 @@ public class MainMenuPlayer : MonoBehaviour
     }
 
     // ----------------- INPUT EVENTS --------------------
-    public void OnNavigate(InputValue value)
+    public void OnNavigate(InputAction.CallbackContext ctx)
     {
-        Vector2 vecVal = value.Get<Vector2>();
-        if (canCycle)
+        if (ctx.performed)
         {
-            Debug.Log(string.Format("x:{0}, y:{1}", vecVal.x, vecVal.y));
-            menuUI.Navigate(this, vecVal);
-            StartCoroutine(PreventSpeedyJoysticks());
+            Vector2 vecVal = ctx.ReadValue<Vector2>();
+            if (canCycle)
+            {
+                //Debug.Log(string.Format("x:{0}, y:{1}", vecVal.x, vecVal.y));
+                menuUI.Navigate(this, vecVal);
+                StartCoroutine(PreventSpeedyJoysticks());
+            }
         }
     }
 
-    public void OnSubmit()
+    public void OnSubmit(InputAction.CallbackContext ctx)
     {
-        menuUI.Submit(this);
+        if (ctx.performed)
+        {
+            menuUI.Submit(this);
+        }
     }
 
-    public void OnConfirmSelections()
+    public void OnConfirmSelections(InputAction.CallbackContext ctx)
     {
-        menuUI.Confirm(this);
+        if (ctx.performed)
+        {
+            menuUI.Confirm(this);
+        }
     }
 
-    public void OnCancel()
+    public void OnCancel(InputAction.CallbackContext ctx)
     {
-        menuUI.Cancel(this);
+        if (ctx.performed)
+        {
+            menuUI.Cancel(this);
+        }
     }
 
-    public void OnAnyKey()
+    public void OnAnyKey(InputAction.CallbackContext ctx)
     {
-        //Debug.Log("AnyKey");
-        //menuUI.AnyKeyPressed();
+        if (ctx.performed)
+        {
+            //Debug.Log("AnyKey");
+            //menuUI.AnyKeyPressed();
+        }
     }
 
     // ----------------- END INPUT EVENTS --------------------

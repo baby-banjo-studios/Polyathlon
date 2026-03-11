@@ -71,7 +71,7 @@ public class GridEntry : Selectable, IPointerEnterHandler
 
     public new void Reset()
     {
-        base.Reset();
+        //base.Reset();
         currentSelectors.Clear();
         Redraw(true);
     }

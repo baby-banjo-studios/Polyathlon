@@ -12,6 +12,7 @@ TagManager:
   - lb_bird
   - FinalWaypoint
   - DebugTextMesh
+  - Dont KO Racer On Impact
   layers:
   - Default
   - TransparentFX

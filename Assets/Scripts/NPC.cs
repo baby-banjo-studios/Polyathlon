@@ -270,15 +270,24 @@ public class NPC : Racer
             item.Use(this);
     }
 
-    protected override IEnumerator SpeedBoost(float magnitude, float duration)
+    protected override IEnumerator SpeedBoostCoroutine(float magnitude)
     {
         movement.BonusSpeed = magnitude;
         anim.speed = magnitude;
         agent.speed = agentSpeed * magnitude;
-        yield return new WaitForSeconds(duration);
+
+        while (remainingBoostTime > 0)
+        {
+            remainingBoostTime -= Time.deltaTime;
+            yield return null;
+        }
+
+        // reset everything
         movement.BonusSpeed = 1f;
         anim.speed = 1f;
         agent.speed = agentSpeed;
+        remainingBoostTime = 0f;
+        boostCoroutine = null;
     }
 
     /*  called by the RaceManager, makes the NPC start moving

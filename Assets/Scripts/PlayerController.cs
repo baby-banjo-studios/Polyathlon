@@ -620,11 +620,11 @@ public class PlayerController : Racer
         }
     }
 
-    protected override IEnumerator SpeedBoost(float magnitude, float duration)
+    protected override IEnumerator SpeedBoostCoroutine(float magnitude)
     {
         vfx.SetSpeedLines(true);
         cameraController.SetZoom(true);
-        yield return base.SpeedBoost(magnitude, duration);
+        yield return base.SpeedBoostCoroutine(magnitude);
         cameraController.SetZoom(false);
         vfx.SetSpeedLines(false);
     }
@@ -651,7 +651,7 @@ public class PlayerController : Racer
 
     protected override void OnCollisionEnter(Collision other)
     {
-        if (other.gameObject.layer != 8) // ignore collisions with projectiles
+        if (other.gameObject.layer != 8 && !other.gameObject.CompareTag("Dont KO Racer On Impact")) // ignore collisions with projectiles
         {
             base.OnCollisionEnter(other);
             float mag;
@@ -661,7 +661,7 @@ public class PlayerController : Racer
             }
             else    // if the other thing is stationary
             {
-                mag = (velocityBeforePhysicsUpdate).magnitude;
+                mag = velocityBeforePhysicsUpdate.magnitude;
             }
             if (mag > dieThreshold)
             {

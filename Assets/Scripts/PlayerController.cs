@@ -253,7 +253,7 @@ public class PlayerController : Racer
         if (!RaceManager.IsPaused)
         {
             Debug.Log("OnFinishAnyKeyPressed now!");
-            RaceManager.ReturnToMenu();
+            RaceManager.NextRace();
         }
     }
 
@@ -507,7 +507,8 @@ public class PlayerController : Racer
     public override void RaceIsOver()
     {
         // Enable FinishLine action map
-        playerInput.currentActionMap = playerInput.actions.actionMaps[8];
+        // Watch this index when adding new movement modes!
+        playerInput.currentActionMap = playerInput.actions.actionMaps[9];
     }
 
     /*  updates player's movement mode and maxSpeed/locomotion accordingly */

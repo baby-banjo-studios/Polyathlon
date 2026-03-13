@@ -43,6 +43,7 @@ public class PhotoModeController : MonoBehaviour
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        RaceManager.ShowDummyUI(!enable);
     }
 
     public void AddMovement(float forward, float right, float up)

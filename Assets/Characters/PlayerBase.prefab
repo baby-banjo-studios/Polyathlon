@@ -673,11 +673,35 @@ MonoBehaviour:
     m_ActionId: 1e61b774-894f-42a1-86e4-e7450cf49769
     m_ActionName: 'FinishLine/AnyButton[/Keyboard/anyKey,/XInputControllerWindows/buttonEast,/XInputControllerWindows/buttonEast,/XInputControllerWindows/buttonNorth,/XInputControllerWindows/buttonNorth,/XInputControllerWindows/buttonSouth,/XInputControllerWindows/buttonSouth,/XInputControllerWindows/buttonWest,/XInputControllerWindows/buttonWest,/XInputControllerWindows/dpad/down,/XInputControllerWindows/dpad/down,/XInputControllerWindows/dpad/left,/XInputControllerWindows/dpad/left,/XInputControllerWindows/dpad/right,/XInputControllerWindows/dpad/right,/XInputControllerWindows/dpad/up,/XInputControllerWindows/dpad/up,/XInputControllerWindows/leftShoulder,/XInputControllerWindows/leftShoulder,/XInputControllerWindows/leftTrigger,/XInputControllerWindows/leftTrigger,/XInputControllerWindows/rightShoulder,/XInputControllerWindows/rightShoulder,/XInputControllerWindows/rightTrigger,/XInputControllerWindows/rightTrigger,/XInputControllerWindows/select,/XInputControllerWindows/select,/XInputControllerWindows/start,/XInputControllerWindows/start]'
   - m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 5786434344950617427}
+        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+        m_MethodName: OnSwimmingJump
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: a875ebe9-e0c2-43c7-983a-0bae5f117562
     m_ActionName: 'Swimming/Jump[/Keyboard/space,/XInputControllerWindows/buttonSouth,/XInputControllerWindows/buttonSouth,/XInputControllerWindows/rightShoulder,/XInputControllerWindows/rightShoulder,/XInputControllerWindows/rightTrigger,/XInputControllerWindows/rightTrigger]'
   - m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 5786434344950617427}
+        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+        m_MethodName: OnBikingJump
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: f8a48a85-3d5c-4e1e-abe4-cad5333c83d0
     m_ActionName: 'Biking/Jump[/Keyboard/space,/XInputControllerWindows/buttonSouth,/XInputControllerWindows/buttonSouth,/XInputControllerWindows/rightShoulder,/XInputControllerWindows/rightShoulder,/XInputControllerWindows/rightTrigger,/XInputControllerWindows/rightTrigger]'
   - m_PersistentCalls:

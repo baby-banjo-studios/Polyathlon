@@ -78,16 +78,16 @@ public class CameraController : MonoBehaviour
                     vfxCam.rect = new Rect(0f, 0.5f, 0.5f, 0.5f);
                     break;
                 case 1:
-                    camera.rect = new Rect(0.5f, 0f, 0.5f, 0.5f);
-                    vfxCam.rect = new Rect(0.5f, 0f, 0.5f, 0.5f);
+                    camera.rect = new Rect(0.5f, 0.5f, 0.5f, 0.5f);
+                    vfxCam.rect = new Rect(0.5f, 0.5f, 0.5f, 0.5f);
                     break;
                 case 2:
                     camera.rect = new Rect(0f, 0f, 0.5f, 0.5f);
                     vfxCam.rect = new Rect(0f, 0f, 0.5f, 0.5f);
                     break;
                 case 3:
-                    camera.rect = new Rect(0f, 0.5f, 0.5f, 0.5f);
-                    vfxCam.rect = new Rect(0f, 0.5f, 0.5f, 0.5f);
+                    camera.rect = new Rect(0.5f, 0f, 0.5f, 0.5f);
+                    vfxCam.rect = new Rect(0.5f, 0f, 0.5f, 0.5f);
                     break;
 
             }

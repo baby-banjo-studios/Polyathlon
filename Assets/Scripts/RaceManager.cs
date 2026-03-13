@@ -146,10 +146,7 @@ public class RaceManager : MonoBehaviour
                     }
                 }
                 // activate dummy camera for 3 player splitscreen
-                if (playerChoices.Count == 3)
-                {
-                    dummyUI.SetActive(true);
-                }
+                ShowDummyUI(true);
                 realPlayersInRace = playerChoices.Count;
             }
             else
@@ -347,6 +344,11 @@ public class RaceManager : MonoBehaviour
         return false;
     }
 
+    public static void ShowDummyUI(bool enabled)
+    {
+        instance.dummyUI.SetActive(enabled && instance.raceSettings.PlayerChoices.Count == 3);
+    }
+
     public static int GetPosition(Racer racer)
     {
         for (int i = 0; i < instance.positions.Count; i++)
@@ -402,25 +404,31 @@ public class RaceManager : MonoBehaviour
         }
     }
 
+    public static void NextRace()
+    {
+        if (instance.raceSettings.HasNextRace)
+        {
+            Debug.Log("Starting next race!");
+            instance.raceSettings.StartNextRace();
+        }
+        else
+        {
+            ReturnToMenu();
+        }
+    }
+
     public static void ReturnToMenu()
     {
         if (IsRaceActive)
         {
             instance.isRaceActive = false;
-            if (instance.raceSettings.HasNextRace)
+            instance.raceSettings.EndRace();
+            Debug.Log("return to main menu please!");
+            if (canLoadMenu)
             {
-                instance.raceSettings.StartNextRace();
-            }
-            else
-            {
-                instance.raceSettings.EndRace();
-                Debug.Log("return to main menu please!");
-                if (canLoadMenu)
-                {
-                    canLoadMenu = false;
-                    Debug.Log("Okay loading main menu!");
-                    SceneManager.LoadScene("Main Menu");
-                }
+                canLoadMenu = false;
+                Debug.Log("Okay loading main menu!");
+                SceneManager.LoadScene("Main Menu");
             }
         }
     }

@@ -7,6 +7,7 @@ public class Racer : MonoBehaviour
     
 
     public Movement.Mode movementMode;
+    public Movement.Mode prevMovementMode; // sometimes its helpful to know what we had previously
     public Movement[] movementOptions;
 
     public Transform characterMesh;
@@ -28,6 +29,9 @@ public class Racer : MonoBehaviour
     protected Vector3 velocityBeforePhysicsUpdate;
     protected bool dead;
     protected bool canRevive; // when this is true, a dead racer can be revived.
+
+    protected Coroutine boostCoroutine;
+    protected float remainingBoostTime = 0f;
 
     public int place;
     public float dieThreshold = 40f;
@@ -126,6 +130,7 @@ public class Racer : MonoBehaviour
     {
         if (initial || mode != movementMode)
         {
+            prevMovementMode = movementMode;
             movementMode = mode;
             if (movement != null)
                 movement.enabled = false;
@@ -164,6 +169,11 @@ public class Racer : MonoBehaviour
                     audioSource.clip = bikeSound;
                     audioSource.Play();
                     break;
+                case Movement.Mode.Wheeling:
+                    if (!(movement is Wheeler))
+                        movement.Land();
+                    movement = movementOptions[(int)Movement.Mode.Wheeling];
+                    break;
                 case Movement.Mode.GetOffTheBoat:
                     movement = movementOptions[(int)Movement.Mode.Running];
                     break;
@@ -171,7 +181,7 @@ public class Racer : MonoBehaviour
             }
             movement.enabled = true;
             animEvents.movement = movement;
-            anim.SetInteger("movement_mode", (int)movementMode % 5);
+            anim.SetInteger("movement_mode", (int)movementMode % 6);
         }
     }
 
@@ -277,18 +287,35 @@ public class Racer : MonoBehaviour
         this.item = item;
     }
 
-    public void SpeedBoost()
+    public void SpeedBoost(float magnitude = 2f, float duration = 5f)
     {
-        StartCoroutine(SpeedBoost(2f, 5f));
+        remainingBoostTime += duration;
+
+        // Only start the coroutine if one isn't already running
+        if (boostCoroutine == null)
+        {
+            boostCoroutine = StartCoroutine(SpeedBoostCoroutine(magnitude));
+        }
     }
 
-    protected virtual IEnumerator SpeedBoost(float magnitude, float duration)
+    protected virtual IEnumerator SpeedBoostCoroutine(float magnitude)
     {
         movement.BonusSpeed = magnitude;
         anim.speed = magnitude;
-        yield return new WaitForSeconds(duration);
+
+        // Continue looping as long as there is time left
+        while (remainingBoostTime > 0)
+        {
+            remainingBoostTime -= Time.deltaTime;
+            yield return null; // Wait for the next frame
+        }
+
+        // Reset values once the total accumulated time is up
         movement.BonusSpeed = 1f;
         anim.speed = 1f;
+        
+        remainingBoostTime = 0f;
+        boostCoroutine = null;
     }
 
     public virtual void SetTarget(Transform target)

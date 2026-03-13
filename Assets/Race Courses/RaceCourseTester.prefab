@@ -108,7 +108,7 @@ Transform:
   m_Children:
   - {fileID: 3972031490066745072}
   - {fileID: 3972031488890227342}
-  - {fileID: 5302197194769693001}
+  - {fileID: 8497969566232045541}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3972031490066745070
@@ -160,7 +160,7 @@ MonoBehaviour:
   npcChoices: []
   testSettings: 1
   testCpuQuantity: 11
-  testCharacterGameObject: {fileID: 5302197194769693007}
+  testCharacterGameObject: {fileID: 8497969566232045539}
   selectedStage: {fileID: 0}
   preloadedStages: []
   numRaces: 0
@@ -169,7 +169,7 @@ MonoBehaviour:
   cpuDifficulty: 0
   numCPUs: 0
   mainMenuSceneName: 
---- !u!1001 &3470635206390552931
+--- !u!1001 &887708710843516879
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -245,17 +245,17 @@ PrefabInstance:
     - target: {fileID: 8772761477247295530, guid: 2382e88df05e92747b9fa2f02a91f09c,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 379.07166
       objectReference: {fileID: 0}
     - target: {fileID: 8772761477247295530, guid: 2382e88df05e92747b9fa2f02a91f09c,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 371.49854
       objectReference: {fileID: 0}
     - target: {fileID: 8772761477247295530, guid: 2382e88df05e92747b9fa2f02a91f09c,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -632.1126
       objectReference: {fileID: 0}
     - target: {fileID: 8772761477247295530, guid: 2382e88df05e92747b9fa2f02a91f09c,
         type: 3}
@@ -302,15 +302,15 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2382e88df05e92747b9fa2f02a91f09c, type: 3}
---- !u!4 &5302197194769693001 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 8772761477247295530, guid: 2382e88df05e92747b9fa2f02a91f09c,
-    type: 3}
-  m_PrefabInstance: {fileID: 3470635206390552931}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &5302197194769693007 stripped
+--- !u!1 &8497969566232045539 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8772761477247295532, guid: 2382e88df05e92747b9fa2f02a91f09c,
     type: 3}
-  m_PrefabInstance: {fileID: 3470635206390552931}
+  m_PrefabInstance: {fileID: 887708710843516879}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &8497969566232045541 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8772761477247295530, guid: 2382e88df05e92747b9fa2f02a91f09c,
+    type: 3}
+  m_PrefabInstance: {fileID: 887708710843516879}
   m_PrefabAsset: {fileID: 0}

@@ -12,6 +12,7 @@ public abstract class Movement : MonoBehaviour
         Gliding,
         Swimming,
         Biking,
+        Wheeling,
         GetOffTheBoat,
         None,
     }

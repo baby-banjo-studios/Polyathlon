@@ -21,6 +21,7 @@ GameObject:
   - component: {fileID: 715668250}
   - component: {fileID: -2653389588791342418}
   - component: {fileID: -806804065813373411}
+  - component: {fileID: 2591413572169800918}
   m_Layer: 10
   m_Name: PlayerBase
   m_TagString: Player
@@ -209,12 +210,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: 
   movementMode: 0
+  prevMovementMode: 0
   movementOptions:
   - {fileID: 411290082333151905}
   - {fileID: 664463851632276183}
   - {fileID: -806804065813373411}
   - {fileID: 411290082333151911}
   - {fileID: 411290082333151928}
+  - {fileID: 2591413572169800918}
   characterMesh: {fileID: 0}
   hips: {fileID: 0}
   place: 0
@@ -670,11 +673,35 @@ MonoBehaviour:
     m_ActionId: 1e61b774-894f-42a1-86e4-e7450cf49769
     m_ActionName: 'FinishLine/AnyButton[/Keyboard/anyKey,/XInputControllerWindows/buttonEast,/XInputControllerWindows/buttonEast,/XInputControllerWindows/buttonNorth,/XInputControllerWindows/buttonNorth,/XInputControllerWindows/buttonSouth,/XInputControllerWindows/buttonSouth,/XInputControllerWindows/buttonWest,/XInputControllerWindows/buttonWest,/XInputControllerWindows/dpad/down,/XInputControllerWindows/dpad/down,/XInputControllerWindows/dpad/left,/XInputControllerWindows/dpad/left,/XInputControllerWindows/dpad/right,/XInputControllerWindows/dpad/right,/XInputControllerWindows/dpad/up,/XInputControllerWindows/dpad/up,/XInputControllerWindows/leftShoulder,/XInputControllerWindows/leftShoulder,/XInputControllerWindows/leftTrigger,/XInputControllerWindows/leftTrigger,/XInputControllerWindows/rightShoulder,/XInputControllerWindows/rightShoulder,/XInputControllerWindows/rightTrigger,/XInputControllerWindows/rightTrigger,/XInputControllerWindows/select,/XInputControllerWindows/select,/XInputControllerWindows/start,/XInputControllerWindows/start]'
   - m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 5786434344950617427}
+        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+        m_MethodName: OnSwimmingJump
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: a875ebe9-e0c2-43c7-983a-0bae5f117562
     m_ActionName: 'Swimming/Jump[/Keyboard/space,/XInputControllerWindows/buttonSouth,/XInputControllerWindows/buttonSouth,/XInputControllerWindows/rightShoulder,/XInputControllerWindows/rightShoulder,/XInputControllerWindows/rightTrigger,/XInputControllerWindows/rightTrigger]'
   - m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 5786434344950617427}
+        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+        m_MethodName: OnBikingJump
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: f8a48a85-3d5c-4e1e-abe4-cad5333c83d0
     m_ActionName: 'Biking/Jump[/Keyboard/space,/XInputControllerWindows/buttonSouth,/XInputControllerWindows/buttonSouth,/XInputControllerWindows/rightShoulder,/XInputControllerWindows/rightShoulder,/XInputControllerWindows/rightTrigger,/XInputControllerWindows/rightTrigger]'
   - m_PersistentCalls:
@@ -746,51 +773,15 @@ MonoBehaviour:
     m_ActionId: e0afb77e-b807-4147-b245-1d66e2501afd
     m_ActionName: 'UI/QualityCycle[/Keyboard/p]'
   - m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 5786434344950617427}
-        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
-        m_MethodName: OnStartButton
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
     m_ActionId: a96d992e-15df-4205-a7a2-11ed628c787b
     m_ActionName: 'Gliding/StartButton[/XInputControllerWindows/start]'
   - m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 5786434344950617427}
-        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
-        m_MethodName: OnStartButton
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
     m_ActionId: db902f0c-25ce-491b-bd43-d55af91c2799
     m_ActionName: 'Swimming/StartButton[/XInputControllerWindows/start]'
   - m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 5786434344950617427}
-        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
-        m_MethodName: OnStartButton
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
     m_ActionId: dd9cd317-9913-41d4-bcb4-d72986e6f590
     m_ActionName: 'Biking/StartButton[/XInputControllerWindows/start]'
   - m_PersistentCalls:
@@ -1065,6 +1056,90 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 7d6fa685-f774-4d8e-8071-1c7eeda17ad0
     m_ActionName: 'PhotoMode/CycleAspectRatio[/Keyboard/k]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5786434344950617427}
+        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+        m_MethodName: OnWheelingMovement
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 5ea21c8e-417f-459c-a220-d088a3c339db
+    m_ActionName: 'Wheeling/Movement[/Keyboard/w,/Keyboard/s,/Keyboard/a,/Keyboard/d]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5786434344950617427}
+        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+        m_MethodName: OnWheelingLook
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 0b977e9d-d7b3-401f-846a-1dc94347e3ec
+    m_ActionName: 'Wheeling/Look[/Mouse/delta,/Keyboard/upArrow,/Keyboard/downArrow,/Keyboard/leftArrow,/Keyboard/rightArrow]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5786434344950617427}
+        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+        m_MethodName: OnWheelingJump
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 4a480789-10d0-4e46-8ac0-01e0534e51e6
+    m_ActionName: 'Wheeling/Jump[/Keyboard/space]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5786434344950617427}
+        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+        m_MethodName: OnUseItem
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 676ddd46-77fc-4556-a41c-d79cb32b03ee
+    m_ActionName: 'Wheeling/Item[/Mouse/leftButton,/Mouse/rightButton,/Keyboard/e]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 25397818-9a4f-44d2-b085-bb9157364e19
+    m_ActionName: Wheeling/StartButton
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5786434344950617427}
+        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+        m_MethodName: OnPause
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 95f655d9-43da-40a1-a07b-2e5ff63d11c2
+    m_ActionName: 'Wheeling/Pause[/Keyboard/escape]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Running
@@ -1090,6 +1165,24 @@ MonoBehaviour:
   rollSpeed: 100
   pitchSpeed: 100
   dragFactor: 55
+--- !u!114 &2591413572169800918
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 411290082333151904}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 74dcc19c2eaf76140b2bfda59c6b8abd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Wheeler
+  maxSpeed: 10
+  acceleration: 0
+  angularSpeed: 0
+  itemDropPoint: {fileID: 1265897368244378925}
+  driveForce: 800
+  wheeler: {fileID: 7652232265114800504}
 --- !u!1 &4550237746107024480
 GameObject:
   m_ObjectHideFlags: 0
@@ -1150,6 +1243,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 8512440165600835769}
   - {fileID: 411290083597394962}
   m_Father: {fileID: 411290082333151910}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1369,6 +1463,97 @@ Camera:
   m_CorrespondingSourceObject: {fileID: 3222331886798531970, guid: da035f00bd980f34a90a606b59b3dbb2,
     type: 3}
   m_PrefabInstance: {fileID: 6071758682022798242}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &6863166415077361910
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 2644899272749797032}
+    m_Modifications:
+    - target: {fileID: 2962416683747405903, guid: 7c7b00cd2293bcb47a1b58fef57ddb51,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2962416683747405903, guid: 7c7b00cd2293bcb47a1b58fef57ddb51,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2962416683747405903, guid: 7c7b00cd2293bcb47a1b58fef57ddb51,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2962416683747405903, guid: 7c7b00cd2293bcb47a1b58fef57ddb51,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2962416683747405903, guid: 7c7b00cd2293bcb47a1b58fef57ddb51,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2962416683747405903, guid: 7c7b00cd2293bcb47a1b58fef57ddb51,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2962416683747405903, guid: 7c7b00cd2293bcb47a1b58fef57ddb51,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2962416683747405903, guid: 7c7b00cd2293bcb47a1b58fef57ddb51,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2962416683747405903, guid: 7c7b00cd2293bcb47a1b58fef57ddb51,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2962416683747405903, guid: 7c7b00cd2293bcb47a1b58fef57ddb51,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3822691653854992782, guid: 7c7b00cd2293bcb47a1b58fef57ddb51,
+        type: 3}
+      propertyPath: m_Name
+      value: Wheeler
+      objectReference: {fileID: 0}
+    - target: {fileID: 3822691653854992782, guid: 7c7b00cd2293bcb47a1b58fef57ddb51,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 7c7b00cd2293bcb47a1b58fef57ddb51, type: 3}
+--- !u!4 &1265897368244378925 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5669895105572312539, guid: 7c7b00cd2293bcb47a1b58fef57ddb51,
+    type: 3}
+  m_PrefabInstance: {fileID: 6863166415077361910}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &7652232265114800504 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3822691653854992782, guid: 7c7b00cd2293bcb47a1b58fef57ddb51,
+    type: 3}
+  m_PrefabInstance: {fileID: 6863166415077361910}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &8512440165600835769 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2962416683747405903, guid: 7c7b00cd2293bcb47a1b58fef57ddb51,
+    type: 3}
+  m_PrefabInstance: {fileID: 6863166415077361910}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &7250146851499414781
 PrefabInstance:

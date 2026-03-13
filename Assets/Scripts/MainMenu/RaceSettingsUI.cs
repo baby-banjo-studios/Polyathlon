@@ -147,7 +147,7 @@ public class RaceSettingsUI : BaseMenuUI
         }
     }
 
-    public override void Submit(MainMenuPlayer player)
+    public override void Confirm(MainMenuPlayer player)
     {
         if (player.IsPrimary())
         {

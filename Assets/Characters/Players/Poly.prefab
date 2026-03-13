@@ -608,6 +608,16 @@ PrefabInstance:
       propertyPath: itemDropPoint
       value: 
       objectReference: {fileID: 3383645509301822644}
+    - target: {fileID: 1204993881345047002, guid: b876125315b763f439a49a003d6689be,
+        type: 3}
+      propertyPath: m_VersionIndex
+      value: 4166
+      objectReference: {fileID: 0}
+    - target: {fileID: 2806578831563592727, guid: b876125315b763f439a49a003d6689be,
+        type: 3}
+      propertyPath: m_VersionIndex
+      value: 10883
+      objectReference: {fileID: 0}
     - target: {fileID: 2899345986483626238, guid: b876125315b763f439a49a003d6689be,
         type: 3}
       propertyPath: m_SizeDelta.x
@@ -643,6 +653,16 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4920504413204865856, guid: b876125315b763f439a49a003d6689be,
+        type: 3}
+      propertyPath: m_VersionIndex
+      value: 4987
+      objectReference: {fileID: 0}
+    - target: {fileID: 5274451044018342305, guid: b876125315b763f439a49a003d6689be,
+        type: 3}
+      propertyPath: m_VersionIndex
+      value: 4763
+      objectReference: {fileID: 0}
     - target: {fileID: 5786434344950617427, guid: b876125315b763f439a49a003d6689be,
         type: 3}
       propertyPath: hips
@@ -653,6 +673,11 @@ PrefabInstance:
       propertyPath: characterMesh
       value: 
       objectReference: {fileID: 3769772727433696576}
+    - target: {fileID: 6952363337134484363, guid: b876125315b763f439a49a003d6689be,
+        type: 3}
+      propertyPath: m_VersionIndex
+      value: 4166
+      objectReference: {fileID: 0}
     - target: {fileID: 7153916419779688960, guid: b876125315b763f439a49a003d6689be,
         type: 3}
       propertyPath: m_AnchorMax.y
@@ -682,6 +707,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7462220554054530644, guid: b876125315b763f439a49a003d6689be,
+        type: 3}
+      propertyPath: m_VersionIndex
+      value: 4763
+      objectReference: {fileID: 0}
+    - target: {fileID: 7681850606568886874, guid: b876125315b763f439a49a003d6689be,
+        type: 3}
+      propertyPath: m_VersionIndex
+      value: 5753
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

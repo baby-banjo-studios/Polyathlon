@@ -20,4 +20,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Training 1.unity
     guid: fc0fcb2a66e5dbf4d8992c8419bf54d9
+  - enabled: 1
+    path: Assets/Scenes/Course 5.unity
+    guid: cfcff0044397b664c867c81f85b4bc9c
   m_configObjects: {}
+  m_UseUCBPForAssetBundles: 0

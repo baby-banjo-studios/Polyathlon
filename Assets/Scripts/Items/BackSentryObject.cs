@@ -36,7 +36,14 @@ public class BackSentryObject : MonoBehaviour
     {
         ownerBackpackMount.Equip(BackpackOptions.BackSentry);
 
-        yield return StartCoroutine(cannon.AimAndShootCoroutine(numberOfShots));
+        if (cannon.owner.movementMode == Movement.Mode.Wheeling)
+        {   // Too jittery while wheeling so no time to slerp
+            yield return StartCoroutine(cannon.AimAndShootCoroutine(numberOfShots, false));
+        }
+        else
+        {
+            yield return StartCoroutine(cannon.AimAndShootCoroutine(numberOfShots));
+        }
         yield return new WaitForSeconds(waitTimeWhenFinished);
 
         ownerBackpackMount.Unequip(BackpackOptions.BackSentry);

@@ -4,7 +4,7 @@ public class BananaObject : MonoBehaviour
 {
     private void OnTriggerEnter(Collider other) 
     {
-        Racer racer = other.transform.GetComponent<Racer>();
+        Racer racer = other.gameObject.GetComponentInParent<Racer>();
         if (racer != null)
         {
             racer.Die(false);

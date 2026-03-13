@@ -93,7 +93,7 @@ public class LaserCannon : MonoBehaviour
         StartCoroutine(AimAndShootCoroutine(numberOfShots));
     }
 
-    public IEnumerator AimAndShootCoroutine(int numberOfShots)
+    public IEnumerator AimAndShootCoroutine(int numberOfShots, bool slerp = true)
     {
         // including this to avoid race condition with racers list being instantiated
         yield return null;
@@ -113,7 +113,15 @@ public class LaserCannon : MonoBehaviour
                     Vector3 targetPosition = target.transform.position + target.GetComponent<Rigidbody>().linearVelocity * Vector3.Distance(target.transform.position, cannon.position) / laserSpeed;
                     // Calculate where to aim
                     directionToTarget = Quaternion.LookRotation(targetPosition - cannon.position);
-                    Quaternion cannonDirection = Quaternion.Slerp(cannon.rotation, Quaternion.LookRotation(targetPosition - cannon.position), Time.deltaTime * aimSpeed);
+                    Quaternion cannonDirection;
+                    if (slerp)
+                    {
+                        cannonDirection = Quaternion.Slerp(cannon.rotation, Quaternion.LookRotation(targetPosition - cannon.position), Time.deltaTime * aimSpeed);
+                    }
+                    else
+                    {
+                        cannonDirection = Quaternion.LookRotation(targetPosition - cannon.position);
+                    }
                     // Clamp the rotation so that the barrel doesn't clip through the platform
                     if (cannonDirection.eulerAngles.x < 240 || cannonDirection.eulerAngles.x > 325)
                     {

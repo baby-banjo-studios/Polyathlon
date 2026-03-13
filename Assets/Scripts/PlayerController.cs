@@ -101,6 +101,17 @@ public class PlayerController : Racer
         }
     }
 
+    public void OnSwimmingJump(InputAction.CallbackContext ctx)
+    {
+        if (canMove)
+        {
+            if (ctx.performed)
+                movement.Jump(true);
+            else if (ctx.canceled)
+                movement.Jump(false);
+        }
+    }
+
     // Biking
     public void OnBikingMovement(InputAction.CallbackContext ctx)
     {
@@ -121,6 +132,17 @@ public class PlayerController : Racer
                 look = ctx.ReadValue<Vector2>() * (ctx.control.device is Gamepad ? Time.deltaTime * gamepadLookSensititvity : keyboardSchemeSensitivity);
             else if (ctx.canceled)
                 look = Vector2.zero;
+        }
+    }
+
+    public void OnBikingJump(InputAction.CallbackContext ctx)
+    {
+        if (canMove)
+        {
+            if (ctx.performed)
+                movement.Jump(true);
+            else if (ctx.canceled)
+                movement.Jump(false);
         }
     }
 
@@ -191,13 +213,47 @@ public class PlayerController : Racer
                 movement.Jump(false);
         }
     }
+
+    // Wheeling
+    public void OnWheelingMovement(InputAction.CallbackContext ctx)
+    {
+        if (canMove)
+        {
+            if (ctx.performed)
+                move = ctx.ReadValue<Vector2>();
+            else if (ctx.canceled)
+                move = Vector2.zero;
+        }
+    }
+
+    public void OnWheelingLook(InputAction.CallbackContext ctx)
+    {
+        if (canLook)
+        {
+            if (ctx.performed)
+                look = ctx.ReadValue<Vector2>() * (ctx.control.device is Gamepad ? Time.deltaTime * gamepadLookSensititvity : keyboardSchemeSensitivity);
+            else if (ctx.canceled)
+                look = Vector2.zero;
+        }
+    }
+
+    public void OnWheelingJump(InputAction.CallbackContext ctx)
+    {
+        if (canMove)
+        {
+            if (ctx.performed)
+                movement.Jump(true);
+            else if (ctx.canceled)
+                movement.Jump(false);
+        }
+    }
     
     public void OnFinishAnyKeyPressed(InputAction.CallbackContext ctx)
     {
         if (!RaceManager.IsPaused)
         {
             Debug.Log("OnFinishAnyKeyPressed now!");
-            RaceManager.ReturnToMenu();
+            RaceManager.NextRace();
         }
     }
 
@@ -451,7 +507,8 @@ public class PlayerController : Racer
     public override void RaceIsOver()
     {
         // Enable FinishLine action map
-        playerInput.currentActionMap = playerInput.actions.actionMaps[8];
+        // Watch this index when adding new movement modes!
+        playerInput.currentActionMap = playerInput.actions.actionMaps[9];
     }
 
     /*  updates player's movement mode and maxSpeed/locomotion accordingly */
@@ -460,6 +517,7 @@ public class PlayerController : Racer
         Vector2 movePreserve = move;
         base.SetMovementMode(mode, initial);
         playerInput.currentActionMap = playerInput.actions.actionMaps[(int)mode];
+        Debug.Log("currentActionMap " + playerInput.currentActionMap);
         move = movePreserve;
     }
 
@@ -549,7 +607,7 @@ public class PlayerController : Racer
             photoModeController.SetActive(true);
             photoModeController.SetStartingPosition(cameraController);
             photoModeController.SetControlScheme(playerInput);
-            playerInput.currentActionMap = playerInput.actions.actionMaps[10];  // Greenscreen
+            playerInput.currentActionMap = playerInput.actions.actionMaps[11];  // Greenscreen
             cameraController.gameObject.SetActive(false);
         }
         else
@@ -563,11 +621,11 @@ public class PlayerController : Racer
         }
     }
 
-    protected override IEnumerator SpeedBoost(float magnitude, float duration)
+    protected override IEnumerator SpeedBoostCoroutine(float magnitude)
     {
         vfx.SetSpeedLines(true);
         cameraController.SetZoom(true);
-        yield return base.SpeedBoost(magnitude, duration);
+        yield return base.SpeedBoostCoroutine(magnitude);
         cameraController.SetZoom(false);
         vfx.SetSpeedLines(false);
     }
@@ -594,7 +652,7 @@ public class PlayerController : Racer
 
     protected override void OnCollisionEnter(Collision other)
     {
-        if (other.gameObject.layer != 8) // ignore collisions with projectiles
+        if (other.gameObject.layer != 8 && !other.gameObject.CompareTag("Dont KO Racer On Impact")) // ignore collisions with projectiles
         {
             base.OnCollisionEnter(other);
             float mag;
@@ -604,7 +662,7 @@ public class PlayerController : Racer
             }
             else    // if the other thing is stationary
             {
-                mag = (velocityBeforePhysicsUpdate).magnitude;
+                mag = velocityBeforePhysicsUpdate.magnitude;
             }
             if (mag > dieThreshold)
             {

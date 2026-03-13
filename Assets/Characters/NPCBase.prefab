@@ -8,6 +8,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -806804065813373411, guid: b876125315b763f439a49a003d6689be,
+        type: 3}
+      propertyPath: maxSpeed
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 411290082333151904, guid: b876125315b763f439a49a003d6689be,
         type: 3}
       propertyPath: m_Name
@@ -71,6 +76,11 @@ PrefabInstance:
     - target: {fileID: 2899345986483626238, guid: b876125315b763f439a49a003d6689be,
         type: 3}
       propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3166750812779697307, guid: b876125315b763f439a49a003d6689be,
+        type: 3}
+      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4053832028573337812, guid: b876125315b763f439a49a003d6689be,
@@ -196,12 +206,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: 
   movementMode: 0
+  prevMovementMode: 0
   movementOptions:
   - {fileID: 4754766360082052857}
   - {fileID: 5580459858832922255}
   - {fileID: 3496138067757726277}
   - {fileID: 4754766360082052863}
   - {fileID: 4754766360082052832}
+  - {fileID: 7475953526108043406}
   characterMesh: {fileID: 0}
   hips: {fileID: 0}
   place: 0
@@ -270,3 +282,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dbf05f26788d0ea4da2c44adfae139cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &7475953526108043406 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2591413572169800918, guid: b876125315b763f439a49a003d6689be,
+    type: 3}
+  m_PrefabInstance: {fileID: 4920570680035058776}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4754766360082052856}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 74dcc19c2eaf76140b2bfda59c6b8abd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Wheeler

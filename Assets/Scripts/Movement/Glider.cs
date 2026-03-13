@@ -115,8 +115,10 @@ public class Glider : Movement
                 characterMesh.RotateAround(racer.hips.position, racer.hips.up, rollSpeed * - forward * Time.deltaTime);
             }
             RaycastHit hit;
-            // allow exception to NPC from landable rule because their navmesh gets messed up otherwise
-            if ((landable) && Physics.Linecast(transform.position + new Vector3(0, 0.1f, 0), transform.position + new Vector3(0, -0.2f, 0), out hit))
+            
+            bool castResult = Physics.Linecast(transform.position + new Vector3(0, 0.1f, 0), transform.position + new Vector3(0, -0.2f, 0), out hit);
+            // allow exception to NPC who were previously wheeling because sometimes they zoom through the gliders so fast that they somehow never become landable
+            if ((landable || (racer is NPC && racer.prevMovementMode == Movement.Mode.Wheeling)) && castResult)
             {
                 characterMesh.position = transform.position;
                 characterMesh.localEulerAngles = new Vector3(0, characterMesh.localEulerAngles.y, 0);

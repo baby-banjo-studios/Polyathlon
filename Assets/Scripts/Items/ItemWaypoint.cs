@@ -37,6 +37,12 @@ public class ItemWaypoint : MonoBehaviour, IWaypointable
             if (Random.Range(0f, 1f) > chanceNPCGoesForItem)
             {
                 npc.ArriveAtWaypoint(this);
+                // If the item waypoint is the last one in a chain and has a guarenteed fork,
+                // then we must consult the fork
+                if (Next == null)
+                {
+                    return GetFork()[Random.Range(0, GetFork().Length)].GetPos(npc);
+                }
                 return Next.GetPos(npc);
             }
             else

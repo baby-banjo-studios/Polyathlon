@@ -32,6 +32,7 @@ public class CameraController : MonoBehaviour
 
     private bool following = false;
     private float defaultFOV;
+    private bool decoupleFromParentYaw;
 
     void Start()
     {
@@ -77,16 +78,16 @@ public class CameraController : MonoBehaviour
                     vfxCam.rect = new Rect(0f, 0.5f, 0.5f, 0.5f);
                     break;
                 case 1:
-                    camera.rect = new Rect(0.5f, 0f, 0.5f, 0.5f);
-                    vfxCam.rect = new Rect(0.5f, 0f, 0.5f, 0.5f);
+                    camera.rect = new Rect(0.5f, 0.5f, 0.5f, 0.5f);
+                    vfxCam.rect = new Rect(0.5f, 0.5f, 0.5f, 0.5f);
                     break;
                 case 2:
                     camera.rect = new Rect(0f, 0f, 0.5f, 0.5f);
                     vfxCam.rect = new Rect(0f, 0f, 0.5f, 0.5f);
                     break;
                 case 3:
-                    camera.rect = new Rect(0f, 0.5f, 0.5f, 0.5f);
-                    vfxCam.rect = new Rect(0f, 0.5f, 0.5f, 0.5f);
+                    camera.rect = new Rect(0.5f, 0f, 0.5f, 0.5f);
+                    vfxCam.rect = new Rect(0.5f, 0f, 0.5f, 0.5f);
                     break;
 
             }
@@ -177,4 +178,27 @@ public class CameraController : MonoBehaviour
 
         camera.fieldOfView = endFOV;
     }
+
+    void LateUpdate()
+    {
+        if (decoupleFromParentYaw)
+        {
+            // Cancel ALL parent rotation (yaw, pitch, roll)
+            transform.rotation = Quaternion.Inverse(transform.parent.rotation) * transform.rotation;
+        }
+    }
+
+    // Enable the camera to freely move around the character without inheriting parent
+    public void EnableYawDecoupling()
+    {
+        decoupleFromParentYaw = true;
+    }
+
+    public void DisableYawDecoupling()
+    {
+        decoupleFromParentYaw = false;
+
+    }
+
+
 }

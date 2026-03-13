@@ -50,10 +50,13 @@ public class NPC : Racer
         base.Start();
     }
 
+    private Vector3 smoothedDesired;
+    private const float desiredSmoothTime = 0.15f;
+
+
     protected override void Update()
     {
-        //move.x = agent.desiredVelocity.x;
-        //move.y = agent.desiredVelocity.z;
+        
         base.Update();
         if (movementMode == Movement.Mode.Jetpacking)
         {
@@ -77,7 +80,6 @@ public class NPC : Racer
         }
         else if (movementMode == Movement.Mode.Gliding)
         {
-            // TODO: Detect if we're gliding and figure out how to pilot the glider
             if (!movement.Grounded)
             {
                 if (!gliderControlActive)
@@ -96,7 +98,54 @@ public class NPC : Racer
             Debug.DrawRay(transform.position, newDir, Color.red);
             transform.rotation = Quaternion.LookRotation(newDir);
             move = new Vector2(0, 1f);
-        }        
+        }
+        else if (movementMode == Movement.Mode.Wheeling)
+        {
+            if (!agent.enabled || !agent.isOnNavMesh)
+            {
+                move = Vector2.zero;
+                return;
+            }
+
+            // KEEP AGENT IN SYNC WITH PHYSICS
+            agent.nextPosition = transform.position;
+
+            Vector3 desired;
+
+            if (agent.hasPath && agent.path.corners.Length > 1)
+                desired = agent.path.corners[1] - transform.position;
+            else
+                desired = agent.desiredVelocity;
+
+            if (desired.sqrMagnitude < 0.01f)
+            {
+                move = Vector2.zero;
+                return;
+            }
+
+            // Smooth
+            smoothedDesired = Vector3.Lerp(
+                smoothedDesired,
+                desired,
+                Time.deltaTime * 6f
+            );
+
+            Vector3 flatDesired = Vector3.ProjectOnPlane(smoothedDesired, Vector3.up).normalized;
+
+            float forwardIntent = Vector3.Dot(transform.forward, flatDesired);
+            float turnIntent    = Vector3.Dot(transform.right,  flatDesired);
+
+            forwardIntent = Mathf.Clamp(forwardIntent, -1f, 1f);
+            turnIntent    = Mathf.Clamp(turnIntent, -1f, 1f);
+
+            // Optional: slow down while turning
+            forwardIntent *= Mathf.Lerp(1f, 0.4f, Mathf.Abs(turnIntent));
+
+            // Match Wheeler axis expectations
+            move.x = turnIntent;
+            move.y = forwardIntent;
+        }
+
     }
 
     void FixedUpdate()
@@ -184,7 +233,7 @@ public class NPC : Racer
                         move += new Vector2(0, -0.1f);
                     }
                 }
-                else if ((distanceToLanding > distanceToTarget && (characterMesh.up.z > -0.5f)))
+                else if (distanceToLanding > distanceToTarget && (characterMesh.up.z > -0.5f))
                 {
                     
                     if (rb.linearVelocity.magnitude < stallSpeed && characterMesh.up.z > -0.5f)
@@ -221,15 +270,24 @@ public class NPC : Racer
             item.Use(this);
     }
 
-    protected override IEnumerator SpeedBoost(float magnitude, float duration)
+    protected override IEnumerator SpeedBoostCoroutine(float magnitude)
     {
         movement.BonusSpeed = magnitude;
         anim.speed = magnitude;
         agent.speed = agentSpeed * magnitude;
-        yield return new WaitForSeconds(duration);
+
+        while (remainingBoostTime > 0)
+        {
+            remainingBoostTime -= Time.deltaTime;
+            yield return null;
+        }
+
+        // reset everything
         movement.BonusSpeed = 1f;
         anim.speed = 1f;
         agent.speed = agentSpeed;
+        remainingBoostTime = 0f;
+        boostCoroutine = null;
     }
 
     /*  called by the RaceManager, makes the NPC start moving
@@ -252,7 +310,7 @@ public class NPC : Racer
         }
     }
 
-    public override void Die(bool emphasizeTorso, Vector3 newMomentum = default(Vector3))
+    public override void Die(bool emphasizeTorso, Vector3 newMomentum = default)
     {
         base.Die(emphasizeTorso, newMomentum);
         if (agent.isOnNavMesh)
@@ -281,6 +339,7 @@ public class NPC : Racer
     /*  updates player's movement mode and maxSpeed/locomotion accordingly */
     public override void SetMovementMode(Movement.Mode mode, bool initial = false)
     {
+        Debug.Log("Setting mode: " + mode);
         base.SetMovementMode(mode, initial);
         move = new Vector2(0, 0);
         if (mode == Movement.Mode.Swimming || mode == Movement.Mode.GetOffTheBoat)
@@ -290,6 +349,17 @@ public class NPC : Racer
         else
         {
             SetNavMeshAgent(true);
+        }
+        if (mode == Movement.Mode.Wheeling)
+        {
+            agent.updatePosition = false;
+            // when the NPC drives the wheeler off a cliff, they get confused.
+            StartCoroutine(FallMonitor());
+            StartCoroutine(PathRefresher());
+        }
+        else
+        {
+            agent.updatePosition = true;
         }
         agent.speed = movement.maxSpeed;
         agent.acceleration = movement.acceleration;
@@ -394,6 +464,54 @@ public class NPC : Racer
         }
         isGoingToJetpack = false;
     }
+
+    // Interruptable coroutine!
+    private IEnumerator FallMonitor()
+    {
+        float ypos = transform.position.y;
+        while (movementMode == Movement.Mode.Wheeling)
+        {
+            yield return new WaitForSeconds(1);
+            // if we fell more than 3 meters in one second
+            if (ypos - transform.position.y > 3f)
+            {
+                ResetNavMeshAgent();
+            }
+        }
+    }
+
+    private IEnumerator PathRefresher()
+    {
+        while (movementMode == Movement.Mode.Wheeling)
+        {
+            yield return new WaitForSeconds(10 + Random.Range(-1f, 10f));
+            // Every 9-20 seconds reset the path just to be safe
+            // Vary the time so that it doesn't look like every NPC is refreshing at once
+            ResetNavMeshAgent();
+        }
+    }
+
+    private void ResetNavMeshAgent()
+    {
+        Vector3 currentDestination = agent.destination;
+        if (NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 3f, NavMesh.AllAreas))
+        {
+            agent.Warp(hit.position);
+            // wait 1 frame to allow warp to complete so that we'll definitely be on a NavMesh
+            StartCoroutine(ResumeAgentNextFrame(currentDestination));
+        }
+    }
+
+    private IEnumerator ResumeAgentNextFrame(Vector3 destination)
+    {
+        yield return null; 
+
+        if (!agent.isOnNavMesh)
+            yield break;
+        agent.ResetPath();
+        agent.SetDestination(destination);
+    }
+
 
     protected void SetNavMeshAgent(bool active)
     {

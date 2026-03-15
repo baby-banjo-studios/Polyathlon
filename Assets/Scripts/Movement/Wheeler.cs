@@ -19,14 +19,12 @@ public class Wheeler : Movement
 
     void Start()
     {
-
-
        leftWheel = transform.Find("Rideables/Wheeler/Wheeler Structure/Left Wheel").GetComponent<Rigidbody>();
        leftWheel.GetComponent<ConfigurableJoint>().connectedBody = rb;
-       leftWheel.solverIterations = 30;
+       leftWheel.solverIterations = 40;
        rightWheel = transform.Find("Rideables/Wheeler/Wheeler Structure/Right Wheel").GetComponent<Rigidbody>();
        rightWheel.GetComponent<ConfigurableJoint>().connectedBody = rb;
-       rightWheel.solverIterations = 30;
+       rightWheel.solverIterations = 40;
     }
 
     // enable wheeler
@@ -43,16 +41,6 @@ public class Wheeler : Movement
         base.OnDisable();
         SetWheeler(false);
     }
-
-    // Simple non-camera relative steering, less jittery but less intuitive
-    /*  
-    public override void AddMovement(float forward, float right)
-    {
-        base.AddMovement(forward, right);
-        // they're flipped here for some reason
-        this.right = forward;
-        this.forward = right;
-    }*/
 
     // Calculate camera-relative steering.
     public override void AddMovement(float inputForward, float inputRight)

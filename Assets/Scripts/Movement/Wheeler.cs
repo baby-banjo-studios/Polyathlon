@@ -19,14 +19,12 @@ public class Wheeler : Movement
 
     void Start()
     {
-
-
        leftWheel = transform.Find("Rideables/Wheeler/Wheeler Structure/Left Wheel").GetComponent<Rigidbody>();
        leftWheel.GetComponent<ConfigurableJoint>().connectedBody = rb;
-       leftWheel.solverIterations = 30;
+       leftWheel.solverIterations = 40;
        rightWheel = transform.Find("Rideables/Wheeler/Wheeler Structure/Right Wheel").GetComponent<Rigidbody>();
        rightWheel.GetComponent<ConfigurableJoint>().connectedBody = rb;
-       rightWheel.solverIterations = 30;
+       rightWheel.solverIterations = 40;
     }
 
     // enable wheeler
@@ -43,16 +41,6 @@ public class Wheeler : Movement
         base.OnDisable();
         SetWheeler(false);
     }
-
-    // Simple non-camera relative steering, less jittery but less intuitive
-    /*  
-    public override void AddMovement(float forward, float right)
-    {
-        base.AddMovement(forward, right);
-        // they're flipped here for some reason
-        this.right = forward;
-        this.forward = right;
-    }*/
 
     // Calculate camera-relative steering.
     public override void AddMovement(float inputForward, float inputRight)
@@ -114,6 +102,7 @@ public class Wheeler : Movement
     {
         ApplyDriveForce();        // translation
         ApplyTurnForce();              // yaw
+        ApplyBalanceTorque();       // self-righting
 
         // Clamp velocity
         
@@ -170,23 +159,47 @@ public class Wheeler : Movement
         }
     }
 
+    void ApplyBalanceTorque()
+    {
+        // Calculate the rotation needed to get from our current 'Up' to World 'Up'
+        Quaternion uprightTarget = Quaternion.FromToRotation(transform.up, Vector3.up) * transform.rotation;
+        Quaternion deltaRotation = uprightTarget * Quaternion.Inverse(transform.rotation);
+
+        deltaRotation.ToAngleAxis(out float angle, out Vector3 axis);
+
+        // If the angle is negligible, don't apply force to avoid micro-vibrations
+        if (float.IsNaN(axis.x) || angle < 0.1f) return;
+
+        // Adjust these values to change how "stiff" the wheeler feels
+        float balanceStrength = 50f; // How hard it pulls back
+        float balanceDamping = 10f;   // Prevents it from oscillating (overshooting)
+
+        // Apply torque. Acceleration mode ignores the mass and keeps it consistent.
+        Vector3 torque = axis.normalized * (angle * balanceStrength) - (rb.angularVelocity * balanceDamping);
+        
+        // We only want to affect pitch and roll, leave yaw for turning ApplyTurnForce
+        torque.y = 0; 
+
+        rb.AddTorque(torque, ForceMode.Acceleration);
+    }
+
 
     void ApplyTurnForce()
     {
-        // Turn using an offset force so that we can keep the center of mass where it is without
-        // causing the wheeler to rotate over the local Z axis
+        float turnSpeed = 200f; 
+
         if (right != 0)
         {
-            
-            Vector3 flatForward = Vector3.ProjectOnPlane(transform.forward, Vector3.up).normalized;
-            Vector3 force = -flatForward * 10;
-            Vector3 yawRight = Vector3.Cross(Vector3.up, flatForward); // right, yaw-only
-            Vector3 posRight = transform.position + yawRight * 10f * right;
-            Vector3 posLeft = transform.position - yawRight * 10f * right; // left, yaw-only
-            rb.AddForceAtPosition(force, posRight, ForceMode.Impulse);
-            rb.AddForceAtPosition(-force, posLeft, ForceMode.Impulse);
+            // Use transform.up so it rotates around its own local vertical axis 
+            // even when tilted
+            Vector3 targetTurn = transform.up * (right * turnSpeed * Mathf.Deg2Rad);
+            rb.angularVelocity = new Vector3(targetTurn.x, targetTurn.y, targetTurn.z);
         }
-
+        else
+        {
+            // Damping logic remains the same
+            rb.angularVelocity = Vector3.Lerp(rb.angularVelocity, Vector3.zero, Time.fixedDeltaTime * 15f);
+        }
     }
 
     public override void Jump(bool hold)

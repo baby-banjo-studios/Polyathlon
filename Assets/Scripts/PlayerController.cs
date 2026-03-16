@@ -662,7 +662,15 @@ public class PlayerController : Racer
             }
             else    // if the other thing is stationary
             {
-                mag = velocityBeforePhysicsUpdate.magnitude;
+                // for wheelers, you can hit things at any speed as long as you're not falling.
+                if (base.movementMode == Movement.Mode.Wheeling)
+                {
+                    mag = velocityBeforePhysicsUpdate.y;
+                }
+                else
+                {
+                    mag = velocityBeforePhysicsUpdate.magnitude;
+                }
             }
             if (mag > dieThreshold)
             {

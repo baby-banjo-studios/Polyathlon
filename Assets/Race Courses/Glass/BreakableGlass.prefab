@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5924157641192657084}
   - component: {fileID: 3632159119311451677}
   - component: {fileID: 6234402489639305354}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Cube.010
   m_TagString: Dont KO Racer On Impact
   m_Icon: {fileID: 0}
@@ -153,7 +153,7 @@ GameObject:
   - component: {fileID: 456031478827409334}
   - component: {fileID: 6592432213385201873}
   - component: {fileID: 7238967652666501727}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: BreakableGlass
   m_TagString: Dont KO Racer On Impact
   m_Icon: {fileID: 0}
@@ -190,7 +190,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   unbrokenGlass: {fileID: 3412623814558774714}
   brokenGlassParent: {fileID: 8920660613299348489}
-  power: 500
+  power: 0.01
+  useExplosivePower: 0
 --- !u!65 &6592432213385201873
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -269,7 +270,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -322,7 +323,7 @@ GameObject:
   - component: {fileID: 4391309657156935386}
   - component: {fileID: 8321234042792060104}
   - component: {fileID: 2795977022345292830}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Cube.018
   m_TagString: Dont KO Racer On Impact
   m_Icon: {fileID: 0}
@@ -463,7 +464,7 @@ GameObject:
   - component: {fileID: 8343003859156336681}
   - component: {fileID: 1557884078177805647}
   - component: {fileID: 1280044116506612781}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Cube.020
   m_TagString: Dont KO Racer On Impact
   m_Icon: {fileID: 0}
@@ -604,7 +605,7 @@ GameObject:
   - component: {fileID: 4486225364303490259}
   - component: {fileID: 5441373400481316846}
   - component: {fileID: 8423169708629427118}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Cube.019
   m_TagString: Dont KO Racer On Impact
   m_Icon: {fileID: 0}
@@ -745,7 +746,7 @@ GameObject:
   - component: {fileID: 3038744678704258044}
   - component: {fileID: 7962485235686661277}
   - component: {fileID: 2946257698841754529}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Cube.008
   m_TagString: Dont KO Racer On Impact
   m_Icon: {fileID: 0}
@@ -882,7 +883,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2547570323590422581}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: breakable_glass
   m_TagString: Dont KO Racer On Impact
   m_Icon: {fileID: 0}
@@ -917,7 +918,7 @@ GameObject:
   - component: {fileID: 1669550288321788752}
   - component: {fileID: 7986639934340419022}
   - component: {fileID: 2004158319175078161}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Cube
   m_TagString: Dont KO Racer On Impact
   m_Icon: {fileID: 0}
@@ -1009,7 +1010,7 @@ GameObject:
   - component: {fileID: 2331041827136742508}
   - component: {fileID: 7061657083568914409}
   - component: {fileID: 3429125702746119718}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Cube.014
   m_TagString: Dont KO Racer On Impact
   m_Icon: {fileID: 0}
@@ -1150,7 +1151,7 @@ GameObject:
   - component: {fileID: 1134701754466576280}
   - component: {fileID: 3230930063862257297}
   - component: {fileID: 9173446417340745365}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Cube.004
   m_TagString: Dont KO Racer On Impact
   m_Icon: {fileID: 0}
@@ -1291,7 +1292,7 @@ GameObject:
   - component: {fileID: 5766142514905149088}
   - component: {fileID: 4841817054472877708}
   - component: {fileID: 5346334566324258279}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Cube.003
   m_TagString: Dont KO Racer On Impact
   m_Icon: {fileID: 0}
@@ -1432,7 +1433,7 @@ GameObject:
   - component: {fileID: 315904298714124934}
   - component: {fileID: 2029138072670573789}
   - component: {fileID: 919666077203207196}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Cube.013
   m_TagString: Dont KO Racer On Impact
   m_Icon: {fileID: 0}
@@ -1573,7 +1574,7 @@ GameObject:
   - component: {fileID: 3518698796033644211}
   - component: {fileID: 7940139563723594176}
   - component: {fileID: 3693184192152585591}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Cube.017
   m_TagString: Dont KO Racer On Impact
   m_Icon: {fileID: 0}
@@ -1714,7 +1715,7 @@ GameObject:
   - component: {fileID: 3562656326210915571}
   - component: {fileID: 778891491810771419}
   - component: {fileID: 4654461089817909302}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Cube.009
   m_TagString: Dont KO Racer On Impact
   m_Icon: {fileID: 0}
@@ -1855,7 +1856,7 @@ GameObject:
   - component: {fileID: 6011999125629509957}
   - component: {fileID: 6071937766038950417}
   - component: {fileID: 1896322133633119450}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Cube.023
   m_TagString: Dont KO Racer On Impact
   m_Icon: {fileID: 0}
@@ -1996,7 +1997,7 @@ GameObject:
   - component: {fileID: 2245442869096166235}
   - component: {fileID: 7570782625121532943}
   - component: {fileID: 726851876095724146}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Cube.011
   m_TagString: Dont KO Racer On Impact
   m_Icon: {fileID: 0}
@@ -2137,7 +2138,7 @@ GameObject:
   - component: {fileID: 4772990344466058861}
   - component: {fileID: 1290955907704577513}
   - component: {fileID: 1886821159057502727}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Cube.005
   m_TagString: Dont KO Racer On Impact
   m_Icon: {fileID: 0}
@@ -2278,7 +2279,7 @@ GameObject:
   - component: {fileID: 5928245185146298387}
   - component: {fileID: 4424185261868123528}
   - component: {fileID: 3144108700132694974}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Cube.002
   m_TagString: Dont KO Racer On Impact
   m_Icon: {fileID: 0}
@@ -2419,7 +2420,7 @@ GameObject:
   - component: {fileID: 8608158373444393514}
   - component: {fileID: 6926783588881060670}
   - component: {fileID: 6420065809413057327}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Cube.012
   m_TagString: Dont KO Racer On Impact
   m_Icon: {fileID: 0}
@@ -2556,7 +2557,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8920660613299348489}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: brokenGlassParent
   m_TagString: Dont KO Racer On Impact
   m_Icon: {fileID: 0}
@@ -2613,7 +2614,7 @@ GameObject:
   - component: {fileID: 6098158200899868773}
   - component: {fileID: 8214332338125251454}
   - component: {fileID: 4563126219775583993}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Cube.007
   m_TagString: Dont KO Racer On Impact
   m_Icon: {fileID: 0}
@@ -2754,7 +2755,7 @@ GameObject:
   - component: {fileID: 8740449074533629969}
   - component: {fileID: 8335241395836812889}
   - component: {fileID: 7355379349969855669}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Cube.006
   m_TagString: Dont KO Racer On Impact
   m_Icon: {fileID: 0}
@@ -2895,7 +2896,7 @@ GameObject:
   - component: {fileID: 1243339581459360930}
   - component: {fileID: 4252334444720071323}
   - component: {fileID: 5889585602166235097}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Cube.016
   m_TagString: Dont KO Racer On Impact
   m_Icon: {fileID: 0}
@@ -3036,7 +3037,7 @@ GameObject:
   - component: {fileID: 7012211804507905287}
   - component: {fileID: 9219235349226098795}
   - component: {fileID: 5903195943101827471}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Cube.021
   m_TagString: Dont KO Racer On Impact
   m_Icon: {fileID: 0}
@@ -3177,7 +3178,7 @@ GameObject:
   - component: {fileID: 1824399038095601412}
   - component: {fileID: 6692119417343225501}
   - component: {fileID: 2050994007066928072}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Cube.015
   m_TagString: Dont KO Racer On Impact
   m_Icon: {fileID: 0}
@@ -3318,7 +3319,7 @@ GameObject:
   - component: {fileID: 2497748956166026505}
   - component: {fileID: 4259429326260977238}
   - component: {fileID: 61177111131795848}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Cube.022
   m_TagString: Dont KO Racer On Impact
   m_Icon: {fileID: 0}

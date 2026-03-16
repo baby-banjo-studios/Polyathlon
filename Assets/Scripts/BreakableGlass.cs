@@ -5,6 +5,7 @@ public class BreakableGlass : MonoBehaviour
     public GameObject unbrokenGlass;
     public Transform brokenGlassParent;
     public float power = 1f;
+    public bool useExplosivePower = false;
     private bool broken = false;
 
     private BoxCollider boxCollider;
@@ -30,9 +31,12 @@ public class BreakableGlass : MonoBehaviour
         boxCollider.enabled = false;
         unbrokenGlass.SetActive(false);
         brokenGlassParent.gameObject.SetActive(true);
-        foreach (Transform shard in brokenGlassParent)
+        if (useExplosivePower)
         {
-            shard.GetComponent<Rigidbody>().AddExplosionForce(power, breakPoint, 1f);
+            foreach (Transform shard in brokenGlassParent)
+            {
+                shard.GetComponent<Rigidbody>().AddExplosionForce(power, breakPoint, 1f);
+            }
         }
     }
 

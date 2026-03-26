@@ -217,7 +217,7 @@ public class PlayerController : Racer
     // Wheeling
     public void OnWheelingMovement(InputAction.CallbackContext ctx)
     {
-        if (canMove)
+        if (canMove && !RaceManager.IsPaused)
         {
             if (ctx.performed)
                 move = ctx.ReadValue<Vector2>();
@@ -228,7 +228,7 @@ public class PlayerController : Racer
 
     public void OnWheelingLook(InputAction.CallbackContext ctx)
     {
-        if (canLook)
+        if (canLook && !RaceManager.IsPaused)
         {
             if (ctx.performed)
                 look = ctx.ReadValue<Vector2>() * (ctx.control.device is Gamepad ? Time.deltaTime * gamepadLookSensititvity : keyboardSchemeSensitivity);
@@ -239,7 +239,7 @@ public class PlayerController : Racer
 
     public void OnWheelingJump(InputAction.CallbackContext ctx)
     {
-        if (canMove)
+        if (canMove && !RaceManager.IsPaused)
         {
             if (ctx.performed)
                 movement.Jump(true);

@@ -181,7 +181,7 @@ public class CameraController : MonoBehaviour
 
     void LateUpdate()
     {
-        if (decoupleFromParentYaw)
+        if (decoupleFromParentYaw && !RaceManager.IsPaused)
         {
             // Cancel ALL parent rotation (yaw, pitch, roll)
             transform.rotation = Quaternion.Inverse(transform.parent.rotation) * transform.rotation;

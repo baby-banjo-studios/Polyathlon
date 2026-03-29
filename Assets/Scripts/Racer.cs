@@ -265,12 +265,23 @@ public class Racer : MonoBehaviour
     {
         if (dead && (canRevive || forceRevive))
         {
+            Vector3 landingPosition = hips.position;
             ragdoll.SetRagdoll(false);
+            
+            // Re-enable components
             anim.enabled = true;
             rb.isKinematic = false;
             GetComponent<Collider>().enabled = true;
-            transform.position = hips.position;
+
+            // Force the position update
+            transform.position = landingPosition;
             hips.localPosition = Vector3.zero;
+
+            // Clear velocity and sync transforms
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+            Physics.SyncTransforms();
+
             dead = false;
         }
     }

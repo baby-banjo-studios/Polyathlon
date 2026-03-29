@@ -635,7 +635,7 @@ public class PlayerController : Racer
         base.Die(emphasizeTorso, newMomentum);
         Debug.Log("die");
         // Have the camera start following the ragdoll
-        StartCoroutine(cameraController.FollowRagdoll());
+        cameraController.StartFollowingRagdoll();
         vfx.ShowDamage();
     }
 
@@ -644,7 +644,7 @@ public class PlayerController : Racer
         if (dead && (canRevive || forceRevive))
         {
             // have the camera stop following the ragdoll
-            StartCoroutine(cameraController.FollowRagdoll());
+            cameraController.StopFollowingRagdoll();
         }
         ui.ReviveText(false);
         base.Revive(forceRevive);

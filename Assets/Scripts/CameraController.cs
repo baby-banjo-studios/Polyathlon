@@ -33,6 +33,7 @@ public class CameraController : MonoBehaviour
     private bool following = false;
     private float defaultFOV;
     private bool decoupleFromParentYaw;
+    private Coroutine followCoroutine;
 
     void Start()
     {
@@ -134,28 +135,34 @@ public class CameraController : MonoBehaviour
         xMax = defaultXMax;
     }
 
-    // Start this to have the camera follow the character when they ragdoll
-    // Start this again to stop following
-    public IEnumerator FollowRagdoll()
+    // Control when to have the camera follow the character when they ragdoll
+    public void StartFollowingRagdoll()
     {
-        //Debug.Log("FollowRagdoll");
-        if (following)
+        // If we are already following, don't start a second loop
+        if (followCoroutine != null) return; 
+
+        followCoroutine = StartCoroutine(FollowRagdollRoutine());
+    }
+
+    public void StopFollowingRagdoll()
+    {
+        if (followCoroutine != null)
         {
-            //Debug.Log("Stop Following!");
-            following = false;
-            yield break;
+            StopCoroutine(followCoroutine);
+            followCoroutine = null;
         }
+        following = false;
+        transform.localPosition = new Vector3(0, 1.5f, 0);
+    }
+
+    private IEnumerator FollowRagdollRoutine()
+    {
         following = true;
         while (following)
         {
-            
             transform.position = characterHips.position;
-            //Debug.Log("our pos: " + transform.position);
-            //Debug.Log("character pos: " + characterHips.position);
             yield return null;
         }
-        //Debug.Log("End!");
-        transform.localPosition = new Vector3(0, 1.5f, 0);
     }
 
     public void SetZoom(bool zoomOut)

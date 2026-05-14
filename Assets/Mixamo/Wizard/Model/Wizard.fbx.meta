@@ -1,0 +1,350 @@
+fileFormatVersion: 2
+guid: 9d05e03d4f5fe1645bfc59c6db6ffb55
+ModelImporter:
+  serializedVersion: 24200
+  internalIDToNameTable: []
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Beardmat
+    second: {fileID: 2100000, guid: 12c821bb33cf60a4db2bb12f43eea558, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Bodymat
+    second: {fileID: 2100000, guid: fc10a592150f10c40a8feb87cd96fdf6, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Bottommat
+    second: {fileID: 2100000, guid: 7b1e76c8a81b3c846aea33c7980959a4, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Hairmat
+    second: {fileID: 2100000, guid: c6cb4a26f0c4ed64b8cabee4a4a3b8e2, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Hatmat
+    second: {fileID: 2100000, guid: d624edd87ec11b549b65eb11aa70e33d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Moustachemat
+    second: {fileID: 2100000, guid: 31dbbedf4b635c14fa1f77cd8cb85629, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Shoesmat
+    second: {fileID: 2100000, guid: e20b6f8b70f84074f8cea7a9f5fae5fe, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Topmat
+    second: {fileID: 2100000, guid: 1c0c4217bd2e5434081af8326103c0f5, type: 2}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Wizard_Beard_Diffuse
+    second: {fileID: 2800000, guid: 311df8d495523f743ac8ce9424f5a8e8, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Wizard_Beard_Gloss
+    second: {fileID: 2800000, guid: c488de4a791a9b1449fd6263680cd4f9, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Wizard_Beard_Normal
+    second: {fileID: 2800000, guid: f55fe61c83b73e64bb37edd72e11eeff, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Wizard_Beard_Opacity
+    second: {fileID: 2800000, guid: fec545ebfb137af44b4f744e8b95b5d1, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Wizard_Beard_Specular
+    second: {fileID: 2800000, guid: 28a2d2b79814b2144b74adb3f537587b, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Wizard_Body_Diffuse
+    second: {fileID: 2800000, guid: 996b1b0b3657de646a1f64781787c1cd, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Wizard_Body_Gloss
+    second: {fileID: 2800000, guid: 76ea0caaf22a83544ad51a408691e208, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Wizard_Body_Normal
+    second: {fileID: 2800000, guid: 4e0a388c73edb5845aaa62eb658f733c, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Wizard_Body_Opacity
+    second: {fileID: 2800000, guid: 06e322c0bceaf574e9e1649cda19eae4, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Wizard_Body_Specular
+    second: {fileID: 2800000, guid: 90f0a210d875d594bbe7c1726c36c1c6, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Wizard_Bottom_Diffuse
+    second: {fileID: 2800000, guid: f90e4085ca801824c9827162d9b0b412, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Wizard_Bottom_Gloss
+    second: {fileID: 2800000, guid: 3677ce4acd982244ea3a6a3f477e1921, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Wizard_Bottom_Normal
+    second: {fileID: 2800000, guid: e20ee0a79bdadc540b920cdbe1cf0347, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Wizard_Bottom_Opacity
+    second: {fileID: 2800000, guid: 243fefef3b46bf6469b7354d569315f2, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Wizard_Bottom_Specular
+    second: {fileID: 2800000, guid: f71f9fc238c09db428f9a5f48b59f6d5, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Wizard_Hair_Diffuse
+    second: {fileID: 2800000, guid: c8b40e9c467757c4d96adcd4c0bfd993, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Wizard_Hair_Gloss
+    second: {fileID: 2800000, guid: e01083440fe0ff740af7cf110eeba9ad, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Wizard_Hair_Normal
+    second: {fileID: 2800000, guid: 67e9fcc0de8a9b649a621b58319e46d3, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Wizard_Hair_Opacity
+    second: {fileID: 2800000, guid: de19a8fe10451054b8d9128171301701, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Wizard_Hair_Specular
+    second: {fileID: 2800000, guid: 677cdb0eac5dc7c4883065daedf4dec4, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Wizard_Hat_Diffuse
+    second: {fileID: 2800000, guid: a075f5ce7dbab7d4a9950415f9ee8f5d, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Wizard_Hat_Gloss
+    second: {fileID: 2800000, guid: 87cd3d8d4fb628d48ae74a1061509222, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Wizard_Hat_Normal
+    second: {fileID: 2800000, guid: 2a33712994463ad44b25b836e159f55f, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Wizard_Hat_Opacity
+    second: {fileID: 2800000, guid: c8818c16585f0e94db581f3d56b1d9c8, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Wizard_Hat_Specular
+    second: {fileID: 2800000, guid: 8bff1f06113537443bee4d3ecf25ed7f, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Wizard_Moustache_Diffuse
+    second: {fileID: 2800000, guid: 06ccbf77e73093241ac663802678b8e6, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Wizard_Moustache_Gloss
+    second: {fileID: 2800000, guid: 550ef214e0abff949a0c5dd02db4a02c, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Wizard_Moustache_Normal
+    second: {fileID: 2800000, guid: 0188d1d0bf502af4c88c749108d1e825, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Wizard_Moustache_Opacity
+    second: {fileID: 2800000, guid: 80076602542bc814aab845e27b6f29e2, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Wizard_Moustache_Specular
+    second: {fileID: 2800000, guid: f446871a9867a034ab8e51365b776144, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Wizard_Shoes_Diffuse
+    second: {fileID: 2800000, guid: 8b0c01d1f6208ef4ea65154e93e606f7, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Wizard_Shoes_Gloss
+    second: {fileID: 2800000, guid: c444f8765e97eaa499e49de562b31d0f, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Wizard_Shoes_Normal
+    second: {fileID: 2800000, guid: db867080c8d8efe46bc92f9a838dbfcd, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Wizard_Shoes_Opacity
+    second: {fileID: 2800000, guid: 38df97e662cafac4081cb5d841c1cf01, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Wizard_Shoes_Specular
+    second: {fileID: 2800000, guid: da99150f01ccf5543a28ea56add30904, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Wizard_Top_Diffuse
+    second: {fileID: 2800000, guid: db7b832e66f09404e9fc4e39107c6671, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Wizard_Top_Gloss
+    second: {fileID: 2800000, guid: 1fb62970e291b154795a09ec01d83bd9, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Wizard_Top_Normal
+    second: {fileID: 2800000, guid: c03598edc4af92141ac60515d876ce5d, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Wizard_Top_Opacity
+    second: {fileID: 2800000, guid: 94784fab450be3949a0b480715c12a65, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Wizard_Top_Specular
+    second: {fileID: 2800000, guid: d47ca0a8b32e1bd47b5f059b4cdb822e, type: 3}
+  materials:
+    materialImportMode: 2
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    removeConstantScaleCurves: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 0
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
+    importPhysicalCameras: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    nodeNameCollisionStrategy: 1
+    fileIdsGeneration: 2
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    keepQuads: 0
+    weldVertices: 1
+    bakeAxisConversion: 0
+    preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    optimizeBones: 1
+    generateMeshLods: 0
+    meshLodGenerationFlags: 0
+    maximumMeshLod: -1
+    meshOptimizationFlags: -1
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVMarginMethod: 1
+    secondaryUVMinLightmapResolution: 40
+    secondaryUVMinObjectScale: 1
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    strictVertexDataChecks: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  referencedClips: []
+  importAnimation: 1
+  humanDescription:
+    serializedVersion: 3
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    globalScale: 1
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
+  animationType: 2
+  humanoidOversampling: 1
+  avatarSetup: 0
+  addHumanoidExtraRootOnlyWhenUsingAvatar: 1
+  importBlendShapeDeformPercent: 1
+  remapMaterialsIfMaterialImportModeIsNone: 0
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

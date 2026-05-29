@@ -13,6 +13,9 @@ public class CharacterCreatorWizard :  ScriptableWizard
     private const string playerBasePath = characterFolder + "/PlayerBase.prefab";
     private const string npcFolder = characterFolder + "/NPCs";
     private const string npcBasePath = characterFolder + "/NPCBase.prefab";
+    private const string ragdollProfileDefaultPath = characterFolder + "/RagdollProfiles/Mixamo.asset";
+    private const string characterListPath = characterFolder + "/CharacterList.asset";
+    private const string RegistriesFolderPath = characterFolder + "/Registries";
     private const string audioMixerPath = "Assets/Audio/Mixer.mixer";
     private const string animatorPath = "Assets/Animation/Standard.controller";
     private const string audioMixerGroupName = "Footsteps";
@@ -29,16 +32,22 @@ public class CharacterCreatorWizard :  ScriptableWizard
     public GameObject characterModel;
     public string characterName;
     public RagdollProfile ragdollProfile;
+    public bool previewOnly;
+    public bool addToRoster;
+
 
     [MenuItem("Polyathlon/Character Creator")]
     private static void MenuEntryCall()
     {
-        DisplayWizard<CharacterCreatorWizard>("Create character", "Create"); 
+        DisplayWizard<CharacterCreatorWizard>("Create character", "Create");
     }
 
     private void OnWizardUpdate()
     {
-        
+        if (ragdollProfile == null)
+        {
+            ragdollProfile = AssetDatabase.LoadAssetAtPath<RagdollProfile>(ragdollProfileDefaultPath);
+        }
     }
 
     private void OnWizardCreate()
@@ -57,8 +66,39 @@ public class CharacterCreatorWizard :  ScriptableWizard
             string modelPath = AssetDatabase.GetAssetPath(characterModel);
             GameObject previewPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(modelPath);
         }
-        // create preview prefab
+
         string previewPath = previewFolder + "/" + characterName + "Preview.prefab";
+        string playerPath = playerFolder + "/" + characterName + ".prefab";
+        string npcPath = npcFolder + "/" + characterName + "NPC.prefab";
+
+        if (!CreatePreview(previewPath))
+        {
+            return;
+        }
+
+        if (!previewOnly)
+        {
+            if (!CreatePlayer(playerPath, previewPath))
+            {
+                return;
+            }
+            if (!CreateNPC(npcPath, previewPath))
+            {
+                return;
+            }
+            
+            if (addToRoster)
+            {
+                if (!AddToRoster(previewPath, playerPath, npcPath))
+                {
+                    return;
+                }
+            }
+        }
+    }
+
+    private bool CreatePreview(string previewPath)
+    {
         GameObject previewInstance = (GameObject)PrefabUtility.InstantiatePrefab(characterModel);
         previewInstance.name = characterName + "Preview";
 
@@ -73,7 +113,8 @@ public class CharacterCreatorWizard :  ScriptableWizard
         if (!CreateRagdoll(previewInstance))
         {
             Debug.LogError("Failed to create ragdoll");
-            return;
+            DestroyImmediate(previewInstance);
+            return false;
         }
         
         AudioSource audioSource = previewInstance.AddComponent<AudioSource>();
@@ -84,7 +125,8 @@ public class CharacterCreatorWizard :  ScriptableWizard
         if (groups.Length < 0)
         {
             Debug.LogError(String.Format("Failed to find mixer group \"{0}\"", audioMixerGroupName));
-            return;
+            DestroyImmediate(previewInstance);
+            return false;
         }
         else
         {
@@ -105,125 +147,24 @@ public class CharacterCreatorWizard :  ScriptableWizard
         else
         {
             Debug.LogError(String.Format("Failed to find transform \"{0}\"", backpackMountParentTransform));
-            return;
+            DestroyImmediate(previewInstance);
+            return false;
         }
 
         GameObject newPrefab = PrefabUtility.SaveAsPrefabAsset(previewInstance, previewPath);
         if (newPrefab == null)
         {   
             Debug.LogError(String.Format("Failed to create prefab \"{0}\"", previewPath));
-            return;
+            DestroyImmediate(previewInstance);
+            return false;
         }
         else
         {
             Debug.Log(String.Format("Preview variant created: {0}", previewPath));
         }
-        
-        AssetDatabase.Refresh();
 
-        // create Player
-        string playerPath = playerFolder + "/" + characterName + ".prefab";
-        GameObject playerBasePrefab = AssetDatabase.LoadAssetAtPath<GameObject>(playerBasePath);
-        GameObject playerInstance = (GameObject)PrefabUtility.InstantiatePrefab(playerBasePrefab);
-        playerInstance.name = characterName;
-        GameObject previewPrefab1 = AssetDatabase.LoadAssetAtPath<GameObject>(previewPath);
-        GameObject previewInstance1 = (GameObject)PrefabUtility.InstantiatePrefab(previewPrefab1, playerInstance.transform);
-        previewInstance1.transform.SetSiblingIndex(0);
-
-        GameObject itemDropPoint = new GameObject(itemDropPointName);
-        itemDropPoint.transform.parent = previewInstance1.transform;
-        itemDropPoint.transform.localPosition = itemDropPointDefaultPosition;
-        
-        if (playerInstance.TryGetComponent(out Racer playerController))
-        {
-            playerController.characterMesh = previewInstance1.transform;
-            playerController.hips = playerInstance.GetComponentsInChildren<Transform>(true).FirstOrDefault(t => t.name == hipsTransformName);
-        }
-        else
-        {
-            Debug.Log(String.Format("{0} does not have an NPC component", npcBasePath));
-            return;
-        }
-
-        Movement[] movements = playerInstance.GetComponents<Movement>();
-        for (int i = 0; i < movements.Length; i++)
-        {
-            movements[i].itemDropPoint = itemDropPoint.transform;
-        }
-
-        newPrefab = PrefabUtility.SaveAsPrefabAsset(playerInstance, playerPath);
-        if (newPrefab == null)
-        {   
-            Debug.LogError(String.Format("Failed to create prefab \"{0}\"", playerPath));
-            return;
-        }
-        else
-        {
-            Debug.Log(String.Format("Player variant created: {0}", playerPath));
-        }
-
-        // create NPC
-        string npcPath = npcFolder + "/" + characterName + "NPC.prefab";
-        GameObject npcBasePrefab = AssetDatabase.LoadAssetAtPath<GameObject>(npcBasePath);
-        GameObject npcInstance = (GameObject)PrefabUtility.InstantiatePrefab(npcBasePrefab);
-        npcInstance.name = characterName + "NPC";
-        GameObject previewInstance2 = (GameObject)PrefabUtility.InstantiatePrefab(previewPrefab1, npcInstance.transform);
-        previewInstance2.transform.SetSiblingIndex(0);
-        
-        if (npcInstance.TryGetComponent(out Racer npc))
-        {
-            npc.characterMesh = npcInstance.transform;
-            npc.hips = npcInstance.GetComponentsInChildren<Transform>(true).FirstOrDefault(t => t.name == hipsTransformName);
-        }
-        else
-        {
-            Debug.Log(String.Format("{0} does not have an NPC component", npcBasePath));
-            return;
-        }
-
-        Movement[] movements1 = npcInstance.GetComponents<Movement>();
-        for (int i = 0; i < movements1.Length; i++)
-        {
-            movements1[i].itemDropPoint = itemDropPoint.transform;
-        }
-
-        newPrefab = PrefabUtility.SaveAsPrefabAsset(npcInstance, npcPath);
-        if (newPrefab == null)
-        {   
-            Debug.LogError(String.Format("Failed to create prefab \"{0}\"", npcPath));
-            return;
-        }
-        else
-        {
-            Debug.Log(String.Format("NPC variant created: {0}", npcPath));
-        }
-
-        // cleanup
         DestroyImmediate(previewInstance);
-        DestroyImmediate(playerInstance);
-        DestroyImmediate(npcInstance);
-    }
-
-    private bool CreatePreview()
-    {
-        
-        return true;
-    }
-
-    private bool CreatePlayer()
-    {
-        
-        return true;
-    }
-    
-    private bool CreateNPC()
-    {
-        
-        return true;
-    }
-
-    private bool Cleanup()
-    {
+        AssetDatabase.Refresh();
         return true;
     }
 
@@ -231,6 +172,127 @@ public class CharacterCreatorWizard :  ScriptableWizard
     {
         Undo.RegisterCompleteObjectUndo(model, "Generate Ragdoll");
         RagdollUtility.CreateRagdoll(model, ragdollProfile);
+
+        return true;
+    }
+
+    private bool CreatePlayer(string playerPath, string previewPath)
+    {
+        bool success = CreateRacer(playerBasePath, previewPath, playerPath, "");
+        if (success)
+        {
+            Debug.Log(String.Format("Player variant created: {0}", playerPath));
+        }
+        else
+        {
+            Debug.LogError(String.Format("Failed to create prefab \"{0}\"", playerPath));
+        }
+
+        return success;
+    }
+
+    private bool CreateNPC(string npcPath, string previewPath)
+    {        
+        bool success = CreateRacer(npcBasePath, previewPath, npcPath, "NPC");
+        if (success)
+        {
+            Debug.Log(String.Format("NPC variant created: {0}", npcPath));
+        }
+        else
+        {
+            Debug.LogError(String.Format("Failed to create prefab \"{0}\"", npcPath));
+        }
+
+        return success;
+    }
+    
+    private bool CreateRacer(string racerBasePath, string previewPath, string racerSavePath, string prefabSuffix)
+    {
+        GameObject racerBasePrefab = AssetDatabase.LoadAssetAtPath<GameObject>(racerBasePath);
+        GameObject racerInstance = (GameObject)PrefabUtility.InstantiatePrefab(racerBasePrefab);
+        racerInstance.name = characterName + prefabSuffix;
+
+        GameObject previewPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(previewPath);
+        GameObject previewInstance = (GameObject)PrefabUtility.InstantiatePrefab(previewPrefab, racerInstance.transform);
+        previewInstance.transform.SetSiblingIndex(0);
+        
+        if (racerInstance.TryGetComponent(out Racer racer))
+        {
+            racer.characterMesh = previewInstance.transform;
+            racer.hips = previewInstance.GetComponentsInChildren<Transform>(true).FirstOrDefault(t => t.name == hipsTransformName);
+        }
+        else
+        {
+            Debug.Log(String.Format("{0} does not have a Racer component", racerBasePath));
+            DestroyImmediate(racerInstance);
+            return false;
+        }
+
+        GameObject itemDropPoint = new GameObject(itemDropPointName);
+        itemDropPoint.transform.parent = previewInstance.transform;
+        itemDropPoint.transform.localPosition = itemDropPointDefaultPosition;
+
+        Movement[] movements1 = racerInstance.GetComponents<Movement>();
+        for (int i = 0; i < movements1.Length; i++)
+        {
+            movements1[i].itemDropPoint = itemDropPoint.transform;
+        }
+
+        GameObject newPrefab = PrefabUtility.SaveAsPrefabAsset(racerInstance, racerSavePath);
+        if (newPrefab == null)
+        {   
+            Debug.LogError(String.Format("Failed to create prefab \"{0}\"", racerSavePath));
+            DestroyImmediate(racerInstance);
+            return false;
+        }
+
+        DestroyImmediate(racerInstance);
+        AssetDatabase.Refresh();
+        return true;
+    }
+
+    private bool AddToRoster(string previewPath, string playerPath, string npcPath)
+    {
+        string registryPath = RegistriesFolderPath + "/" + characterName + ".asset";
+        CharacterRegistry registryInstance = CreateInstance<CharacterRegistry>();
+        registryInstance.name = characterName;
+        registryInstance.displayName = characterName;
+        
+        registryInstance.previewObj = AssetDatabase.LoadAssetAtPath<GameObject>(previewPath);
+        registryInstance.playerObj = AssetDatabase.LoadAssetAtPath<GameObject>(playerPath);
+        registryInstance.npcObj = AssetDatabase.LoadAssetAtPath<GameObject>(npcPath);
+
+        try
+        {
+            AssetDatabase.CreateAsset(registryInstance, registryPath);
+        }
+        catch (Exception e)
+        {
+            Debug.LogError(String.Format("Failed to create registry \"{0}\" : {1}", registryPath, e.ToString()));
+            return false;
+        }
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+
+        CharacterList characterList = AssetDatabase.LoadAssetAtPath<CharacterList>(characterListPath);
+        if (characterList == null)
+        {
+            Debug.LogError(String.Format("Failed to get CharacterList at {0}", characterListPath));
+            return false;
+        }
+
+        CharacterRegistry registryAsset = AssetDatabase.LoadAssetAtPath<CharacterRegistry>(registryPath);
+        if (registryAsset == null)
+        {
+            Debug.LogError(String.Format("Failed to get CharacterRegistry at {0}", registryPath));
+            return false;
+        }
+        
+        characterList.AddCharacter(registryAsset);
+        EditorUtility.SetDirty(characterList);
+        AssetDatabase.SaveAssets();
+
+        AssetDatabase.Refresh();
 
         return true;
     }

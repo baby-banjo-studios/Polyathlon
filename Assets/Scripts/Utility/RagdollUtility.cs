@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 [System.Serializable]
 public class RagdollJointConstraints
@@ -128,7 +131,7 @@ public class RagdollUtility
 
         // if using humaniod avatar, can directly use avatar bone assignments instead of mixamo implementations
         Animator animator = model.GetComponent<Animator>();
-        bool isHumanoid = animator.isHuman && animator != null;
+        bool isHumanoid =  animator != null && animator.isHuman;
 
         // create dynamic bones
         DynamicBoneInfo[] dynamicBones = new DynamicBoneInfo[(int)RagdollBones.NumberOfBones];
@@ -160,7 +163,11 @@ public class RagdollUtility
             Rigidbody rb = bone.transform.gameObject.GetComponent<Rigidbody>();
             if (rb == null)
             {
+#if UNITY_EDITOR
+                rb = Undo.AddComponent<Rigidbody>(bone.transform.gameObject);
+#else
                 rb = bone.transform.gameObject.AddComponent<Rigidbody>();
+#endif
             }
             rb.mass = profile.GetBoneWeight_Kg((RagdollBones)i);
             bone.rb = rb;
@@ -211,7 +218,11 @@ public class RagdollUtility
                 BoxCollider col = bone.transform.gameObject.GetComponent<BoxCollider>();
                 if (col == null)
                 {
+#if UNITY_EDITOR
+                    col = Undo.AddComponent<BoxCollider>(bone.transform.gameObject);
+#else
                     col = bone.transform.gameObject.AddComponent<BoxCollider>();
+#endif
                 }
                 Bounds breastBounds = GetBreastBounds(bone.transform, 
                                                       leftArmBone.transform,
@@ -230,7 +241,11 @@ public class RagdollUtility
                 SphereCollider col = bone.transform.gameObject.GetComponent<SphereCollider>();
                 if (col == null)
                 {
+#if UNITY_EDITOR
+                    col = Undo.AddComponent<SphereCollider>(bone.transform.gameObject);
+#else
                     col = bone.transform.gameObject.AddComponent<SphereCollider>();
+#endif
                 }
                 float radius = Vector3.Distance(leftArmBone.transform.position, rightArmBone.transform.position) / 4f;
                 col.radius = radius;
@@ -252,7 +267,11 @@ public class RagdollUtility
                 CapsuleCollider col = bone.transform.gameObject.GetComponent<CapsuleCollider>();
                 if (col == null)
                 {
+#if UNITY_EDITOR
+                    col = Undo.AddComponent<CapsuleCollider>(bone.transform.gameObject);
+#else
                     col = bone.transform.gameObject.AddComponent<CapsuleCollider>();
+#endif
                 }
 
                 int direction;
@@ -336,7 +355,11 @@ public class RagdollUtility
                     }
                 }
 
+#if UNITY_EDITOR
+                CharacterJoint joint = Undo.AddComponent<CharacterJoint>(bone.transform.gameObject);
+#else
                 CharacterJoint joint = bone.transform.gameObject.AddComponent<CharacterJoint>();
+#endif
                 // joint.axis = CalculateDirectionAxis(localTwist);
                 // joint.swingAxis = CalculateDirectionAxis(localSwing);
                 joint.axis = CalculateDirectionAxis(worldTwistDir);

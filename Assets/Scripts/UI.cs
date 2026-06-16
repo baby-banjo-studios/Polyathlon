@@ -14,6 +14,9 @@ public class UI : MonoBehaviour
     private GameObject pauseMenu;
 
     [SerializeField]
+    private GameObject debugConsole;
+
+    [SerializeField]
     protected Selectable firstSelectable;
 
     public TextMeshProUGUI positionText;
@@ -74,6 +77,8 @@ public class UI : MonoBehaviour
             itemText.text = "Respawn: Left Trigger (Gamepad)\nRight/Left Click (Mouse)";
             itemText.gameObject.SetActive(true);
         }
+
+        SetDebugConsole(false);
     }
 
     // Update is called once per frame
@@ -297,6 +302,11 @@ public class UI : MonoBehaviour
                 //Debug.Log("NO nav events");
             }
         }
+    }
+
+    public void SetDebugConsole(bool active)
+    {
+        debugConsole.SetActive(active);
     }
 
     public void SetGameHUD(bool active)

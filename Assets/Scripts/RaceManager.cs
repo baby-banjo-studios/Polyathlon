@@ -11,7 +11,8 @@ public enum GameState
 {
     Normal,
     Paused,
-    PhotoMode
+    PhotoMode,
+    DebugConsole
 }
 
 public class RaceManager : MonoBehaviour
@@ -51,7 +52,7 @@ public class RaceManager : MonoBehaviour
     public static float ElapsedTime { get => instance.elapsedTime; }
     public static bool IsRaceActive { get => instance.isRaceActive; }
     public static GameState CurrentGameState { get => instance.gameState; }
-    public static bool IsPaused { get => instance.gameState == GameState.Paused; }
+    public static bool IsPaused { get => instance.gameState == GameState.Paused || instance.gameState == GameState.DebugConsole; }
     public static bool IsPhotoMode { get => instance.gameState == GameState.PhotoMode; }
     public static PhotoModeController PhotoModeController { get => instance.photoModeController; }
     public GameObject raceCourseTester;
@@ -295,6 +296,11 @@ public class RaceManager : MonoBehaviour
                     Time.timeScale = 0f;
                 }
                 break;
+            case GameState.DebugConsole:
+                {
+                    Time.timeScale = 0f;
+                }
+                break;
         }
         foreach (PlayerController pc in instance.playerControllers)
         {
@@ -328,6 +334,11 @@ public class RaceManager : MonoBehaviour
                     SetGameState(GameState.Paused);
                 }
                 break;
+            case GameState.DebugConsole:
+                {
+                    SetGameState(GameState.Paused);
+                }
+                break;
         }
         return true;
     }
@@ -340,6 +351,20 @@ public class RaceManager : MonoBehaviour
             // instance.playerWhoPausedTheGame.EnablePhotoMode(IsPhotoMode, instance.photoModeController);
             SetGameState(GameState.PhotoMode);
             return true;
+        }
+        return false;
+    }
+
+    public static bool ToggleDebugConsole()
+    {
+        if (CurrentGameState == GameState.Normal)
+        {
+            SetGameState(GameState.DebugConsole);
+            return true;
+        }
+        else
+        {
+            SetGameState(GameState.Normal);
         }
         return false;
     }

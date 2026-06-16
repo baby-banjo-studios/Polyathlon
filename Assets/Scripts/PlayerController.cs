@@ -405,7 +405,16 @@ public class PlayerController : Racer
         }
     }
 
-    
+    public void OnDebugConsoleOpen(InputAction.CallbackContext ctx)
+    {
+        if (RaceManager.CurrentGameState == GameState.Normal || RaceManager.CurrentGameState == GameState.DebugConsole)
+        {
+            if (ctx.performed)
+            {
+                RaceManager.ToggleDebugConsole();
+            }
+        }
+    }
 
     protected override void Awake() 
     {
@@ -517,6 +526,10 @@ public class PlayerController : Racer
         Vector2 movePreserve = move;
         base.SetMovementMode(mode, initial);
         playerInput.currentActionMap = playerInput.actions.actionMaps[(int)mode];
+        if (controlScheme == ControlScheme.Keyboard)
+        {
+            playerInput.actions.FindActionMap("Debug").Enable();
+        }
         Debug.Log("currentActionMap " + playerInput.currentActionMap);
         move = movePreserve;
     }
@@ -550,6 +563,7 @@ public class PlayerController : Racer
                     }
                     ui.SetGameHUD(true);
                     ui.SetPauseMenu(false);
+                    ui.SetDebugConsole(false);
                     EnablePhotoMode(false);
                     Cursor.visible = false;
                     Cursor.lockState = CursorLockMode.Locked;
@@ -569,6 +583,7 @@ public class PlayerController : Racer
                     ui.SetGameHUD(true);
                     EnablePhotoMode(false);
                     ui.SetPauseMenu(isPlayerInControl);
+                    ui.SetDebugConsole(false);
                     if (controlScheme == ControlScheme.Keyboard)
                     {
                         if (isPlayerInControl)
@@ -590,7 +605,19 @@ public class PlayerController : Racer
                 {
                     ui.SetGameHUD(false);
                     ui.SetPauseMenu(false);
+                    ui.SetDebugConsole(false);
                     EnablePhotoMode(isPlayerInControl);
+                    Cursor.visible = false;
+                    Cursor.lockState = CursorLockMode.Locked;
+                    Cursor.visible = false;
+                }
+                break;
+            case GameState.DebugConsole:
+                {
+                    ui.SetGameHUD(false);
+                    ui.SetPauseMenu(false);
+                    ui.SetDebugConsole(true);
+                    EnablePhotoMode(false);
                     Cursor.visible = false;
                     Cursor.lockState = CursorLockMode.Locked;
                     Cursor.visible = false;

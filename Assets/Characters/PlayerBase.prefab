@@ -1140,6 +1140,50 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 95f655d9-43da-40a1-a07b-2e5ff63d11c2
     m_ActionName: 'Wheeling/Pause[/Keyboard/escape]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 39e218e7-2fa2-4907-b557-0472b3e8b409
+    m_ActionName: 'Noclip/Movement[/Keyboard/w,/Keyboard/s,/Keyboard/a,/Keyboard/d]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: fd01bb41-4aea-4074-8090-7c4724df0d09
+    m_ActionName: 'Noclip/Down[/Keyboard/q]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: faf9df7d-ec7c-4ba6-9c09-d053800889cc
+    m_ActionName: 'Noclip/Up[/Keyboard/e]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: ee868e54-fe36-4b5f-bc5b-dd43f63831f5
+    m_ActionName: 'Noclip/Look[/Mouse/delta,/Keyboard/upArrow,/Keyboard/downArrow,/Keyboard/leftArrow,/Keyboard/rightArrow]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 7111255d-f132-47e2-aef7-6915a9c9aa65
+    m_ActionName: 'Noclip/Jump[/Keyboard/space]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 4c0edce2-fe45-4ef5-bd6f-f0934c4ebfdf
+    m_ActionName: 'Noclip/Item[/Mouse/leftButton,/Mouse/rightButton,/Keyboard/e]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: e61816bc-9cef-4cd0-a287-c6cec7dfe332
+    m_ActionName: 'Noclip/Pause[/Keyboard/escape]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5786434344950617427}
+        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+        m_MethodName: OnDebugConsoleOpen
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 3c608445-d0f4-46f7-8b19-4b71e34e111e
+    m_ActionName: 'Debug/ToggleConsole[/Keyboard/backquote]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Running

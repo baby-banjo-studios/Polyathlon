@@ -30,6 +30,7 @@ public class Racer : MonoBehaviour
     protected Vector3 velocityBeforePhysicsUpdate;
     protected bool dead;
     protected bool canRevive; // when this is true, a dead racer can be revived.
+    public bool invincible = false;
 
     protected Coroutine boostCoroutine;
     protected float remainingBoostTime = 0f;
@@ -197,34 +198,37 @@ public class Racer : MonoBehaviour
     // When newMomentum is 0,0,0, the momentum used will be simply the character's current momentum
     public virtual void Die(bool emphasizeTorso, Vector3 newMomentum = default(Vector3))
     {
-        anim.enabled = false;
-        rb.isKinematic = true;
-        GetComponent<Collider>().enabled = false;
-        ragdoll.SetRagdoll(true);
-        Vector3 momentum;
-        if (newMomentum == Vector3.zero)
+        if (!invincible)
         {
-            //momentum = Vector3.ClampMagnitude(velocityBeforePhysicsUpdate, 30);
-            momentum = velocityBeforePhysicsUpdate;
+            anim.enabled = false;
+            rb.isKinematic = true;
+            GetComponent<Collider>().enabled = false;
+            ragdoll.SetRagdoll(true);
+            Vector3 momentum;
+            if (newMomentum == Vector3.zero)
+            {
+                //momentum = Vector3.ClampMagnitude(velocityBeforePhysicsUpdate, 30);
+                momentum = velocityBeforePhysicsUpdate;
+            }
+            else
+            {
+                momentum = newMomentum;
+            }
+            ragdoll.AddMomentum(momentum, emphasizeTorso);
+            dead = true;
+            canRevive = false;
+            try
+            {
+                // Deactivate jetpack particles if we're jetpacking
+                Jetpack jetpack = (Jetpack)movement;
+                jetpack.SetParticles(false);
+            }
+            catch (System.Exception)
+            {
+                
+            }
+            StartCoroutine(RevivalEnabler());
         }
-        else
-        {
-            momentum = newMomentum;
-        }
-        ragdoll.AddMomentum(momentum, emphasizeTorso);
-        dead = true;
-        canRevive = false;
-        try
-        {
-            // Deactivate jetpack particles if we're jetpacking
-            Jetpack jetpack = (Jetpack)movement;
-            jetpack.SetParticles(false);
-        }
-        catch (System.Exception)
-        {
-            
-        }
-        StartCoroutine(RevivalEnabler());
     }
 
     public virtual void ApplyJumpSplosion(Vector3 force)

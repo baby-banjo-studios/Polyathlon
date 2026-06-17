@@ -701,11 +701,14 @@ public class PlayerController : Racer
 
     public override void Die(bool emphasizeTorso, Vector3 newMomentum = default(Vector3))
     {
-        base.Die(emphasizeTorso, newMomentum);
-        Debug.Log("die");
-        // Have the camera start following the ragdoll
-        StartCoroutine(cameraController.FollowRagdoll());
-        vfx.ShowDamage();
+        if (!invincible)
+        {
+            base.Die(emphasizeTorso, newMomentum);
+            Debug.Log("die");
+            // Have the camera start following the ragdoll
+            StartCoroutine(cameraController.FollowRagdoll());
+            vfx.ShowDamage();
+        }
     }
 
     public override void Revive(bool forceRevive = false)

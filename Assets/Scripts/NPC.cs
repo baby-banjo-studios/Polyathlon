@@ -312,10 +312,13 @@ public class NPC : Racer
 
     public override void Die(bool emphasizeTorso, Vector3 newMomentum = default)
     {
-        base.Die(emphasizeTorso, newMomentum);
-        if (agent.isOnNavMesh)
+        if (!invincible)
         {
-            agent.isStopped = true;
+            base.Die(emphasizeTorso, newMomentum);
+            if (agent.isOnNavMesh)
+            {
+                agent.isStopped = true;
+            }
         }
     }
 

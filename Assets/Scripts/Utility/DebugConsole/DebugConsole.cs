@@ -33,7 +33,8 @@ public class DebugConsole : MonoBehaviour
         // create command definitions
         availableCommands = new List<ConsoleCommand>
         {
-            new ConsoleCommand("noclip", new[] { new CommandArgument<int>("playerID", 1) }, HandleNoclip)
+            new ConsoleCommand("noclip",    new[] { new CommandArgument<int>("playerID", 1) },  HandleNoclipCommand),
+            new ConsoleCommand("god",       new[] { new CommandArgument<int>("playerID", 1) },  HandleGodCommand)
         };
 
         availableCommandsLookup = new Dictionary<string, ConsoleCommand>();
@@ -231,7 +232,7 @@ public class DebugConsole : MonoBehaviour
         }
     }
 
-    private bool HandleNoclip(string[] args)
+    private bool HandleNoclipCommand(string[] args)
     {
         int playerIndex = Int32.Parse(args[0]) - 1;
         PlayerController player = RaceManager.GetPlayerByIndex(playerIndex);
@@ -251,4 +252,16 @@ public class DebugConsole : MonoBehaviour
         return true;
     }
 
+    
+    private bool HandleGodCommand(string[] args)
+    {
+        int playerIndex = Int32.Parse(args[0]) - 1;
+        PlayerController player = RaceManager.GetPlayerByIndex(playerIndex);
+        if (player == null)
+        {
+            return false;
+        }
+        player.invincible = !player.invincible;
+        return true;
+    }
 }

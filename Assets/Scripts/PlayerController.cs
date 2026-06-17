@@ -416,6 +416,48 @@ public class PlayerController : Racer
         }
     }
 
+    public void OnNoclipMovement(InputAction.CallbackContext ctx)
+    {
+        if (canMove && !RaceManager.IsPaused)
+        {
+            if (ctx.performed)
+                move = ctx.ReadValue<Vector2>();
+            else if (ctx.canceled)
+                move = Vector2.zero;
+        }
+    }
+
+    public void OnNoclipLook(InputAction.CallbackContext ctx)
+    {
+        if (canLook && !RaceManager.IsPaused)
+        {
+            if (ctx.performed)
+                look = ctx.ReadValue<Vector2>() * (ctx.control.device is Gamepad ? Time.deltaTime * gamepadLookSensititvity : keyboardSchemeSensitivity);
+            else if (ctx.canceled)
+                look = Vector2.zero;
+        }
+    }
+    public void OnNoclipUp(InputAction.CallbackContext ctx)
+    {
+        if (canMove && !RaceManager.IsPaused)
+        {
+            if (ctx.performed)
+                moveUp = ctx.ReadValue<float>();
+            else if (ctx.canceled)
+                moveUp = 0f;
+        }
+    }
+    public void OnNoclipDown(InputAction.CallbackContext ctx)
+    {
+        if (canMove && !RaceManager.IsPaused)
+        {
+            if (ctx.performed)
+                moveDown = ctx.ReadValue<float>();
+            else if (ctx.canceled)
+                moveDown = 0f;
+        }
+    }
+
     protected override void Awake() 
     {
         base.Awake();

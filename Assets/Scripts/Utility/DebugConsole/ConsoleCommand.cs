@@ -5,6 +5,7 @@ using UnityEditor.ShaderKeywordFilter;
 public enum CommandReturnType
 {
     Ok,
+    Failed,
     NotEnoughArgs,
     TooManyArgs,
     CantEvaluateDefaultArgs,
@@ -41,11 +42,11 @@ public class ConsoleCommand
 {
     public string name;
     public CommandArgument[] arguments;
-    public Action<string[]> callback;
+    public Func<string[], bool> callback;
     
     protected int numRequiredArgs;
 
-    public ConsoleCommand(string name, CommandArgument[] arguments, Action<string[]> callback)
+    public ConsoleCommand(string name, CommandArgument[] arguments, Func<string[], bool> callback)
     {
         this.name = name;
         this.arguments = arguments;
@@ -98,7 +99,11 @@ public class ConsoleCommand
             }
         }
 
-        callback(evaluatedArgs);
+        bool result = callback(evaluatedArgs);
+        if (!result)
+        {
+            return CommandReturnType.Failed;
+        }
 
         return CommandReturnType.Ok;
     }

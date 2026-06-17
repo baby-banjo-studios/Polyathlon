@@ -598,6 +598,11 @@ PrefabInstance:
       propertyPath: m_SizeDelta.x
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3826419593597496676, guid: b876125315b763f439a49a003d6689be,
+        type: 3}
+      propertyPath: itemDropPoint
+      value: 
+      objectReference: {fileID: 7115039467352433421}
     - target: {fileID: 4053832028573337812, guid: b876125315b763f439a49a003d6689be,
         type: 3}
       propertyPath: m_AnchorMax.y

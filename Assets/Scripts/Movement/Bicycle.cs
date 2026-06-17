@@ -64,9 +64,9 @@ public class Bicycle : Movement
         bike.SetActive(false);
     }
 
-    public override void AddMovement(float forward, float right)
+    public override void AddMovement(float forward, float up, float right)
     {
-        base.AddMovement(forward, right);
+        base.AddMovement(forward, up, right);
         if (!launched)
         {
             Vector3 translation = Vector3.zero;

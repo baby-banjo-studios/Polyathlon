@@ -13,6 +13,7 @@ public abstract class Movement : MonoBehaviour
         Swimming,
         Biking,
         Wheeling,
+        Noclip,
         GetOffTheBoat,
         None,
     }
@@ -43,6 +44,7 @@ public abstract class Movement : MonoBehaviour
 
     protected Animator anim;
     protected Rigidbody rb;
+    protected Collider mainCollider;
     protected Racer racer;
 
     protected Vector3 velocity = Vector3.zero;
@@ -82,11 +84,17 @@ public abstract class Movement : MonoBehaviour
     protected virtual void OnEnable()
     {
         rb = GetComponent<Rigidbody>();
+        rb.isKinematic = false;
+        rb.useGravity = true;
         defaultMass = rb.mass;
         defaultDrag = rb.linearDamping;
         defaultAngularDrag = rb.angularDamping;
         defaultConstraints = rb.constraints;
         defaultCenterOfMass = rb.centerOfMass;
+
+        mainCollider = GetComponent<CapsuleCollider>();
+        mainCollider.enabled = true;
+
         racer = GetComponent<Racer>();
         characterMesh = transform.GetChild(0);
         defaultCharacterMeshPos = characterMesh.localPosition;
@@ -118,7 +126,7 @@ public abstract class Movement : MonoBehaviour
     }
 
     /*  moves the player rigidbody */
-    public virtual void AddMovement(float forward, float right)
+    public virtual void AddMovement(float forward, float up, float right)
     {
         if (Time.deltaTime > 0)
         {

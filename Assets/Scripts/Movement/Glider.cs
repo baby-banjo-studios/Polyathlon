@@ -55,9 +55,9 @@ public class Glider : Movement
     }
 
     /*  moves the player rigidbody */
-    public override void AddMovement(float forward, float right)
+    public override void AddMovement(float forward, float up, float right)
     {
-        base.AddMovement(forward, right);
+        base.AddMovement(forward, up, right);
 
         Vector3 translation = Vector3.zero;
         // for npcs

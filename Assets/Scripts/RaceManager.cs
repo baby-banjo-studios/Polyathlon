@@ -160,6 +160,16 @@ public class RaceManager : MonoBehaviour
             }
             //Destroy(raceSettings.gameObject);
         }
+        else
+        {
+            // test scene - initialize player still
+            PlayerController firstPlayer = FindFirstObjectByType<PlayerController>();
+            if (firstPlayer != null)
+            {
+                //firstPlayer.SetPlayerIndex(0, 1);
+                firstPlayer.SetPlayerNumber(0);
+            }
+        }
     }
 
     private void Start() 
@@ -472,6 +482,22 @@ public class RaceManager : MonoBehaviour
     {
         return instance.racers;
     }
+
+    public static PlayerController GetPlayerByIndex(int playerIndex)
+    {
+        foreach (Racer racer in instance.racers)
+        {
+            if (racer is PlayerController pc)
+            {
+                if (pc.GetPlayerNumber() == playerIndex)
+                {
+                    return pc;
+                }
+            }
+        }
+        return null;
+    }
+
     public static Racer GetRacerOtherThanThisOne(Racer racer)
     {
         Racer chosen = racer;

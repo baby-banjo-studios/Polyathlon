@@ -65,9 +65,9 @@ public class Jetpack : Movement
     }
 
     /*  moves the player rigidbody */
-    public override void AddMovement(float forward, float right)
+    public override void AddMovement(float forward, float up, float right)
     {
-        base.AddMovement(forward, right);
+        base.AddMovement(forward, up, right);
 
         // keep track of how long we have been launched for
         // if we pass the predefined threshold, un-launch

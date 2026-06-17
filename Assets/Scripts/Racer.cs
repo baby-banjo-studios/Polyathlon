@@ -26,6 +26,7 @@ public class Racer : MonoBehaviour
     protected AudioSource audioSource;
     
     protected Vector2 move;
+    protected float moveUp, moveDown;
     protected Vector3 velocityBeforePhysicsUpdate;
     protected bool dead;
     protected bool canRevive; // when this is true, a dead racer can be revived.
@@ -82,7 +83,7 @@ public class Racer : MonoBehaviour
     {
         if (!dead && RaceManager.IsRaceActive && !RaceManager.IsPaused)
         {
-            movement.AddMovement(move.x, move.y);
+            movement.AddMovement(move.x, moveUp - moveDown, move.y);
         }
 
         Debug.DrawRay(transform.position, rb.linearVelocity.normalized * 3f, Color.green);
@@ -173,6 +174,11 @@ public class Racer : MonoBehaviour
                     if (!(movement is Wheeler))
                         movement.Land();
                     movement = movementOptions[(int)Movement.Mode.Wheeling];
+                    break;
+                case Movement.Mode.Noclip:
+                    if (!(movement is Noclip))
+                        movement.Land();
+                    movement = movementOptions[(int)Movement.Mode.Noclip];
                     break;
                 case Movement.Mode.GetOffTheBoat:
                     movement = movementOptions[(int)Movement.Mode.Running];

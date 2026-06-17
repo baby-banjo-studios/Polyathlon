@@ -43,9 +43,9 @@ public class Wheeler : Movement
     }
 
     // Calculate camera-relative steering.
-    public override void AddMovement(float inputForward, float inputRight)
+    public override void AddMovement(float inputForward, float inputUp, float inputRight)
     {
-        base.AddMovement(inputForward, inputRight);
+        base.AddMovement(inputForward, inputUp, inputRight);
 
         float rawForward = inputRight;   // W/S
         float rawTurn    = inputForward; // A/D

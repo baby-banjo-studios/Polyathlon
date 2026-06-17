@@ -2,10 +2,16 @@ using UnityEngine;
 using TMPro;
 using System.Collections.Generic;
 using System.Text;
+using System;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.LowLevel;
 
 public class DebugConsole : MonoBehaviour
 {
     public TextMeshProUGUI commandInputText;
+
+    private List<ConsoleCommand> availableCommands;
+    private Dictionary<string, ConsoleCommand> availableCommandsLookup;
 
     public int maxCommandHistorySize = 100;
     private LinkedList<string> commandHistory;
@@ -23,6 +29,23 @@ public class DebugConsole : MonoBehaviour
     {
         commandHistory = new LinkedList<string>();
         currentCommand = new StringBuilder();
+
+        // create command definitions
+        availableCommands = new List<ConsoleCommand>
+        {
+            new ConsoleCommand("noclip", new[] { new CommandArgument<int>("playerID", 1) }, HandleNoclip)
+        };
+
+        availableCommandsLookup = new Dictionary<string, ConsoleCommand>();
+        foreach (ConsoleCommand command in availableCommands)
+        {
+            availableCommandsLookup[command.name] = command;
+        }
+    }
+
+    private void HijackInputEvent(InputEventPtr eventPtr, InputDevice device)
+    {
+        
     }
 
     private void Update()
@@ -64,7 +87,6 @@ public class DebugConsole : MonoBehaviour
         switch (e.keyCode)
         {
             case KeyCode.Escape:
-            case KeyCode.BackQuote:
                 {
                     e.Use();
                     RaceManager.ToggleDebugConsole();
@@ -198,7 +220,35 @@ public class DebugConsole : MonoBehaviour
 
     private void SubmitCommand(string commandString)
     {
-        
+        string[] commandToks = commandString.Split(' ');
+        if (commandToks.Length > 0)
+        {
+            string commandName = commandToks[0];
+            if (availableCommandsLookup.TryGetValue(commandName, out ConsoleCommand command))
+            {
+                command.Execute(commandToks[1..]);
+            }
+        }
+    }
+
+    private bool HandleNoclip(string[] args)
+    {
+        int playerIndex = Int32.Parse(args[0]) - 1;
+        PlayerController player = RaceManager.GetPlayerByIndex(playerIndex);
+        if (player == null)
+        {
+            return false;
+        }
+
+        if (player.movementMode == Movement.Mode.Noclip)
+        {
+            player.SetMovementMode(player.prevMovementMode);
+        }
+        else
+        {
+            player.SetMovementMode(Movement.Mode.Noclip);
+        }
+        return true;
     }
 
 }

@@ -66,8 +66,14 @@ public class DebugConsole : MonoBehaviour
             case KeyCode.Escape:
             case KeyCode.BackQuote:
                 {
-                    // close terminal
+                    e.Use();
                     RaceManager.ToggleDebugConsole();
+                }
+                break;
+            case KeyCode.BackQuote:
+                {
+                    // consume the `
+                    e.Use();
                 }
                 break;
             case KeyCode.Return:
@@ -172,7 +178,7 @@ public class DebugConsole : MonoBehaviour
                 break;
             default:
                 {
-                    if (e.character != '\0' && !char.IsControl(e.character))
+                    if (e.character != '\0' && e.character != '`' && !char.IsControl(e.character))
                     {
                         e.Use();
                         currentCommand.Append(e.character);

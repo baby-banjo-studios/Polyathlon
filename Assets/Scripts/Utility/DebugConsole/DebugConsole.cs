@@ -22,6 +22,8 @@ public class DebugConsole : MonoBehaviour
     private float cursorElapsedTime = 0.0f;
     private bool cursorVisible = true;
 
+    public LootTable allItems;
+
     /// <summary>
     /// Awake is called when the script instance is being loaded.
     /// </summary>
@@ -36,7 +38,11 @@ public class DebugConsole : MonoBehaviour
             new ConsoleCommand("noclip",    new CommandArgument[] { new CommandArgument<int>("playerID", 1) },  HandleNoclipCommand),
             new ConsoleCommand("god",       new CommandArgument[] { new CommandArgument<int>("playerID", 1) },  HandleGodCommand),
             new ConsoleCommand("setspeed",  new CommandArgument[] { new CommandArgument<int>("racerID", 1),
-                                                                    new CommandArgument<float>("speedScale")},  HandleSetspeedComand)
+                                                                    new CommandArgument<float>("speedScale")},  HandleSetspeedCommand),
+            new ConsoleCommand("equipitem", new CommandArgument[] { new CommandArgument<int>("racerID", 1),
+                                                                    new CommandArgument<string>("item")},       HandleEquipItemCommand),
+            new ConsoleCommand("useitem",   new CommandArgument[] { new CommandArgument<int>("racerID", 1),
+                                                                    new CommandArgument<string>("item")},       HandleUseItemCommand)
         };
 
         availableCommandsLookup = new Dictionary<string, ConsoleCommand>();
@@ -261,7 +267,7 @@ public class DebugConsole : MonoBehaviour
         player.invincible = !player.invincible;
         return true;
     }
-    private bool HandleSetspeedComand(string[] args)
+    private bool HandleSetspeedCommand(string[] args)
     {
         int racerIndex = Int32.Parse(args[0]) - 1;
         float speedMultiplier = Single.Parse(args[1]);
@@ -271,6 +277,62 @@ public class DebugConsole : MonoBehaviour
             return false;
         }
         target.SetPermanentSpeedScale(speedMultiplier);
+        return true;
+    }
+    private bool HandleEquipItemCommand(string[] args)
+    {
+        int racerIndex = Int32.Parse(args[0]) - 1;
+        string itemName = args[1].ToLower();
+        Racer target = RaceManager.GetRacerByIndex(racerIndex);
+        if (target == null)
+        {
+            return false;
+        }
+                
+        return EquipItemHelper(target, itemName, out _);
+    }
+
+    private bool HandleUseItemCommand(string[] args)
+    {
+        int racerIndex = Int32.Parse(args[0]) - 1;
+        string itemName = args[1].ToLower();
+        Racer target = RaceManager.GetRacerByIndex(racerIndex);
+        if (target == null)
+        {
+            return false;
+        }
+
+        if (!EquipItemHelper(target, itemName, out Item equippedItem))
+        {
+            return false;
+        }   
+
+        equippedItem.Use(target);
+        return true;
+    }
+
+    private bool EquipItemHelper(Racer racer, string itemName, out Item equippedItem)
+    {        
+
+        Item item = null;
+        foreach (ItemRegistry registry in allItems.GetAllItems())
+        {
+            if (registry.name.ToLower() == itemName ||
+                registry.displayName.Replace(" ", "").ToLower() == itemName)
+            {
+                item = registry.itemPrefab;
+                break;
+            }
+        }
+        if (item == null)
+        {
+            equippedItem = null;
+            return false;
+        }
+
+        racer.EquipItem(item);
+
+        equippedItem = item;
         return true;
     }
 }

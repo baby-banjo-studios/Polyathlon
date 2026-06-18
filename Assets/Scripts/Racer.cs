@@ -4,7 +4,7 @@ using System.Collections;
 public class Racer : MonoBehaviour
 {
     public new string name;
-    
+    public int racerID;
 
     public Movement.Mode movementMode;
     public Movement.Mode prevMovementMode; // sometimes its helpful to know what we had previously
@@ -306,6 +306,12 @@ public class Racer : MonoBehaviour
         {
             boostCoroutine = StartCoroutine(SpeedBoostCoroutine(magnitude));
         }
+    }
+
+    public virtual void SetPermanentSpeedScale(float magnitude)
+    {
+        movement.BonusSpeed = magnitude;
+        anim.speed = magnitude;
     }
 
     protected virtual IEnumerator SpeedBoostCoroutine(float magnitude)

@@ -121,6 +121,14 @@ public class RaceManager : MonoBehaviour
                         racer.movementMode = Movement.Mode.GetOffTheBoat;
                     }
                     racer.name = npcChoices[i].displayName;
+                    if (testRun)
+                    {
+                        racer.racerID = i + 1;
+                    }
+                    else
+                    {
+                        racer.racerID = i + raceSettings.PlayerChoices.Count;   // racers should be indexed after players
+                    }
                 }
             }
             // Next instantiate the players
@@ -136,6 +144,7 @@ public class RaceManager : MonoBehaviour
 
                     PlayerController playerRacer = newPlayer.GetComponent<PlayerController>();
                     playerRacer.name = playerChoices[i].character.displayName + " (P" + (playerChoices[i].playerNumber + 1) + ")";
+                    playerRacer.racerID = i;
                     playerRacer.SetPlayerNumber(playerChoices[i].playerNumber);
                     playerRacer.SetPlayerIndex(i, playerChoices.Count);
                     //newPlayer.GetComponentInChildren<UI>().SetScale(i, playerChoices.Count);
@@ -168,6 +177,7 @@ public class RaceManager : MonoBehaviour
             {
                 //firstPlayer.SetPlayerIndex(0, 1);
                 firstPlayer.SetPlayerNumber(0);
+                firstPlayer.racerID = 0;
             }
         }
     }
@@ -481,6 +491,18 @@ public class RaceManager : MonoBehaviour
     public static IList<Racer> GetListOfRacers()
     {
         return instance.racers;
+    }
+
+    public static Racer GetRacerByIndex(int racerIndex)
+    {
+        foreach (Racer racer in instance.racers)
+        {
+            if (racer.racerID == racerIndex)
+            {
+                return racer;
+            }
+        }
+        return null;
     }
 
     public static PlayerController GetPlayerByIndex(int playerIndex)

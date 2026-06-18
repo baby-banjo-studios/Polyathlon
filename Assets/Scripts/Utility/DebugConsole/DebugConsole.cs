@@ -33,8 +33,10 @@ public class DebugConsole : MonoBehaviour
         // create command definitions
         availableCommands = new List<ConsoleCommand>
         {
-            new ConsoleCommand("noclip",    new[] { new CommandArgument<int>("playerID", 1) },  HandleNoclipCommand),
-            new ConsoleCommand("god",       new[] { new CommandArgument<int>("playerID", 1) },  HandleGodCommand)
+            new ConsoleCommand("noclip",    new CommandArgument[] { new CommandArgument<int>("playerID", 1) },  HandleNoclipCommand),
+            new ConsoleCommand("god",       new CommandArgument[] { new CommandArgument<int>("playerID", 1) },  HandleGodCommand),
+            new ConsoleCommand("setspeed",  new CommandArgument[] { new CommandArgument<int>("racerID", 1),
+                                                                    new CommandArgument<float>("speedScale")},  HandleSetspeedComand)
         };
 
         availableCommandsLookup = new Dictionary<string, ConsoleCommand>();
@@ -42,11 +44,6 @@ public class DebugConsole : MonoBehaviour
         {
             availableCommandsLookup[command.name] = command;
         }
-    }
-
-    private void HijackInputEvent(InputEventPtr eventPtr, InputDevice device)
-    {
-        
     }
 
     private void Update()
@@ -262,6 +259,18 @@ public class DebugConsole : MonoBehaviour
             return false;
         }
         player.invincible = !player.invincible;
+        return true;
+    }
+    private bool HandleSetspeedComand(string[] args)
+    {
+        int racerIndex = Int32.Parse(args[0]) - 1;
+        float speedMultiplier = Single.Parse(args[1]);
+        Racer target = RaceManager.GetRacerByIndex(racerIndex);
+        if (target == null)
+        {
+            return false;
+        }
+        target.SetPermanentSpeedScale(speedMultiplier);
         return true;
     }
 }

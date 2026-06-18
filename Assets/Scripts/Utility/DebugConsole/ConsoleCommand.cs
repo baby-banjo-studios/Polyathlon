@@ -79,10 +79,28 @@ public class ConsoleCommand
         }
         else if (numRequiredArgs == 0)
         {
+            // no args provided, assume default for everything
             evaluatedArgs = new string[arguments.Length];
             for (int i = 0; i < arguments.Length; i++)
             {
                 evaluatedArgs[i] = arguments[i].defaultValue;
+            }
+        }
+        else if (numRequiredArgs == providedArgs.Length)
+        {
+            // only optional args missing, assume default for optional only
+            evaluatedArgs = new string[arguments.Length];
+            int j = 0;
+            for (int i = 0; i < arguments.Length; i++)
+            {
+                if (arguments[i].required)
+                {
+                    evaluatedArgs[i] = providedArgs[j++];
+                }
+                else
+                {
+                    evaluatedArgs[i] = arguments[i].defaultValue;
+                }
             }
         }
         else

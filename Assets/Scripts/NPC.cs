@@ -270,6 +270,12 @@ public class NPC : Racer
             item.Use(this);
     }
 
+    public override void SetPermanentSpeedScale(float magnitude)
+    {
+        base.SetPermanentSpeedScale(magnitude);
+        agent.speed = agentSpeed * magnitude;
+    }
+
     protected override IEnumerator SpeedBoostCoroutine(float magnitude)
     {
         movement.BonusSpeed = magnitude;

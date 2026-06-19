@@ -6,11 +6,16 @@ using UnityEngine;
 public class CharacterList : ScriptableObject
 {
     [SerializeField]
-    private CharacterRegistry[] characters;
+    private List<CharacterRegistry> characters;
 
     public CharacterRegistry[] GetCharacters()
     {
-        return characters;
+        return characters.ToArray();
+    }
+
+    public void AddCharacter(CharacterRegistry registry)
+    {
+        characters.Add(registry);
     }
 
 }

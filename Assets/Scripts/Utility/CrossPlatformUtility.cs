@@ -44,7 +44,7 @@ public class CrossPlatformUtility
 #elif UNITY_STANDALONE_LINUX || UNITY_EDITOR_LINUX
         // running on linux
 		string linPath = folderpath.Replace("\\", "/"); // linux explorer doesn't like forward slashes
-        if (Directory.Exists(winPath)) // if path requested is a folder, automatically open insides of that folder
+        if (Directory.Exists(linPath)) // if path requested is a folder, automatically open insides of that folder
 		{
             try
             {

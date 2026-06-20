@@ -159,6 +159,10 @@ public class RaceManager : MonoBehaviour
             {
                 InitializePlayer(firstPlayer, "Test Player", 0);
             }
+            foreach (NPC npc in FindObjectsByType<NPC>(FindObjectsSortMode.None))
+            {
+                racers.Add(npc);
+            }
         }
 
         ReassignRacerIDs();

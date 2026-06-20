@@ -210,6 +210,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   name: 
+  racerID: 0
   movementMode: 0
   prevMovementMode: 0
   movementOptions:
@@ -222,6 +223,7 @@ MonoBehaviour:
   - {fileID: 3826419593597496676}
   characterMesh: {fileID: 0}
   hips: {fileID: 0}
+  invincible: 0
   place: 0
   dieThreshold: 40
   lastCheckpoint: {fileID: 0}
@@ -1827,6 +1829,18 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2de82fdb6e1ca5a4e9a18467566d9ee5, type: 3}
+--- !u!114 &618751524619308655 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7785471539622730386, guid: 2de82fdb6e1ca5a4e9a18467566d9ee5,
+    type: 3}
+  m_PrefabInstance: {fileID: 7250146851499414781}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5427982094564c849b6e772999c78b07, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!224 &718279922784106784 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7884226173693947357, guid: 2de82fdb6e1ca5a4e9a18467566d9ee5,
@@ -2003,6 +2017,11 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1074559107989996861, guid: 370b3844169253345bb455bc48ccf436,
+        type: 3}
+      propertyPath: vfx
+      value: 
+      objectReference: {fileID: 618751524619308655}
     - target: {fileID: 1083308876546646362, guid: 370b3844169253345bb455bc48ccf436,
         type: 3}
       propertyPath: m_AnchorMax.y

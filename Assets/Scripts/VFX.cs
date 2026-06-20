@@ -6,6 +6,8 @@ using UnityEngine.UI;
 public class VFX : MonoBehaviour
 {
     [SerializeField] private RectTransform screenOverlayCanvas;
+    [SerializeField] private RectTransform overlayScaleTransform;
+    [SerializeField] private RectTransform unscaledOverlayCanvas;
     [SerializeField] private RectTransform cameraSpaceCanvas;
     [SerializeField] private Camera playerCam;
     public GameObject speedLinesObj;
@@ -31,7 +33,9 @@ public class VFX : MonoBehaviour
             if (viewportPos.z >= 0)
             {
                 targetLockObj.SetActive(true);
-                Vector3 finalPosition = new Vector3(viewportPos.x * screenOverlayCanvas.sizeDelta.x, viewportPos.y * screenOverlayCanvas.sizeDelta.y, 0);
+                float canvasX = playerCam.rect.x + viewportPos.x * playerCam.rect.width;
+                float canvasY = playerCam.rect.y + viewportPos.y * playerCam.rect.height;
+                Vector3 finalPosition = new Vector3(canvasX * unscaledOverlayCanvas.sizeDelta.x, canvasY * unscaledOverlayCanvas.sizeDelta.y, 0);
                 targetLockObj.transform.position = finalPosition;
             }
             else
@@ -39,6 +43,16 @@ public class VFX : MonoBehaviour
                 targetLockObj.SetActive(false);
             }
         }
+    }
+
+    public void SetScale(RectTransform referenceRectTransform)
+    {
+        overlayScaleTransform.pivot = referenceRectTransform.pivot;
+        overlayScaleTransform.anchorMax = referenceRectTransform.anchorMax;
+        overlayScaleTransform.anchorMin = referenceRectTransform.anchorMin;
+        overlayScaleTransform.anchoredPosition = referenceRectTransform.anchoredPosition;
+        overlayScaleTransform.localScale = referenceRectTransform.localScale;
+        overlayScaleTransform.sizeDelta = referenceRectTransform.sizeDelta;
     }
 
     public void SetSpeedLines(bool enable)

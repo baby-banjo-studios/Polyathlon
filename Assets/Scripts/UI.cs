@@ -33,6 +33,7 @@ public class UI : MonoBehaviour
     
     public Sprite defaultItemSprite;
     private Racer racer;
+    [SerializeField]
     private VFX vfx;
 
     private bool isPrimaryUI;
@@ -171,6 +172,8 @@ public class UI : MonoBehaviour
             scaleTransform.sizeDelta = new Vector2(maxScreenSize.x, maxScreenSize.y);
             //scaleTransform.sizeDelta = new Vector2(scaleTransform.sizeDelta.x / 2, scaleTransform.sizeDelta.y / 2);
         }
+        // also set scaleTransform on VFX
+        vfx.SetScale(scaleTransform);
     }
 
     /*  returns time in the form "minutes:seconds.milliseconds" */

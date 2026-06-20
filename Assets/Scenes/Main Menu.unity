@@ -8117,7 +8117,8 @@ MonoBehaviour:
   npcChoices: []
   testSettings: 0
   testCpuQuantity: 11
-  testCharacterGameObject: {fileID: 0}
+  defaultCharacterRegistry: {fileID: 11400000, guid: be13371e872caf64c8c3ce23c9b1cdb2,
+    type: 2}
   selectedStage: {fileID: 0}
   preloadedStages: []
   numRaces: 0
@@ -12002,7 +12003,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1185230011}
   m_HandleRect: {fileID: 1185230010}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -19945,6 +19946,7 @@ Terrain:
   m_AllowAutoConnect: 1
   m_EnableHeightmapRayTracing: 1
   m_EnableTreesAndDetailsRayTracing: 0
+  m_EnableHeightmapLODFrustumCulling: 1
   m_TreeMotionVectorModeOverride: 3
 --- !u!4 &1388494254
 Transform:
@@ -24886,7 +24888,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1425822952}
   m_Direction: 0
   m_Value: 0
-  m_Size: 0.99999994
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:

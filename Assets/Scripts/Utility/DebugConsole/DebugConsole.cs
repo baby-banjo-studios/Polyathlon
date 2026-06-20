@@ -1,10 +1,13 @@
 using UnityEngine;
 using TMPro;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
+using UnityEngine.UI;
+using System.Linq;
 
 public class DebugConsole : MonoBehaviour
 {
@@ -21,6 +24,16 @@ public class DebugConsole : MonoBehaviour
     public float cursorBlinkTime = 1.0f;
     private float cursorElapsedTime = 0.0f;
     private bool cursorVisible = true;
+    private bool autocompleteNeedsToRun = true;
+    private List<string> autocompleteOptions = new List<string>();
+    private List<string> autocompleteFinalizedTokens = new List<string>();
+    private ConsoleCommand autocompleteSelectedCommand = null;
+    private int autoCompleteIndex = 0;
+    public GameObject feedbackLinePrefab;
+    public RectTransform feedbackLineParent;
+    public float feedbackDisplayTime = 10f;
+    public float feedbackFadeTime = 1f;
+    private List<TextMeshProUGUI> feedbackInstances = new List<TextMeshProUGUI>();
 
     private Racer racer;    // only used to keep track of who opened console
 
@@ -37,15 +50,17 @@ public class DebugConsole : MonoBehaviour
         // create command definitions
         availableCommands = new List<ConsoleCommand>
         {
-            new ConsoleCommand("noclip",    new CommandArgument[] { new CommandArgument<int>("playerID", 1) },  HandleNoclipCommand),
-            new ConsoleCommand("god",       new CommandArgument[] { new CommandArgument<int>("playerID", 1) },  HandleGodCommand),
-            new ConsoleCommand("setspeed",  new CommandArgument[] { new CommandArgument<int>("racerID", 1),
-                                                                    new CommandArgument<float>("speedScale")},  HandleSetspeedCommand),
-            new ConsoleCommand("equipitem", new CommandArgument[] { new CommandArgument<int>("racerID", 1),
-                                                                    new CommandArgument<string>("item")},       HandleEquipItemCommand),
-            new ConsoleCommand("useitem",   new CommandArgument[] { new CommandArgument<int>("racerID", 1),
-                                                                    new CommandArgument<string>("item")},       HandleUseItemCommand),
-            new ConsoleCommand("addplayer", new CommandArgument[] { },                                          HandleAddPlayer),
+            new ConsoleCommand("help",      "displays useful info about a command",     new CommandArgument[] { new CommandArgument<string>("command", "") }, HandleHelpCommand),
+            new ConsoleCommand("list",      "lists all available commands",             new CommandArgument[] { },                                              HandleListCommand),
+            new ConsoleCommand("noclip",    "disables all collision on a player",       new CommandArgument[] { new CommandArgument<int>("playerID", 1) },      HandleNoclipCommand),
+            new ConsoleCommand("god",       "makes a player invincible",                new CommandArgument[] { new CommandArgument<int>("playerID", 1) },      HandleGodCommand),
+            new ConsoleCommand("setspeed",  "multiplies a racer's movement speed",      new CommandArgument[] { new CommandArgument<int>("racerID", 1),
+                                                                                        new CommandArgument<float>("speedScale")},                              HandleSetspeedCommand),
+            new ConsoleCommand("equipitem", "equips and item on a racer",               new CommandArgument[] { new CommandArgument<int>("racerID", 1),
+                                                                                        new CommandArgument<string>("itemName")},                               HandleEquipItemCommand),
+            new ConsoleCommand("useitem",   "uses an item on a racer immediately",      new CommandArgument[] { new CommandArgument<int>("racerID", 1),
+                                                                                        new CommandArgument<string>("itemName")},                               HandleUseItemCommand),
+            new ConsoleCommand("addplayer", "adds a dummy player with its own screen",  new CommandArgument[] { },                                              HandleAddPlayer),
         };
 
         availableCommandsLookup = new Dictionary<string, ConsoleCommand>();
@@ -55,6 +70,15 @@ public class DebugConsole : MonoBehaviour
         }
 
         racer = GetComponentInParent<Racer>();
+    }
+
+    private void OnDisable()
+    {
+        foreach (TextMeshProUGUI feedbackLine in feedbackInstances)
+        {
+            Destroy(feedbackLine.gameObject);
+        }
+        feedbackInstances.Clear();
     }
 
     private void Update()
@@ -123,17 +147,19 @@ public class DebugConsole : MonoBehaviour
                     cursorPos = 0;
                     cursorElapsedTime = 0f;
                     cursorVisible = true;
+                    autocompleteNeedsToRun = true;
                 }
                 break;
             case KeyCode.Backspace:
                 {
                     // delete character before cursor
-                    if (currentCommand.Length > 0)
+                    if (cursorPos > 0)
                     {
                         currentCommand.Remove(cursorPos - 1, 1);
                         cursorPos--;
                         cursorElapsedTime = 0f;
                         cursorVisible = true;
+                        autocompleteNeedsToRun = true;
                     }
                 }
                 break;
@@ -145,12 +171,57 @@ public class DebugConsole : MonoBehaviour
                         currentCommand.Remove(cursorPos, 1);
                         cursorElapsedTime = 0f;
                         cursorVisible = true;
+                        autocompleteNeedsToRun = true;
                     }
                 }
                 break;
             case KeyCode.Tab:
                 {
                     // autocomplete
+                    if (autocompleteNeedsToRun)
+                    {
+                        // populate autocomplete options if first time hitting tab
+                        autocompleteNeedsToRun = false;
+                        autocompleteOptions.Clear();
+                        autocompleteFinalizedTokens.Clear();
+                        autoCompleteIndex = -1;
+                        string[] commandToks = currentCommand.ToString().Split(' ');
+                        if (commandToks.Length == 1)
+                        {
+                            string partialCommmand = commandToks[0];
+                            // prune list of commands
+                            foreach (ConsoleCommand command in availableCommands)
+                            {
+                                if (command.name.StartsWith(partialCommmand))
+                                {
+                                    autocompleteOptions.Add(command.name);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            for (int i = 0; i < commandToks.Length - 1; i++)
+                            {
+                                autocompleteFinalizedTokens.Add(commandToks[i]);
+                            }
+                        }
+                    }
+                    // cycle through options if not first time hitting tab
+                    if (autocompleteOptions.Count > 0)
+                    {
+                        autoCompleteIndex++;
+                        autoCompleteIndex %= autocompleteOptions.Count;
+                        currentCommand.Clear();
+                        foreach (string tok in autocompleteFinalizedTokens)
+                        {
+                            currentCommand.Append(tok);
+                            currentCommand.Append(" ");
+                        }
+                        currentCommand.Append(autocompleteOptions[autoCompleteIndex]);
+                        cursorElapsedTime = 0f;
+                        cursorPos = currentCommand.Length;
+                        cursorVisible = true;
+                    }
                 }
                 break;
             case KeyCode.LeftArrow:
@@ -193,6 +264,7 @@ public class DebugConsole : MonoBehaviour
                         cursorElapsedTime = 0f;
                         cursorPos = currentCommand.Length;
                         cursorVisible = true;
+                        autocompleteNeedsToRun = true;
                     }
                 }
                 break;
@@ -210,6 +282,7 @@ public class DebugConsole : MonoBehaviour
                         cursorElapsedTime = 0f;
                         cursorPos = currentCommand.Length;
                         cursorVisible = true;
+                        autocompleteNeedsToRun = true;
                     }
                 }
                 break;
@@ -218,19 +291,15 @@ public class DebugConsole : MonoBehaviour
                     if (e.character != '\0' && e.character != '`' && !char.IsControl(e.character))
                     {
                         e.Use();
-                        currentCommand.Append(e.character);
+                        currentCommand.Insert(cursorPos, e.character);
                         cursorPos++;
                         cursorElapsedTime = 0f;
                         cursorVisible = true;
+                        autocompleteNeedsToRun = true;
                     }
                 }
                 break;
         }
-    }
-
-    private void UpdateDisplay()
-    {
-
     }
 
     private void SubmitCommand(string commandString)
@@ -241,9 +310,93 @@ public class DebugConsole : MonoBehaviour
             string commandName = commandToks[0];
             if (availableCommandsLookup.TryGetValue(commandName, out ConsoleCommand command))
             {
-                command.Execute(commandToks[1..]);
+                CommandReturnCode returnCode = command.Execute(commandToks[1..]);
+                switch (returnCode)
+                {
+                    case CommandReturnCode.Ok:
+                    case CommandReturnCode.Failed:
+                        {
+                            // do nothing, individual commands print feedback
+                        }
+                        break;
+                    case CommandReturnCode.NotEnoughArgs:
+                    case CommandReturnCode.TooManyArgs:
+                    case CommandReturnCode.InvalidArgType:
+                        {
+                            // display usage string to instruct user on how to better use command next time
+                            DisplayFeedback(String.Format("Usage: {0}", command.GetUsage()));
+                        }
+                        break;
+                    case CommandReturnCode.CantEvaluateDefaultArgs:
+                        {
+                            // this should really not be possible if commands are written with non-ambiguous parameters
+                            DisplayFeedback(String.Format("Oops! Try specifying more arguments", command.name, command.arguments.Length));
+                        }
+                        break;
+                }
+            }
+            else
+            {
+                DisplayFeedback(String.Format("Unrecognized command \"{0}\"", commandName));
             }
         }
+    }
+
+    private void DisplayFeedback(string message)
+    {
+        TextMeshProUGUI feedbackText = Instantiate(feedbackLinePrefab, feedbackLineParent).GetComponent<TextMeshProUGUI>();
+        feedbackText.text = message;
+        feedbackInstances.Add(feedbackText);
+        LayoutRebuilder.ForceRebuildLayoutImmediate(feedbackLineParent);
+        StartCoroutine(FadeFeedbackLine(feedbackText));
+    }
+
+    private IEnumerator FadeFeedbackLine(TextMeshProUGUI feedbackLine)
+    {
+        yield return new WaitForSecondsRealtime(feedbackDisplayTime);
+        float elapsedTime = 0f;
+        while (elapsedTime < feedbackFadeTime)
+        {
+            feedbackLine.alpha = 1.0f - (elapsedTime / feedbackFadeTime);
+            elapsedTime += Time.unscaledDeltaTime;
+            yield return null;
+        }
+        feedbackLine.alpha = 0f;
+        feedbackInstances.Remove(feedbackLine);
+        Destroy(feedbackLine.gameObject);
+    }
+
+    private bool HandleHelpCommand(string[] args)
+    {
+        if (args[0] == "")
+        {
+            // general help about the command line
+            DisplayFeedback("This command line can be used to execute commands to assist with debugging.\nIt also may be fun to play around with!\nTry running the \"list\" command to see all available commands or type \"help [command]\" to get help about a specific command");
+        }
+        else
+        {
+            string commandName = args[0];
+            if (availableCommandsLookup.TryGetValue(commandName, out ConsoleCommand command))
+            {
+                DisplayFeedback(command.helpText);
+                DisplayFeedback(String.Format("Usage: {0}", command.GetUsage()));
+            }
+            else
+            {
+                DisplayFeedback(String.Format("Unrecognized command \"{0}\"", commandName));
+            }
+        }
+        return true;
+    }
+
+    private bool HandleListCommand(string[] args)
+    {
+        DisplayFeedback("Available commands:");
+        foreach (ConsoleCommand command in availableCommands)
+        {
+            DisplayFeedback(String.Format("- {0}", command.name));
+        }
+        return true;
     }
 
     private bool HandleNoclipCommand(string[] args)
@@ -252,16 +405,19 @@ public class DebugConsole : MonoBehaviour
         PlayerController player = RaceManager.GetPlayerByIndex(playerIndex);
         if (player == null)
         {
+            DisplayFeedback(String.Format("Invalid player ID {0}", playerIndex + 1));
             return false;
         }
 
         if (player.movementMode == Movement.Mode.Noclip)
         {
             player.SetMovementMode(player.prevMovementMode);
+            DisplayFeedback(String.Format("Enabled noclip for player {0}", playerIndex + 1));
         }
         else
         {
             player.SetMovementMode(Movement.Mode.Noclip);
+            DisplayFeedback(String.Format("Disabled noclip for player {0}", playerIndex + 1));
         }
         return true;
     }
@@ -273,9 +429,18 @@ public class DebugConsole : MonoBehaviour
         PlayerController player = RaceManager.GetPlayerByIndex(playerIndex);
         if (player == null)
         {
+            DisplayFeedback(String.Format("Invalid player ID {0}", playerIndex + 1));
             return false;
         }
         player.invincible = !player.invincible;
+        if (player.invincible)
+        {
+            DisplayFeedback(String.Format("Enabled god mode for player {0}", playerIndex + 1));
+        }
+        else
+        {
+            DisplayFeedback(String.Format("Disabled god mode for player {0}", playerIndex + 1));
+        }
         return true;
     }
     private bool HandleSetspeedCommand(string[] args)
@@ -285,9 +450,11 @@ public class DebugConsole : MonoBehaviour
         Racer target = RaceManager.GetRacerByIndex(racerIndex);
         if (target == null)
         {
+            DisplayFeedback(String.Format("Invalid racer ID {0}", racerIndex + 1));
             return false;
         }
         target.SetPermanentSpeedScale(speedMultiplier);
+        DisplayFeedback(String.Format("Set racer {0}'s speed to {1}x", racerIndex + 1, speedMultiplier));
         return true;
     }
     private bool HandleEquipItemCommand(string[] args)
@@ -297,10 +464,16 @@ public class DebugConsole : MonoBehaviour
         Racer target = RaceManager.GetRacerByIndex(racerIndex);
         if (target == null)
         {
+            DisplayFeedback(String.Format("Invalid racer ID {0}", racerIndex + 1));
             return false;
         }
                 
-        return EquipItemHelper(target, itemName, out _);
+        if (!EquipItemHelper(target, itemName, out _))
+        {
+            return false;
+        }
+        DisplayFeedback(String.Format("Equipped racer {0} with {1}", racerIndex + 1, itemName));
+        return true;
     }
 
     private bool HandleUseItemCommand(string[] args)
@@ -310,6 +483,7 @@ public class DebugConsole : MonoBehaviour
         Racer target = RaceManager.GetRacerByIndex(racerIndex);
         if (target == null)
         {
+            DisplayFeedback(String.Format("Invalid racer ID {0}", racerIndex + 1));
             return false;
         }
 
@@ -319,6 +493,8 @@ public class DebugConsole : MonoBehaviour
         }   
 
         equippedItem.Use(target);
+
+        DisplayFeedback(String.Format("Used {0} on racer {1}", itemName, racerIndex + 1));
         return true;
     }
 
@@ -337,6 +513,7 @@ public class DebugConsole : MonoBehaviour
         }
         if (item == null)
         {
+            DisplayFeedback(String.Format("Invalid item {0}", itemName));
             equippedItem = null;
             return false;
         }
@@ -350,7 +527,11 @@ public class DebugConsole : MonoBehaviour
     private bool HandleAddPlayer(string[] args)
     {
         // no args
-        RaceManager.AddDummyPlayer();
+        if (!RaceManager.AddDummyPlayer())
+        {
+            DisplayFeedback("Failed to add player");
+        }
+        DisplayFeedback("Added dummy player");
         return true;
     }
 

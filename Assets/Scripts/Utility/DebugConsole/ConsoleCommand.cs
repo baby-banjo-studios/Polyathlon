@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEditor.ShaderKeywordFilter;
 
-public enum CommandReturnType
+public enum CommandReturnCode
 {
     Ok,
     Failed,
@@ -41,14 +41,16 @@ public class CommandArgument<T> : CommandArgument
 public class ConsoleCommand
 {
     public string name;
+    public string helpText;
     public CommandArgument[] arguments;
     public Func<string[], bool> callback;
     
-    protected int numRequiredArgs;
+    public int numRequiredArgs;
 
-    public ConsoleCommand(string name, CommandArgument[] arguments, Func<string[], bool> callback)
+    public ConsoleCommand(string name, string helpText, CommandArgument[] arguments, Func<string[], bool> callback)
     {
         this.name = name;
+        this.helpText = helpText;
         this.arguments = arguments;
         this.callback = callback;
         foreach (CommandArgument arg in arguments)
@@ -60,15 +62,32 @@ public class ConsoleCommand
         }
     }
 
-    public CommandReturnType Execute(string[] providedArgs)
+    public string GetUsage()
+    {
+        string usageString = name;
+        foreach (CommandArgument argument in arguments)
+        {
+            if (argument.required)
+            {
+                usageString += String.Format(" <{0}>", argument.name);
+            }
+            else
+            {
+                usageString += String.Format(" [{0}]", argument.name);
+            }
+        }
+        return usageString;
+    }
+
+    public CommandReturnCode Execute(string[] providedArgs)
     {
         if (providedArgs.Length < numRequiredArgs)
         {
-            return CommandReturnType.NotEnoughArgs;
+            return CommandReturnCode.NotEnoughArgs;
         }
         else if (providedArgs.Length > arguments.Length)
         {
-            return CommandReturnType.TooManyArgs;
+            return CommandReturnCode.TooManyArgs;
         }
 
         // find missing arguments and populate with defaults
@@ -106,24 +125,24 @@ public class ConsoleCommand
         else
         {
             // TBD evaluate missing arguments by inferencing type of existing arguments
-            return CommandReturnType.CantEvaluateDefaultArgs;
+            return CommandReturnCode.CantEvaluateDefaultArgs;
         }
 
         for (int i = 0; i < arguments.Length; i++)
         {
             if (!ValidateArgument(evaluatedArgs[i], arguments[i].type))
             {
-                return CommandReturnType.InvalidArgType;
+                return CommandReturnCode.InvalidArgType;
             }
         }
 
         bool result = callback(evaluatedArgs);
         if (!result)
         {
-            return CommandReturnType.Failed;
+            return CommandReturnCode.Failed;
         }
 
-        return CommandReturnType.Ok;
+        return CommandReturnCode.Ok;
     }
 
     protected bool ValidateArgument(string arg, Type expectedType)

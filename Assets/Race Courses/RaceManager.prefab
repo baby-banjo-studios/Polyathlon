@@ -53,11 +53,11 @@ MonoBehaviour:
   panel: {fileID: 6051685631321643198}
   menuText: {fileID: 1145677636669638282}
   dummyUI: {fileID: 4241080438625007664}
-  raceCourseTester: {fileID: 3972031488923505484, guid: e777d02076410da4a8ea600d61cb4bd8,
+  defaultSettings: {fileID: 4369238642418302601, guid: 66b1a88aecc6b6540aa0c118f5e5a3f2,
     type: 3}
   dontAddRacers: 0
   isTrainingCourse: 0
-  debugEnd: 0
+  respawnOnUse: 0
 --- !u!1 &3486025653226795286
 GameObject:
   m_ObjectHideFlags: 0
@@ -162,6 +162,7 @@ MonoBehaviour:
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -374,6 +375,7 @@ MonoBehaviour:
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -729,6 +731,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -888,6 +891,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0

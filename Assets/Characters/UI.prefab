@@ -738,6 +738,7 @@ MonoBehaviour:
   commandInputText: {fileID: 4530272826064131379}
   maxCommandHistorySize: 100
   cursorBlinkTime: 0.5
+  allItems: {fileID: 11400000, guid: bd6efe75f6f94a84085ec0a88a4194e8, type: 2}
 --- !u!1 &4797029713690499900
 GameObject:
   m_ObjectHideFlags: 0

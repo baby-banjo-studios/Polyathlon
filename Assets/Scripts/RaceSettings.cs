@@ -34,7 +34,7 @@ public class RaceSettings : MonoBehaviour
     // Test options for when running the race directly from the race scene instead of from the main menu
     public bool testSettings = false;
     public int testCpuQuantity = 11;
-    public GameObject testCharacterGameObject;
+    public CharacterRegistry defaultCharacterRegistry;
 
     public StageRegistry selectedStage;
     public List<StageRegistry> preloadedStages;

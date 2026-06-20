@@ -118,6 +118,7 @@ public class DebugConsole : MonoBehaviour
                     {
                         commandHistory.RemoveLast();
                     }
+                    currentCommandHistorySelection = null;
                     currentCommand.Clear();
                     cursorPos = 0;
                     cursorElapsedTime = 0f;
@@ -190,6 +191,7 @@ public class DebugConsole : MonoBehaviour
                         currentCommand.Clear();
                         currentCommand.Append(currentCommandHistorySelection.Value);
                         cursorElapsedTime = 0f;
+                        cursorPos = currentCommand.Length;
                         cursorVisible = true;
                     }
                 }
@@ -197,12 +199,16 @@ public class DebugConsole : MonoBehaviour
             case KeyCode.DownArrow:
                 {
                     // select next command
-                    if (currentCommandHistorySelection != null && currentCommandHistorySelection.Previous != null)
+                    if (currentCommandHistorySelection != null)
                     {
                         currentCommandHistorySelection = currentCommandHistorySelection.Previous;
                         currentCommand.Clear();
-                        currentCommand.Append(currentCommandHistorySelection.Value);
+                        if (currentCommandHistorySelection != null)
+                        {
+                            currentCommand.Append(currentCommandHistorySelection.Value);
+                        }
                         cursorElapsedTime = 0f;
+                        cursorPos = currentCommand.Length;
                         cursorVisible = true;
                     }
                 }

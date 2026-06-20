@@ -411,7 +411,7 @@ public class PlayerController : Racer
         {
             if (ctx.performed)
             {
-                RaceManager.ToggleDebugConsole();
+                RaceManager.ToggleDebugConsole(this);
             }
         }
     }
@@ -471,7 +471,14 @@ public class PlayerController : Racer
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         keyboardSchemeSensitivity = mouseLookSensisitivity;
-        controlScheme = ((InputControlScheme)playerInput.user.controlScheme).name == "Gamepad" ? ControlScheme.Gamepad : ControlScheme.Keyboard;
+        if (playerInput.user.controlScheme == null)
+        {
+            controlScheme = ControlScheme.Keyboard;
+        }
+        else
+        {
+            controlScheme = ((InputControlScheme)playerInput.user.controlScheme).name == "Gamepad" ? ControlScheme.Gamepad : ControlScheme.Keyboard;
+        }
     }
 
     protected override void Start() 
@@ -586,7 +593,7 @@ public class PlayerController : Racer
         vfx.SetTarget(target);
     }
 
-    public void SetPlayerIndex(int playerIndex, int maxPlayers)
+    public void RedrawPlayerUI(int playerIndex, int maxPlayers)
     {
         ui.SetScale(playerIndex, maxPlayers);
         cameraController.SetScale(playerIndex, maxPlayers);
@@ -658,7 +665,7 @@ public class PlayerController : Racer
                 {
                     ui.SetGameHUD(false);
                     ui.SetPauseMenu(false);
-                    ui.SetDebugConsole(true);
+                    ui.SetDebugConsole(isPlayerInControl);
                     EnablePhotoMode(false);
                     Cursor.visible = false;
                     Cursor.lockState = CursorLockMode.Locked;

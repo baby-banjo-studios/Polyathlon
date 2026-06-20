@@ -22,6 +22,8 @@ public class DebugConsole : MonoBehaviour
     private float cursorElapsedTime = 0.0f;
     private bool cursorVisible = true;
 
+    private Racer racer;    // only used to keep track of who opened console
+
     public LootTable allItems;
 
     /// <summary>
@@ -42,7 +44,8 @@ public class DebugConsole : MonoBehaviour
             new ConsoleCommand("equipitem", new CommandArgument[] { new CommandArgument<int>("racerID", 1),
                                                                     new CommandArgument<string>("item")},       HandleEquipItemCommand),
             new ConsoleCommand("useitem",   new CommandArgument[] { new CommandArgument<int>("racerID", 1),
-                                                                    new CommandArgument<string>("item")},       HandleUseItemCommand)
+                                                                    new CommandArgument<string>("item")},       HandleUseItemCommand),
+            new ConsoleCommand("addplayer", new CommandArgument[] { },                                          HandleAddPlayer),
         };
 
         availableCommandsLookup = new Dictionary<string, ConsoleCommand>();
@@ -50,6 +53,8 @@ public class DebugConsole : MonoBehaviour
         {
             availableCommandsLookup[command.name] = command;
         }
+
+        racer = GetComponentInParent<Racer>();
     }
 
     private void Update()
@@ -93,7 +98,7 @@ public class DebugConsole : MonoBehaviour
             case KeyCode.Escape:
                 {
                     e.Use();
-                    RaceManager.ToggleDebugConsole();
+                    RaceManager.ToggleDebugConsole((PlayerController)racer);
                 }
                 break;
             case KeyCode.BackQuote:
@@ -335,4 +340,12 @@ public class DebugConsole : MonoBehaviour
         equippedItem = item;
         return true;
     }
+
+    private bool HandleAddPlayer(string[] args)
+    {
+        // no args
+        RaceManager.AddDummyPlayer();
+        return true;
+    }
+
 }

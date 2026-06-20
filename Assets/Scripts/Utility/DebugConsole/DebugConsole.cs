@@ -192,7 +192,7 @@ public class DebugConsole : MonoBehaviour
                             // prune list of commands
                             foreach (ConsoleCommand command in availableCommands)
                             {
-                                if (command.name.StartsWith(partialCommmand))
+                                if (command.name.StartsWith(partialCommmand, StringComparison.OrdinalIgnoreCase))
                                 {
                                     autocompleteOptions.Add(command.name);
                                 }
@@ -203,6 +203,28 @@ public class DebugConsole : MonoBehaviour
                             for (int i = 0; i < commandToks.Length - 1; i++)
                             {
                                 autocompleteFinalizedTokens.Add(commandToks[i]);
+                            }
+                            string partialArgument = commandToks[commandToks.Length - 1];
+                            // based on command, cycle through predetermined lists of acceptable arguments
+                            string commandName = autocompleteFinalizedTokens[0];
+                            if (availableCommandsLookup.TryGetValue(commandName, out ConsoleCommand command))
+                            {
+                                int argumentIndex = commandToks.Length - 2;
+                                if (command.arguments.Length > argumentIndex)
+                                {
+                                    CommandArgument argument = command.arguments[argumentIndex];
+                                    if (argument.name == "itemName")
+                                    {
+                                        foreach (ItemRegistry registry in allItems.GetAllItems())
+                                        {
+                                            string itemCommandName = registry.name.Replace(" ", "");
+                                            if (itemCommandName.StartsWith(partialArgument, StringComparison.OrdinalIgnoreCase))
+                                            {
+                                                autocompleteOptions.Add(itemCommandName);
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }

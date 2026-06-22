@@ -214,7 +214,7 @@ public class RaceManager : MonoBehaviour
     private void InitializePlayer(PlayerController playerController, string displayName, int playerIndex)
     {
         playerController.name = displayName + " (P" + (playerIndex + 1) + ")";
-        playerController.SetPlayerNumber(playerIndex + 1);
+        playerController.SetPlayerNumber(playerIndex);
 
         // remove excess audio listeners
         if (playerIndex > 0)

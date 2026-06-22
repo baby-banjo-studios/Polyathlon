@@ -25,12 +25,12 @@ TagManager:
   - Laser
   - IgnoreProjectile
   - Racer
-  - VFX
+  - VFX_1
   - NavMeshIgnore
   - IgnoreRacer
-  - 
-  - 
-  - 
+  - VFX_2
+  - VFX_3
+  - VFX_4
   - 
   - 
   - 

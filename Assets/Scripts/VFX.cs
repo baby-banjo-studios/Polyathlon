@@ -10,6 +10,7 @@ public class VFX : MonoBehaviour
     [SerializeField] private RectTransform unscaledOverlayCanvas;
     [SerializeField] private RectTransform cameraSpaceCanvas;
     [SerializeField] private Camera playerCam;
+    [SerializeField] private Camera vfxCam;
     public GameObject speedLinesObj;
     public Image damageImage;
     public float damageFadeTime = 1f;
@@ -22,6 +23,28 @@ public class VFX : MonoBehaviour
     {
         SetSpeedLines(false);   
         SetTarget(null);
+    }
+
+    public void SetPlayerIndex(int playerIndex)
+    {
+        if (playerIndex < 0 || playerIndex > 3)
+        {
+            Debug.LogError(string.Format("VFX cannot accomodate player index {0}", playerIndex));
+        }
+        else
+        {
+            int layer = LayerMask.NameToLayer(string.Format("VFX_{0}", playerIndex + 1));
+            if (layer < 0)
+            {
+                Debug.LogError(string.Format("layer VFX_{0} not found", playerIndex + 1));
+            }
+            else
+            {
+                int layerMask = 1 << layer;
+                vfxCam.cullingMask = layerMask;
+                speedLinesObj.layer = layer;
+            }
+        }
     }
 
     private void Update()

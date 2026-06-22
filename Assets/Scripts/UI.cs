@@ -174,6 +174,7 @@ public class UI : MonoBehaviour
         }
         // also set scaleTransform on VFX
         vfx.SetScale(scaleTransform);
+        vfx.SetPlayerIndex(player);
     }
 
     /*  returns time in the form "minutes:seconds.milliseconds" */

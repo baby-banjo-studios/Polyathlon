@@ -8,6 +8,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.UI;
 using System.Linq;
+using UnityEngine.SceneManagement;
 
 public class DebugConsole : MonoBehaviour
 {
@@ -64,7 +65,9 @@ public class DebugConsole : MonoBehaviour
             new ConsoleCommand("setmovement",   "changes a racer's movement mode",          new CommandArgument[] { new CommandArgument<int>("racerID", 1),
                                                                                             new CommandArgument<string>("movementMode")},                           HandleSetMovement),
             new ConsoleCommand("addplayer",     "adds a dummy player with its own screen",  new CommandArgument[] { },                                              HandleAddPlayer),
-            new ConsoleCommand("setgravity",    "scales gravity by a multiplier",           new CommandArgument[] { new CommandArgument<float>("gravityScale") },   HandleSetGravity)
+            new ConsoleCommand("setgravity",    "scales gravity by a multiplier",           new CommandArgument[] { new CommandArgument<float>("gravityScale") },   HandleSetGravity),
+            new ConsoleCommand("reload",        "reloads the scene",                        new CommandArgument[] { },                                              HandleReload),
+
         };
 
         availableCommandsLookup = new Dictionary<string, ConsoleCommand>();
@@ -615,6 +618,16 @@ public class DebugConsole : MonoBehaviour
         float gravityScale = Single.Parse(args[0]);
         Physics.gravity = startingGravity * gravityScale;
         DisplayFeedback(String.Format("Set gravity to {0} m/s<sup>2</sup>", Physics.gravity.y));
+        return true;
+    }
+
+    private bool HandleReload(string[] args)
+    {
+        // no args
+        Time.timeScale = 1f;
+        Physics.gravity = startingGravity;
+        int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+        SceneManager.LoadScene(currentSceneIndex);
         return true;
     }
 

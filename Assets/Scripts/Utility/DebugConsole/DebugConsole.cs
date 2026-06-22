@@ -61,6 +61,8 @@ public class DebugConsole : MonoBehaviour
                                                                                             new CommandArgument<string>("itemName")},                               HandleEquipItemCommand),
             new ConsoleCommand("useitem",       "uses an item on a racer immediately",      new CommandArgument[] { new CommandArgument<int>("racerID", 1),
                                                                                             new CommandArgument<string>("itemName")},                               HandleUseItemCommand),
+            new ConsoleCommand("setmovement",   "changes a racer's movement mode",          new CommandArgument[] { new CommandArgument<int>("racerID", 1),
+                                                                                            new CommandArgument<string>("movementMode")},                           HandleSetMovement),
             new ConsoleCommand("addplayer",     "adds a dummy player with its own screen",  new CommandArgument[] { },                                              HandleAddPlayer),
             new ConsoleCommand("setgravity",    "scales gravity by a multiplier",           new CommandArgument[] { new CommandArgument<float>("gravityScale") },   HandleSetGravity)
         };
@@ -225,6 +227,20 @@ public class DebugConsole : MonoBehaviour
                                             if (itemCommandName.StartsWith(partialArgument, StringComparison.OrdinalIgnoreCase))
                                             {
                                                 autocompleteOptions.Add(itemCommandName);
+                                            }
+                                        }
+                                    }
+                                    if (argument.name == "movementMode")
+                                    {
+                                        foreach (Movement.Mode mode in Enum.GetValues(typeof(Movement.Mode)))
+                                        {
+                                            if (mode < Movement.Mode.Noclip)
+                                            {
+                                                string modeName = mode.ToString().ToLower();
+                                                if (modeName.StartsWith(partialArgument, StringComparison.OrdinalIgnoreCase))
+                                                {
+                                                    autocompleteOptions.Add(modeName);
+                                                }
                                             }
                                         }
                                     }
@@ -547,6 +563,39 @@ public class DebugConsole : MonoBehaviour
         racer.EquipItem(item);
 
         equippedItem = item;
+        return true;
+    }
+
+    private bool HandleSetMovement(string[] args)
+    {
+        int racerIndex = Int32.Parse(args[0]) - 1;
+        string submittedModeName = args[1].ToLower();
+        Racer target = RaceManager.GetRacerByIndex(racerIndex);
+        if (target == null)
+        {
+            DisplayFeedback(String.Format("Invalid racer ID {0}", racerIndex + 1));
+            return false;
+        }
+        Movement.Mode resolvedMovementMode = Movement.Mode.None;
+        foreach (Movement.Mode mode in Enum.GetValues(typeof(Movement.Mode)))
+        {
+            if (mode < Movement.Mode.Noclip)
+            {
+                string modeName = mode.ToString().ToLower();
+                if (submittedModeName == modeName)
+                {
+                    resolvedMovementMode = mode;
+                    break;
+                }
+            }
+        }
+        if (resolvedMovementMode == Movement.Mode.None)
+        {
+            DisplayFeedback(String.Format("Unrecognized movement mode {0}", submittedModeName));
+            return false;
+        }
+        target.SetMovementMode(resolvedMovementMode);
+        DisplayFeedback(String.Format("Set racer {0}'s movement mode to {1}", racerIndex + 1, resolvedMovementMode.ToString()));
         return true;
     }
 

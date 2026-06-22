@@ -56,6 +56,7 @@ public class DebugConsole : MonoBehaviour
             new ConsoleCommand("list",          "lists all available commands",             new CommandArgument[] { },                                              HandleListCommand),
             new ConsoleCommand("noclip",        "disables all collision on a player",       new CommandArgument[] { new CommandArgument<int>("playerID", 1) },      HandleNoclipCommand),
             new ConsoleCommand("god",           "makes a player invincible",                new CommandArgument[] { new CommandArgument<int>("playerID", 1) },      HandleGodCommand),
+            new ConsoleCommand("kill",          "instantly kills a racer",                  new CommandArgument[] { new CommandArgument<int>("racerID") },          HandleKillCommand),
             new ConsoleCommand("setspeed",      "multiplies a racer's movement speed",      new CommandArgument[] { new CommandArgument<int>("racerID", 1),
                                                                                             new CommandArgument<float>("speedScale")},                              HandleSetspeedCommand),
             new ConsoleCommand("equipitem",     "equips and item on a racer",               new CommandArgument[] { new CommandArgument<int>("racerID", 1),
@@ -488,6 +489,21 @@ public class DebugConsole : MonoBehaviour
         }
         return true;
     }
+
+    private bool HandleKillCommand(string[] args)
+    {
+        int racerIndex = Int32.Parse(args[0]) - 1;
+        Racer target = RaceManager.GetRacerByIndex(racerIndex);
+        if (target == null)
+        {
+            DisplayFeedback(String.Format("Invalid racer ID {0}", racerIndex + 1));
+            return false;
+        }
+        target.Die(false);
+        DisplayFeedback(String.Format("Killed racer ID {0}", racerIndex + 1));
+        return true;
+    }
+
     private bool HandleSetspeedCommand(string[] args)
     {
         int racerIndex = Int32.Parse(args[0]) - 1;

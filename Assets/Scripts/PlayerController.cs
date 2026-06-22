@@ -217,7 +217,7 @@ public class PlayerController : Racer
     // Wheeling
     public void OnWheelingMovement(InputAction.CallbackContext ctx)
     {
-        if (canMove)
+        if (canMove && !RaceManager.IsPaused)
         {
             if (ctx.performed)
                 move = ctx.ReadValue<Vector2>();
@@ -228,7 +228,7 @@ public class PlayerController : Racer
 
     public void OnWheelingLook(InputAction.CallbackContext ctx)
     {
-        if (canLook)
+        if (canLook && !RaceManager.IsPaused)
         {
             if (ctx.performed)
                 look = ctx.ReadValue<Vector2>() * (ctx.control.device is Gamepad ? Time.deltaTime * gamepadLookSensititvity : keyboardSchemeSensitivity);
@@ -239,7 +239,7 @@ public class PlayerController : Racer
 
     public void OnWheelingJump(InputAction.CallbackContext ctx)
     {
-        if (canMove)
+        if (canMove && !RaceManager.IsPaused)
         {
             if (ctx.performed)
                 movement.Jump(true);
@@ -713,7 +713,7 @@ public class PlayerController : Racer
             base.Die(emphasizeTorso, newMomentum);
             Debug.Log("die");
             // Have the camera start following the ragdoll
-            StartCoroutine(cameraController.FollowRagdoll());
+            cameraController.StartFollowingRagdoll();
             vfx.ShowDamage();
         }
     }
@@ -723,7 +723,7 @@ public class PlayerController : Racer
         if (dead && (canRevive || forceRevive))
         {
             // have the camera stop following the ragdoll
-            StartCoroutine(cameraController.FollowRagdoll());
+            cameraController.StopFollowingRagdoll();
         }
         ui.ReviveText(false);
         base.Revive(forceRevive);

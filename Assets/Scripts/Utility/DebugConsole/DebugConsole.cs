@@ -38,6 +38,7 @@ public class DebugConsole : MonoBehaviour
     private Racer racer;    // only used to keep track of who opened console
 
     public LootTable allItems;
+    private Vector3 startingGravity;
 
     /// <summary>
     /// Awake is called when the script instance is being loaded.
@@ -50,17 +51,18 @@ public class DebugConsole : MonoBehaviour
         // create command definitions
         availableCommands = new List<ConsoleCommand>
         {
-            new ConsoleCommand("help",      "displays useful info about a command",     new CommandArgument[] { new CommandArgument<string>("command", "") }, HandleHelpCommand),
-            new ConsoleCommand("list",      "lists all available commands",             new CommandArgument[] { },                                              HandleListCommand),
-            new ConsoleCommand("noclip",    "disables all collision on a player",       new CommandArgument[] { new CommandArgument<int>("playerID", 1) },      HandleNoclipCommand),
-            new ConsoleCommand("god",       "makes a player invincible",                new CommandArgument[] { new CommandArgument<int>("playerID", 1) },      HandleGodCommand),
-            new ConsoleCommand("setspeed",  "multiplies a racer's movement speed",      new CommandArgument[] { new CommandArgument<int>("racerID", 1),
-                                                                                        new CommandArgument<float>("speedScale")},                              HandleSetspeedCommand),
-            new ConsoleCommand("equipitem", "equips and item on a racer",               new CommandArgument[] { new CommandArgument<int>("racerID", 1),
-                                                                                        new CommandArgument<string>("itemName")},                               HandleEquipItemCommand),
-            new ConsoleCommand("useitem",   "uses an item on a racer immediately",      new CommandArgument[] { new CommandArgument<int>("racerID", 1),
-                                                                                        new CommandArgument<string>("itemName")},                               HandleUseItemCommand),
-            new ConsoleCommand("addplayer", "adds a dummy player with its own screen",  new CommandArgument[] { },                                              HandleAddPlayer),
+            new ConsoleCommand("help",          "displays useful info about a command",     new CommandArgument[] { new CommandArgument<string>("command", "") }, HandleHelpCommand),
+            new ConsoleCommand("list",          "lists all available commands",             new CommandArgument[] { },                                              HandleListCommand),
+            new ConsoleCommand("noclip",        "disables all collision on a player",       new CommandArgument[] { new CommandArgument<int>("playerID", 1) },      HandleNoclipCommand),
+            new ConsoleCommand("god",           "makes a player invincible",                new CommandArgument[] { new CommandArgument<int>("playerID", 1) },      HandleGodCommand),
+            new ConsoleCommand("setspeed",      "multiplies a racer's movement speed",      new CommandArgument[] { new CommandArgument<int>("racerID", 1),
+                                                                                            new CommandArgument<float>("speedScale")},                              HandleSetspeedCommand),
+            new ConsoleCommand("equipitem",     "equips and item on a racer",               new CommandArgument[] { new CommandArgument<int>("racerID", 1),
+                                                                                            new CommandArgument<string>("itemName")},                               HandleEquipItemCommand),
+            new ConsoleCommand("useitem",       "uses an item on a racer immediately",      new CommandArgument[] { new CommandArgument<int>("racerID", 1),
+                                                                                            new CommandArgument<string>("itemName")},                               HandleUseItemCommand),
+            new ConsoleCommand("addplayer",     "adds a dummy player with its own screen",  new CommandArgument[] { },                                              HandleAddPlayer),
+            new ConsoleCommand("setgravity",    "scales gravity by a multiplier",           new CommandArgument[] { new CommandArgument<float>("gravityScale") },   HandleSetGravity)
         };
 
         availableCommandsLookup = new Dictionary<string, ConsoleCommand>();
@@ -70,6 +72,8 @@ public class DebugConsole : MonoBehaviour
         }
 
         racer = GetComponentInParent<Racer>();
+
+        startingGravity = Physics.gravity;
     }
 
     private void OnDisable()
@@ -554,6 +558,14 @@ public class DebugConsole : MonoBehaviour
             DisplayFeedback("Failed to add player");
         }
         DisplayFeedback("Added dummy player");
+        return true;
+    }
+
+    private bool HandleSetGravity(string[] args)
+    {
+        float gravityScale = Single.Parse(args[0]);
+        Physics.gravity = startingGravity * gravityScale;
+        DisplayFeedback(String.Format("Set gravity to {0} m/s<sup>2</sup>", Physics.gravity.y));
         return true;
     }
 

@@ -625,7 +625,10 @@ public class DebugConsole : MonoBehaviour
         {
             DisplayFeedback("Failed to add player");
         }
-        DisplayFeedback("Added dummy player");
+        else
+        {
+            DisplayFeedback("Added dummy player");
+        }
         return true;
     }
 

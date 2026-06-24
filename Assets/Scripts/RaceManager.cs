@@ -177,7 +177,7 @@ public class RaceManager : MonoBehaviour
         }
         RaceSettings.PlayerChoice choice = new RaceSettings.PlayerChoice(nextPlayerIdx, 
                                                                         RaceSettings.instance.defaultCharacterRegistry,
-                                                                        ControlScheme.None,
+                                                                        ControlScheme.Gamepad,  // keyboard breaks pause controls, default to Gamepad
                                                                         new InputDevice[] { });
         PlayerController newPlayer = instance.AddPlayer(choice, nextPlayerIdx);
         if (instance.chain != null)
@@ -190,13 +190,8 @@ public class RaceManager : MonoBehaviour
 
     private PlayerController AddPlayer(RaceSettings.PlayerChoice playerChoice, int playerIndex)
     {
-        string controlSchemeString = null;
-        if (playerChoice.controlScheme != ControlScheme.None)
-        {
-            controlSchemeString = playerChoice.controlScheme.ToString();
-        }
         PlayerInput playerInput = PlayerInput.Instantiate(playerChoice.character.playerObj, playerChoice.playerNumber,
-                                                          controlSchemeString, -1, playerChoice.inputDevices);
+                                                          playerChoice.controlScheme.ToString(), -1, playerChoice.inputDevices);
         PlayerController playerController = playerInput.GetComponent<PlayerController>();
 
         if (startingPositions != null)

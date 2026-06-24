@@ -471,9 +471,9 @@ public class PlayerController : Racer
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         keyboardSchemeSensitivity = mouseLookSensisitivity;
-        if (!playerInput.user.valid || playerInput.user.controlScheme == null)
+        if (playerInput.user.controlScheme == null)
         {
-            controlScheme = ControlScheme.None;
+            controlScheme = ControlScheme.Gamepad;  // have to default to Gamepad here, can't have >1 Keyboard
         }
         else
         {

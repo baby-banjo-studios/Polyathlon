@@ -458,12 +458,12 @@ public class DebugConsole : MonoBehaviour
         if (player.movementMode == Movement.Mode.Noclip)
         {
             player.SetMovementMode(player.prevMovementMode);
-            DisplayFeedback(String.Format("Enabled noclip for player {0}", playerIndex + 1));
+            DisplayFeedback(String.Format("Disabled noclip for player {0}", playerIndex + 1));
         }
         else
         {
             player.SetMovementMode(Movement.Mode.Noclip);
-            DisplayFeedback(String.Format("Disabled noclip for player {0}", playerIndex + 1));
+            DisplayFeedback(String.Format("Enabled noclip for player {0}", playerIndex + 1));
         }
         return true;
     }

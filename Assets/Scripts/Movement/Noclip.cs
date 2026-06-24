@@ -63,7 +63,7 @@ public class Noclip : Movement
         if (velocity.magnitude > 0)
         {
             rb.linearVelocity = new Vector3(velocity.normalized.x * smoothSpeed, velocity.normalized.y * smoothSpeed, velocity.normalized.z * smoothSpeed);
-            smoothSpeed = Mathf.Lerp(smoothSpeed, maxSpeed * boostSpeedScale * permanentSpeedScale, Time.deltaTime);
+            smoothSpeed = Mathf.Lerp(smoothSpeed, maxSpeed * boostSpeedScale * PermanentSpeedScale * PhysicalSpeedScale, Time.deltaTime);
             
             // rotate the character mesh if enabled
             Vector3 velocity2D = new Vector3(velocity.x, 0f, velocity.z);
@@ -80,7 +80,7 @@ public class Noclip : Movement
         Vector3 actualVelocity2D = new Vector3(actualVelocity.x, 0f, actualVelocity.z);
         speed = Mathf.SmoothStep(speed, actualVelocity2D.magnitude, Time.deltaTime * 20);
     
-        anim.SetFloat("speed", speed, dampTime, Time.deltaTime);
+        anim.SetFloat("speed", speed / PhysicalSpeedScale, dampTime, Time.deltaTime);
     }
     
     public override void Jump(bool hold)

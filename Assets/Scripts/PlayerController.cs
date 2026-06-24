@@ -751,7 +751,12 @@ public class PlayerController : Racer
                     mag = velocityBeforePhysicsUpdate.magnitude;
                 }
             }
-            if (mag > dieThreshold)
+            float scaledDieThreshold = dieThreshold;
+            if (movement.PhysicalSpeedScale > 1f)
+            {
+                scaledDieThreshold *= movement.PhysicalSpeedScale;
+            }
+            if (mag > scaledDieThreshold)
             {
                 Debug.Log(gameObject.name + " hit " + other.gameObject.name + " at " + mag + " m/s and died");
                 Die(false);

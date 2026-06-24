@@ -57,7 +57,7 @@ public class Run : Movement
             if (velocity.magnitude > 0)
             {
                 rb.linearVelocity = new Vector3(velocity.normalized.x * smoothSpeed, rb.linearVelocity.y, velocity.normalized.z * smoothSpeed);
-                smoothSpeed = Mathf.Lerp(smoothSpeed, maxSpeed * boostSpeedScale * permanentSpeedScale, Time.deltaTime);
+                smoothSpeed = Mathf.Lerp(smoothSpeed, maxSpeed * boostSpeedScale * PermanentSpeedScale * PhysicalSpeedScale, Time.deltaTime);
                 // rotate the character mesh if enabled
                 
                 characterMesh.rotation = Quaternion.Lerp(characterMesh.rotation, Quaternion.LookRotation(velocity), Time.deltaTime * rotationSpeed);
@@ -89,7 +89,7 @@ public class Run : Movement
         
         speed = Mathf.SmoothStep(speed, actualVelocity.magnitude, Time.deltaTime * 20);
     
-        anim.SetFloat("speed", speed, dampTime, Time.deltaTime);
+        anim.SetFloat("speed", speed / PhysicalSpeedScale, dampTime, Time.deltaTime);
         anim.SetBool("grounded", grounded);
         //Debug.Log("velocity" + velocity);
     }

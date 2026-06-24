@@ -60,6 +60,8 @@ public class DebugConsole : MonoBehaviour
             new ConsoleCommand("kill",          "instantly kills a racer",                  new CommandArgument[] { new CommandArgument<int>("racerID") },          HandleKillCommand),
             new ConsoleCommand("setspeed",      "multiplies a racer's movement speed",      new CommandArgument[] { new CommandArgument<int>("racerID", 1),
                                                                                             new CommandArgument<float>("speedScale")},                              HandleSetspeedCommand),
+            new ConsoleCommand("setsize",       "multiplies a racer's physical size",       new CommandArgument[] { new CommandArgument<int>("racerID", 1),
+                                                                                            new CommandArgument<float>("sizeScale")},                               HandleSetSizeCommand),
             new ConsoleCommand("equipitem",     "equips and item on a racer",               new CommandArgument[] { new CommandArgument<int>("racerID", 1),
                                                                                             new CommandArgument<string>("itemName")},                               HandleEquipItemCommand),
             new ConsoleCommand("useitem",       "uses an item on a racer immediately",      new CommandArgument[] { new CommandArgument<int>("racerID", 1),
@@ -539,6 +541,20 @@ public class DebugConsole : MonoBehaviour
         }
         target.SetPermanentSpeedScale(speedMultiplier);
         DisplayFeedback(String.Format("Set racer {0}'s speed to {1}x", racerIndex + 1, speedMultiplier));
+        return true;
+    }
+    private bool HandleSetSizeCommand(string[] args)
+    {
+        int racerIndex = Int32.Parse(args[0]) - 1;
+        float sizeMultiplier = Single.Parse(args[1]);
+        Racer target = RaceManager.GetRacerByIndex(racerIndex);
+        if (target == null)
+        {
+            DisplayFeedback(String.Format("Invalid racer ID {0}", racerIndex + 1));
+            return false;
+        }
+        target.transform.localScale = new Vector3(sizeMultiplier, sizeMultiplier, sizeMultiplier);
+        DisplayFeedback(String.Format("Set racer {0}'s size to {1}x", racerIndex + 1, sizeMultiplier));
         return true;
     }
     private bool HandleEquipItemCommand(string[] args)

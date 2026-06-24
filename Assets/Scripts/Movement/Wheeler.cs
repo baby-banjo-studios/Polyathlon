@@ -108,9 +108,9 @@ public class Wheeler : Movement
         
         Vector3 horizontalVel = Vector3.ProjectOnPlane(rb.linearVelocity, Vector3.up);
 
-        if (horizontalVel.magnitude > maxSpeed * BoostSpeedScale * PermanentSpeedScale)
+        if (horizontalVel.magnitude > maxSpeed * BoostSpeedScale * PermanentSpeedScale * PhysicalSpeedScale)
         {
-            Vector3 clampedHorizontal = horizontalVel.normalized * maxSpeed * BoostSpeedScale * PermanentSpeedScale;
+            Vector3 clampedHorizontal = horizontalVel.normalized * maxSpeed * BoostSpeedScale * PermanentSpeedScale * PhysicalSpeedScale;
             rb.linearVelocity = clampedHorizontal + Vector3.up * rb.linearVelocity.y;
         }
 
@@ -153,7 +153,7 @@ public class Wheeler : Movement
                 - Vector3.Cross(pitchAxis, Vector3.up).normalized;
 
             rb.AddForce(
-                driveDir * forward * driveForce * BoostSpeedScale * PermanentSpeedScale,
+                driveDir * forward * driveForce * BoostSpeedScale * PermanentSpeedScale * PhysicalSpeedScale,
                 ForceMode.Force
             );
         }

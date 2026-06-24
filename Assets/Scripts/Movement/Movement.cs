@@ -59,6 +59,7 @@ public abstract class Movement : MonoBehaviour
 
     protected float boostSpeedScale = 1f;
     protected float permanentSpeedScale = 1f;
+    protected float physicalSpeedScale = 1f;
 
     // keep track of these because some movement modes will change these
     private float defaultMass;
@@ -80,6 +81,7 @@ public abstract class Movement : MonoBehaviour
     public bool Grounded { get => grounded; set => grounded = value; }
     public float BoostSpeedScale { get => boostSpeedScale; set => boostSpeedScale = value; }
     public float PermanentSpeedScale { get => permanentSpeedScale; set => permanentSpeedScale = value; }
+    public float PhysicalSpeedScale { get => transform.localScale.x; }
     public CameraController CameraController { get => cameraController; set => cameraController = value; }
     public virtual Vector3 Forward { get => characterMesh.forward; }
     public virtual Vector3 ItemDropPoint { get => itemDropPoint.position; }

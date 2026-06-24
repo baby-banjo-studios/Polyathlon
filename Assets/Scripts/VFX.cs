@@ -8,6 +8,9 @@ public class VFX : MonoBehaviour
     [SerializeField] private RectTransform screenOverlayCanvas;
     [SerializeField] private RectTransform overlayScaleTransform;
     [SerializeField] private RectTransform unscaledOverlayCanvas;
+    [SerializeField] private RectTransform unscaledOCSplitscreenMask;
+    private Vector2 startingOCSplitscreenMaskSizeDelta;
+
     [SerializeField] private RectTransform cameraSpaceCanvas;
     [SerializeField] private Camera playerCam;
     [SerializeField] private Camera vfxCam;
@@ -18,6 +21,11 @@ public class VFX : MonoBehaviour
     [SerializeField] private GameObject targetLockObj;
     private Transform target;
     private bool targeting;
+
+    private void Awake()
+    {
+        startingOCSplitscreenMaskSizeDelta = unscaledOCSplitscreenMask.sizeDelta;
+    }
 
     private void Start()
     {
@@ -76,6 +84,11 @@ public class VFX : MonoBehaviour
         overlayScaleTransform.anchoredPosition = referenceRectTransform.anchoredPosition;
         overlayScaleTransform.localScale = referenceRectTransform.localScale;
         overlayScaleTransform.sizeDelta = referenceRectTransform.sizeDelta;
+    }
+
+    public void SetOverlayMask(int playerIndex, int maxPlayers)
+    {
+        SplitscreenUtility.ScaleTransform(unscaledOCSplitscreenMask, playerIndex, maxPlayers, startingOCSplitscreenMaskSizeDelta);
     }
 
     public void SetSpeedLines(bool enable)

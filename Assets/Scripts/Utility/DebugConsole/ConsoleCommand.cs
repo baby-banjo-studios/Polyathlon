@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using UnityEditor.ShaderKeywordFilter;
 
 public enum CommandReturnCode
 {

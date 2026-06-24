@@ -3769,7 +3769,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
             ]
         },
         {
-            ""name"": ""Greeenscreen"",
+            ""name"": ""Greenscreen"",
             ""id"": ""10032132-0350-4fb1-b0ab-a8f3823682f9"",
             ""actions"": [
                 {
@@ -4642,13 +4642,13 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         // FinishLine
         m_FinishLine = asset.FindActionMap("FinishLine", throwIfNotFound: true);
         m_FinishLine_AnyButton = m_FinishLine.FindAction("AnyButton", throwIfNotFound: true);
-        // Greeenscreen
-        m_Greeenscreen = asset.FindActionMap("Greeenscreen", throwIfNotFound: true);
-        m_Greeenscreen_Move = m_Greeenscreen.FindAction("Move", throwIfNotFound: true);
-        m_Greeenscreen_TakeSnapshot = m_Greeenscreen.FindAction("TakeSnapshot", throwIfNotFound: true);
-        m_Greeenscreen_Scrub = m_Greeenscreen.FindAction("Scrub", throwIfNotFound: true);
-        m_Greeenscreen_SwapTarget = m_Greeenscreen.FindAction("SwapTarget", throwIfNotFound: true);
-        m_Greeenscreen_SwapControl = m_Greeenscreen.FindAction("SwapControl", throwIfNotFound: true);
+        // Greenscreen
+        m_Greenscreen = asset.FindActionMap("Greenscreen", throwIfNotFound: true);
+        m_Greenscreen_Move = m_Greenscreen.FindAction("Move", throwIfNotFound: true);
+        m_Greenscreen_TakeSnapshot = m_Greenscreen.FindAction("TakeSnapshot", throwIfNotFound: true);
+        m_Greenscreen_Scrub = m_Greenscreen.FindAction("Scrub", throwIfNotFound: true);
+        m_Greenscreen_SwapTarget = m_Greenscreen.FindAction("SwapTarget", throwIfNotFound: true);
+        m_Greenscreen_SwapControl = m_Greenscreen.FindAction("SwapControl", throwIfNotFound: true);
         // PhotoMode
         m_PhotoMode = asset.FindActionMap("PhotoMode", throwIfNotFound: true);
         m_PhotoMode_Movement = m_PhotoMode.FindAction("Movement", throwIfNotFound: true);
@@ -4681,7 +4681,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         UnityEngine.Debug.Assert(!m_Debug.enabled, "This will cause a leak and performance issues, InputActions.Debug.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_Driving.enabled, "This will cause a leak and performance issues, InputActions.Driving.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_FinishLine.enabled, "This will cause a leak and performance issues, InputActions.FinishLine.Disable() has not been called.");
-        UnityEngine.Debug.Assert(!m_Greeenscreen.enabled, "This will cause a leak and performance issues, InputActions.Greeenscreen.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_Greenscreen.enabled, "This will cause a leak and performance issues, InputActions.Greenscreen.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_PhotoMode.enabled, "This will cause a leak and performance issues, InputActions.PhotoMode.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_Paused.enabled, "This will cause a leak and performance issues, InputActions.Paused.Disable() has not been called.");
     }
@@ -6384,49 +6384,49 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
     /// </summary>
     public FinishLineActions @FinishLine => new FinishLineActions(this);
 
-    // Greeenscreen
-    private readonly InputActionMap m_Greeenscreen;
-    private List<IGreeenscreenActions> m_GreeenscreenActionsCallbackInterfaces = new List<IGreeenscreenActions>();
-    private readonly InputAction m_Greeenscreen_Move;
-    private readonly InputAction m_Greeenscreen_TakeSnapshot;
-    private readonly InputAction m_Greeenscreen_Scrub;
-    private readonly InputAction m_Greeenscreen_SwapTarget;
-    private readonly InputAction m_Greeenscreen_SwapControl;
+    // Greenscreen
+    private readonly InputActionMap m_Greenscreen;
+    private List<IGreenscreenActions> m_GreenscreenActionsCallbackInterfaces = new List<IGreenscreenActions>();
+    private readonly InputAction m_Greenscreen_Move;
+    private readonly InputAction m_Greenscreen_TakeSnapshot;
+    private readonly InputAction m_Greenscreen_Scrub;
+    private readonly InputAction m_Greenscreen_SwapTarget;
+    private readonly InputAction m_Greenscreen_SwapControl;
     /// <summary>
-    /// Provides access to input actions defined in input action map "Greeenscreen".
+    /// Provides access to input actions defined in input action map "Greenscreen".
     /// </summary>
-    public struct GreeenscreenActions
+    public struct GreenscreenActions
     {
         private @InputActions m_Wrapper;
 
         /// <summary>
         /// Construct a new instance of the input action map wrapper class.
         /// </summary>
-        public GreeenscreenActions(@InputActions wrapper) { m_Wrapper = wrapper; }
+        public GreenscreenActions(@InputActions wrapper) { m_Wrapper = wrapper; }
         /// <summary>
-        /// Provides access to the underlying input action "Greeenscreen/Move".
+        /// Provides access to the underlying input action "Greenscreen/Move".
         /// </summary>
-        public InputAction @Move => m_Wrapper.m_Greeenscreen_Move;
+        public InputAction @Move => m_Wrapper.m_Greenscreen_Move;
         /// <summary>
-        /// Provides access to the underlying input action "Greeenscreen/TakeSnapshot".
+        /// Provides access to the underlying input action "Greenscreen/TakeSnapshot".
         /// </summary>
-        public InputAction @TakeSnapshot => m_Wrapper.m_Greeenscreen_TakeSnapshot;
+        public InputAction @TakeSnapshot => m_Wrapper.m_Greenscreen_TakeSnapshot;
         /// <summary>
-        /// Provides access to the underlying input action "Greeenscreen/Scrub".
+        /// Provides access to the underlying input action "Greenscreen/Scrub".
         /// </summary>
-        public InputAction @Scrub => m_Wrapper.m_Greeenscreen_Scrub;
+        public InputAction @Scrub => m_Wrapper.m_Greenscreen_Scrub;
         /// <summary>
-        /// Provides access to the underlying input action "Greeenscreen/SwapTarget".
+        /// Provides access to the underlying input action "Greenscreen/SwapTarget".
         /// </summary>
-        public InputAction @SwapTarget => m_Wrapper.m_Greeenscreen_SwapTarget;
+        public InputAction @SwapTarget => m_Wrapper.m_Greenscreen_SwapTarget;
         /// <summary>
-        /// Provides access to the underlying input action "Greeenscreen/SwapControl".
+        /// Provides access to the underlying input action "Greenscreen/SwapControl".
         /// </summary>
-        public InputAction @SwapControl => m_Wrapper.m_Greeenscreen_SwapControl;
+        public InputAction @SwapControl => m_Wrapper.m_Greenscreen_SwapControl;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
-        public InputActionMap Get() { return m_Wrapper.m_Greeenscreen; }
+        public InputActionMap Get() { return m_Wrapper.m_Greenscreen; }
         /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
         public void Enable() { Get().Enable(); }
         /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
@@ -6434,9 +6434,9 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
         public bool enabled => Get().enabled;
         /// <summary>
-        /// Implicitly converts an <see ref="GreeenscreenActions" /> to an <see ref="InputActionMap" /> instance.
+        /// Implicitly converts an <see ref="GreenscreenActions" /> to an <see ref="InputActionMap" /> instance.
         /// </summary>
-        public static implicit operator InputActionMap(GreeenscreenActions set) { return set.Get(); }
+        public static implicit operator InputActionMap(GreenscreenActions set) { return set.Get(); }
         /// <summary>
         /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
         /// </summary>
@@ -6444,11 +6444,11 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         /// <remarks>
         /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
         /// </remarks>
-        /// <seealso cref="GreeenscreenActions" />
-        public void AddCallbacks(IGreeenscreenActions instance)
+        /// <seealso cref="GreenscreenActions" />
+        public void AddCallbacks(IGreenscreenActions instance)
         {
-            if (instance == null || m_Wrapper.m_GreeenscreenActionsCallbackInterfaces.Contains(instance)) return;
-            m_Wrapper.m_GreeenscreenActionsCallbackInterfaces.Add(instance);
+            if (instance == null || m_Wrapper.m_GreenscreenActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_GreenscreenActionsCallbackInterfaces.Add(instance);
             @Move.started += instance.OnMove;
             @Move.performed += instance.OnMove;
             @Move.canceled += instance.OnMove;
@@ -6472,8 +6472,8 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         /// <remarks>
         /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
         /// </remarks>
-        /// <seealso cref="GreeenscreenActions" />
-        private void UnregisterCallbacks(IGreeenscreenActions instance)
+        /// <seealso cref="GreenscreenActions" />
+        private void UnregisterCallbacks(IGreenscreenActions instance)
         {
             @Move.started -= instance.OnMove;
             @Move.performed -= instance.OnMove;
@@ -6493,12 +6493,12 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         }
 
         /// <summary>
-        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="GreeenscreenActions.UnregisterCallbacks(IGreeenscreenActions)" />.
+        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="GreenscreenActions.UnregisterCallbacks(IGreenscreenActions)" />.
         /// </summary>
-        /// <seealso cref="GreeenscreenActions.UnregisterCallbacks(IGreeenscreenActions)" />
-        public void RemoveCallbacks(IGreeenscreenActions instance)
+        /// <seealso cref="GreenscreenActions.UnregisterCallbacks(IGreenscreenActions)" />
+        public void RemoveCallbacks(IGreenscreenActions instance)
         {
-            if (m_Wrapper.m_GreeenscreenActionsCallbackInterfaces.Remove(instance))
+            if (m_Wrapper.m_GreenscreenActionsCallbackInterfaces.Remove(instance))
                 UnregisterCallbacks(instance);
         }
 
@@ -6508,21 +6508,21 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         /// <remarks>
         /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
         /// </remarks>
-        /// <seealso cref="GreeenscreenActions.AddCallbacks(IGreeenscreenActions)" />
-        /// <seealso cref="GreeenscreenActions.RemoveCallbacks(IGreeenscreenActions)" />
-        /// <seealso cref="GreeenscreenActions.UnregisterCallbacks(IGreeenscreenActions)" />
-        public void SetCallbacks(IGreeenscreenActions instance)
+        /// <seealso cref="GreenscreenActions.AddCallbacks(IGreenscreenActions)" />
+        /// <seealso cref="GreenscreenActions.RemoveCallbacks(IGreenscreenActions)" />
+        /// <seealso cref="GreenscreenActions.UnregisterCallbacks(IGreenscreenActions)" />
+        public void SetCallbacks(IGreenscreenActions instance)
         {
-            foreach (var item in m_Wrapper.m_GreeenscreenActionsCallbackInterfaces)
+            foreach (var item in m_Wrapper.m_GreenscreenActionsCallbackInterfaces)
                 UnregisterCallbacks(item);
-            m_Wrapper.m_GreeenscreenActionsCallbackInterfaces.Clear();
+            m_Wrapper.m_GreenscreenActionsCallbackInterfaces.Clear();
             AddCallbacks(instance);
         }
     }
     /// <summary>
-    /// Provides a new <see cref="GreeenscreenActions" /> instance referencing this action map.
+    /// Provides a new <see cref="GreenscreenActions" /> instance referencing this action map.
     /// </summary>
-    public GreeenscreenActions @Greeenscreen => new GreeenscreenActions(this);
+    public GreenscreenActions @Greenscreen => new GreenscreenActions(this);
 
     // PhotoMode
     private readonly InputActionMap m_PhotoMode;
@@ -7392,11 +7392,11 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         void OnAnyButton(InputAction.CallbackContext context);
     }
     /// <summary>
-    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Greeenscreen" which allows adding and removing callbacks.
+    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Greenscreen" which allows adding and removing callbacks.
     /// </summary>
-    /// <seealso cref="GreeenscreenActions.AddCallbacks(IGreeenscreenActions)" />
-    /// <seealso cref="GreeenscreenActions.RemoveCallbacks(IGreeenscreenActions)" />
-    public interface IGreeenscreenActions
+    /// <seealso cref="GreenscreenActions.AddCallbacks(IGreenscreenActions)" />
+    /// <seealso cref="GreenscreenActions.RemoveCallbacks(IGreenscreenActions)" />
+    public interface IGreenscreenActions
     {
         /// <summary>
         /// Method invoked when associated input action "Move" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.

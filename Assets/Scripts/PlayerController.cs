@@ -566,7 +566,7 @@ public class PlayerController : Racer
     {
         // Enable FinishLine action map
         // Watch this index when adding new movement modes!
-        playerInput.currentActionMap = playerInput.actions.actionMaps[9];
+        playerInput.currentActionMap = playerInput.actions.FindActionMap("FinishLine");
     }
 
     /*  updates player's movement mode and maxSpeed/locomotion accordingly */
@@ -627,7 +627,7 @@ public class PlayerController : Racer
                     }
                     if (isPlayerInControl)
                     {
-                        playerInput.currentActionMap = playerInput.actions.actionMaps[11];  // Paused
+                        playerInput.currentActionMap = playerInput.actions.FindActionMap("Paused");  // Paused
                     }
                     ui.SetGameHUD(true);
                     EnablePhotoMode(false);
@@ -683,7 +683,7 @@ public class PlayerController : Racer
             photoModeController.SetActive(true);
             photoModeController.SetStartingPosition(cameraController);
             photoModeController.SetControlScheme(playerInput);
-            playerInput.currentActionMap = playerInput.actions.actionMaps[11];  // Greenscreen
+            playerInput.currentActionMap = playerInput.actions.FindActionMap("Greenscreen");
             cameraController.gameObject.SetActive(false);
         }
         else

@@ -52,8 +52,9 @@ public class DebugConsole : MonoBehaviour
         // create command definitions
         availableCommands = new List<ConsoleCommand>
         {
-            new ConsoleCommand("help",          "displays useful info about a command",     new CommandArgument[] { new CommandArgument<string>("command", "") }, HandleHelpCommand),
+            new ConsoleCommand("help",          "displays useful info about a command",     new CommandArgument[] { new CommandArgument<string>("command", "") },   HandleHelpCommand),
             new ConsoleCommand("list",          "lists all available commands",             new CommandArgument[] { },                                              HandleListCommand),
+            new ConsoleCommand("listracers",    "lists all available racer IDs and names",  new CommandArgument[] { },                                              HandleListRacersCommand),
             new ConsoleCommand("noclip",        "disables all collision on a player",       new CommandArgument[] { new CommandArgument<int>("playerID", 1) },      HandleNoclipCommand),
             new ConsoleCommand("god",           "makes a player invincible",                new CommandArgument[] { new CommandArgument<int>("playerID", 1) },      HandleGodCommand),
             new ConsoleCommand("kill",          "instantly kills a racer",                  new CommandArgument[] { new CommandArgument<int>("racerID") },          HandleKillCommand),
@@ -441,6 +442,28 @@ public class DebugConsole : MonoBehaviour
         foreach (ConsoleCommand command in availableCommands)
         {
             DisplayFeedback(String.Format("- {0}", command.name));
+        }
+        return true;
+    }
+
+    private bool HandleListRacersCommand(string[] args)
+    {
+        DisplayFeedback("Current racers:");
+        // list players first
+        foreach (Racer racer in RaceManager.GetListOfRacers())
+        {
+            if (racer is PlayerController)
+            {
+                DisplayFeedback(String.Format("- {0,2}: {1}", racer.racerID, racer.name));
+            }
+        }
+        // list NPCs next
+        foreach (Racer racer in RaceManager.GetListOfRacers())
+        {
+            if (racer is NPC)
+            {
+                DisplayFeedback(String.Format("- {0,2}: {1}", racer.racerID, racer.name));
+            }
         }
         return true;
     }

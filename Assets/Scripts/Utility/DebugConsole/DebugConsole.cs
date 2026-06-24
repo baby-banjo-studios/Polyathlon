@@ -228,7 +228,7 @@ public class DebugConsole : MonoBehaviour
                                     {
                                         foreach (ItemRegistry registry in allItems.GetAllItems())
                                         {
-                                            string itemCommandName = registry.name.Replace(" ", "");
+                                            string itemCommandName = registry.name.ToLower().Replace(" ", "");
                                             if (itemCommandName.StartsWith(partialArgument, StringComparison.OrdinalIgnoreCase))
                                             {
                                                 autocompleteOptions.Add(itemCommandName);
@@ -354,7 +354,7 @@ public class DebugConsole : MonoBehaviour
         string[] commandToks = commandString.Split(' ');
         if (commandToks.Length > 0)
         {
-            string commandName = commandToks[0];
+            string commandName = commandToks[0].ToLower();
             if (availableCommandsLookup.TryGetValue(commandName, out ConsoleCommand command))
             {
                 CommandReturnCode returnCode = command.Execute(commandToks[1..]);

@@ -57,7 +57,8 @@ public abstract class Movement : MonoBehaviour
     protected Vector3 smoothSpeedDirection;
     protected const float dampTime = 0.05f; // reduce jittering in animator by providing dampening
 
-    protected float bonusSpeed = 1f;
+    protected float boostSpeedScale = 1f;
+    protected float permanentSpeedScale = 1f;
 
     // keep track of these because some movement modes will change these
     private float defaultMass;
@@ -77,7 +78,8 @@ public abstract class Movement : MonoBehaviour
     public Vector3 Velocity { get => actualVelocity; set => velocity = value; }
     public bool Falling { get => falling; set => falling = value; } 
     public bool Grounded { get => grounded; set => grounded = value; }
-    public float BonusSpeed { get => bonusSpeed; set => bonusSpeed = value; }
+    public float BoostSpeedScale { get => boostSpeedScale; set => boostSpeedScale = value; }
+    public float PermanentSpeedScale { get => permanentSpeedScale; set => permanentSpeedScale = value; }
     public CameraController CameraController { get => cameraController; set => cameraController = value; }
     public virtual Vector3 Forward { get => characterMesh.forward; }
     public virtual Vector3 ItemDropPoint { get => itemDropPoint.position; }

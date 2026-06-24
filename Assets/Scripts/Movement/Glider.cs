@@ -91,7 +91,7 @@ public class Glider : Movement
                 if (smoothSpeed > maxSpeed)
                     smoothSpeed = smoothSpeed * Mathf.Max(Vector3.Dot(smoothSpeedDirection, velocity.normalized), 0);
                 rb.linearVelocity = new Vector3(velocity.normalized.x * smoothSpeed, racer is NPC ? 0 : rb.linearVelocity.y, velocity.normalized.z * smoothSpeed);
-                smoothSpeed = Mathf.Lerp(smoothSpeed, maxSpeed * bonusSpeed, Time.deltaTime);
+                smoothSpeed = Mathf.Lerp(smoothSpeed, maxSpeed * boostSpeedScale * permanentSpeedScale, Time.deltaTime);
                 // rotate the character mesh if enabled
                 
                 characterMesh.rotation = Quaternion.Lerp(characterMesh.rotation, Quaternion.LookRotation(velocity), Time.deltaTime * rotationSpeed);

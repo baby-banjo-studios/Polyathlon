@@ -31,6 +31,7 @@ public class Racer : MonoBehaviour
     protected bool dead;
     protected bool canRevive; // when this is true, a dead racer can be revived.
     public bool invincible = false;
+    protected float permanentSpeedScale = 1f;
 
     protected Coroutine boostCoroutine;
     protected float remainingBoostTime = 0f;
@@ -187,7 +188,9 @@ public class Racer : MonoBehaviour
                 
             }
             movement.enabled = true;
+            movement.PermanentSpeedScale = permanentSpeedScale;
             animEvents.movement = movement;
+            anim.speed = movement.PermanentSpeedScale;
             anim.SetInteger("movement_mode", (int)movementMode % 6);
         }
     }
@@ -321,14 +324,15 @@ public class Racer : MonoBehaviour
 
     public virtual void SetPermanentSpeedScale(float magnitude)
     {
-        movement.BonusSpeed = magnitude;
+        permanentSpeedScale = magnitude;
+        movement.PermanentSpeedScale = permanentSpeedScale;
         anim.speed = magnitude;
     }
 
     protected virtual IEnumerator SpeedBoostCoroutine(float magnitude)
     {
-        movement.BonusSpeed = magnitude;
-        anim.speed = magnitude;
+        movement.BoostSpeedScale = magnitude;
+        anim.speed = movement.BoostSpeedScale * movement.PermanentSpeedScale;
 
         // Continue looping as long as there is time left
         while (remainingBoostTime > 0)
@@ -338,8 +342,8 @@ public class Racer : MonoBehaviour
         }
 
         // Reset values once the total accumulated time is up
-        movement.BonusSpeed = 1f;
-        anim.speed = 1f;
+        movement.BoostSpeedScale = 1f;
+        anim.speed = movement.PermanentSpeedScale;
         
         remainingBoostTime = 0f;
         boostCoroutine = null;

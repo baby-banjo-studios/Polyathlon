@@ -154,10 +154,10 @@ public class NPC : Racer
         {
             if (movementMode == Movement.Mode.Running || movementMode == Movement.Mode.Jetpacking && movement.Grounded)
             {
-                if (movement.BonusSpeed == 1)
+                if (movement.BoostSpeedScale == 1 && movement.PermanentSpeedScale == 1)
                     rb.linearVelocity = Vector3.ClampMagnitude(rb.linearVelocity, 20);
             }
-            else if (movementMode == Movement.Mode.Biking && movement.BonusSpeed == 1)
+            else if (movementMode == Movement.Mode.Biking && movement.BoostSpeedScale == 1 && movement.PermanentSpeedScale == 1)
             {
                 rb.linearVelocity = Vector3.ClampMagnitude(rb.linearVelocity, 50);
             }
@@ -278,7 +278,7 @@ public class NPC : Racer
 
     protected override IEnumerator SpeedBoostCoroutine(float magnitude)
     {
-        movement.BonusSpeed = magnitude;
+        movement.BoostSpeedScale = magnitude;
         anim.speed = magnitude;
         agent.speed = agentSpeed * magnitude;
 
@@ -289,7 +289,7 @@ public class NPC : Racer
         }
 
         // reset everything
-        movement.BonusSpeed = 1f;
+        movement.BoostSpeedScale = 1f;
         anim.speed = 1f;
         agent.speed = agentSpeed;
         remainingBoostTime = 0f;

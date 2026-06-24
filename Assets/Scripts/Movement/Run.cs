@@ -57,7 +57,7 @@ public class Run : Movement
             if (velocity.magnitude > 0)
             {
                 rb.linearVelocity = new Vector3(velocity.normalized.x * smoothSpeed, rb.linearVelocity.y, velocity.normalized.z * smoothSpeed);
-                smoothSpeed = Mathf.Lerp(smoothSpeed, maxSpeed * bonusSpeed, Time.deltaTime);
+                smoothSpeed = Mathf.Lerp(smoothSpeed, maxSpeed * boostSpeedScale * permanentSpeedScale, Time.deltaTime);
                 // rotate the character mesh if enabled
                 
                 characterMesh.rotation = Quaternion.Lerp(characterMesh.rotation, Quaternion.LookRotation(velocity), Time.deltaTime * rotationSpeed);

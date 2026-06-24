@@ -122,7 +122,7 @@ public class Jetpack : Movement
                 if (smoothSpeed > maxSpeed)
                     smoothSpeed = smoothSpeed * Mathf.Max(Vector3.Dot(smoothSpeedDirection, velocity.normalized), 0);
                 rb.linearVelocity = new Vector3(velocity.normalized.x * smoothSpeed, rb.linearVelocity.y, velocity.normalized.z * smoothSpeed);
-                smoothSpeed = Mathf.Lerp(smoothSpeed, maxSpeed * bonusSpeed, Time.deltaTime);
+                smoothSpeed = Mathf.Lerp(smoothSpeed, maxSpeed * boostSpeedScale * permanentSpeedScale, Time.deltaTime);
                 // rotate the character mesh if enabled
                 
                 characterMesh.rotation = Quaternion.Lerp(characterMesh.rotation, Quaternion.LookRotation(velocity), Time.deltaTime * rotationSpeed);
@@ -200,8 +200,8 @@ public class Jetpack : Movement
         // INTERRUPTABLE: if fireJetpack is false, exit
         while(fireJetpack && !racer.IsDead())
         {
-            rb.AddForce(racer.BackpackMount.jetpack.transform.transform.up * jetpackForce * Time.deltaTime * bonusSpeed);
-            Vector3 clampedVelocity = Vector3.ClampMagnitude(rb.linearVelocity, jetpackSpeed * bonusSpeed);
+            rb.AddForce(racer.BackpackMount.jetpack.transform.transform.up * jetpackForce * Time.deltaTime * boostSpeedScale * permanentSpeedScale);
+            Vector3 clampedVelocity = Vector3.ClampMagnitude(rb.linearVelocity, jetpackSpeed * boostSpeedScale * permanentSpeedScale);
             if (launched)
             {
                 if (launchElapsedTime > launchDuration)

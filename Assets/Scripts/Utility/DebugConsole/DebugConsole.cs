@@ -553,6 +553,11 @@ public class DebugConsole : MonoBehaviour
             DisplayFeedback(String.Format("Invalid racer ID {0}", racerIndex + 1));
             return false;
         }
+        if (sizeMultiplier <= 0)
+        {
+            DisplayFeedback(String.Format("Invalid size {0}. Size must be greater than 0.", sizeMultiplier));
+            return false;
+        }
         target.transform.localScale = new Vector3(sizeMultiplier, sizeMultiplier, sizeMultiplier);
         DisplayFeedback(String.Format("Set racer {0}'s size to {1}x", racerIndex + 1, sizeMultiplier));
         return true;

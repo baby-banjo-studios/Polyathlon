@@ -405,7 +405,58 @@ public class PlayerController : Racer
         }
     }
 
-    
+    public void OnDebugConsoleOpen(InputAction.CallbackContext ctx)
+    {
+        if (RaceManager.CurrentGameState == GameState.Normal || RaceManager.CurrentGameState == GameState.DebugConsole)
+        {
+            if (ctx.performed)
+            {
+                RaceManager.ToggleDebugConsole(this);
+            }
+        }
+    }
+
+    public void OnNoclipMovement(InputAction.CallbackContext ctx)
+    {
+        if (canMove && !RaceManager.IsPaused)
+        {
+            if (ctx.performed)
+                move = ctx.ReadValue<Vector2>();
+            else if (ctx.canceled)
+                move = Vector2.zero;
+        }
+    }
+
+    public void OnNoclipLook(InputAction.CallbackContext ctx)
+    {
+        if (canLook && !RaceManager.IsPaused)
+        {
+            if (ctx.performed)
+                look = ctx.ReadValue<Vector2>() * (ctx.control.device is Gamepad ? Time.deltaTime * gamepadLookSensititvity : keyboardSchemeSensitivity);
+            else if (ctx.canceled)
+                look = Vector2.zero;
+        }
+    }
+    public void OnNoclipUp(InputAction.CallbackContext ctx)
+    {
+        if (canMove && !RaceManager.IsPaused)
+        {
+            if (ctx.performed)
+                moveUp = ctx.ReadValue<float>();
+            else if (ctx.canceled)
+                moveUp = 0f;
+        }
+    }
+    public void OnNoclipDown(InputAction.CallbackContext ctx)
+    {
+        if (canMove && !RaceManager.IsPaused)
+        {
+            if (ctx.performed)
+                moveDown = ctx.ReadValue<float>();
+            else if (ctx.canceled)
+                moveDown = 0f;
+        }
+    }
 
     protected override void Awake() 
     {
@@ -420,7 +471,14 @@ public class PlayerController : Racer
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         keyboardSchemeSensitivity = mouseLookSensisitivity;
-        controlScheme = ((InputControlScheme)playerInput.user.controlScheme).name == "Gamepad" ? ControlScheme.Gamepad : ControlScheme.Keyboard;
+        if (playerInput.user.controlScheme == null)
+        {
+            controlScheme = ControlScheme.Gamepad;  // have to default to Gamepad here, can't have >1 Keyboard
+        }
+        else
+        {
+            controlScheme = ((InputControlScheme)playerInput.user.controlScheme).name == "Gamepad" ? ControlScheme.Gamepad : ControlScheme.Keyboard;
+        }
     }
 
     protected override void Start() 
@@ -508,7 +566,7 @@ public class PlayerController : Racer
     {
         // Enable FinishLine action map
         // Watch this index when adding new movement modes!
-        playerInput.currentActionMap = playerInput.actions.actionMaps[9];
+        playerInput.currentActionMap = playerInput.actions.FindActionMap("FinishLine");
     }
 
     /*  updates player's movement mode and maxSpeed/locomotion accordingly */
@@ -517,6 +575,10 @@ public class PlayerController : Racer
         Vector2 movePreserve = move;
         base.SetMovementMode(mode, initial);
         playerInput.currentActionMap = playerInput.actions.actionMaps[(int)mode];
+        if (controlScheme == ControlScheme.Keyboard)
+        {
+            playerInput.actions.FindActionMap("Debug").Enable();
+        }
         Debug.Log("currentActionMap " + playerInput.currentActionMap);
         move = movePreserve;
     }
@@ -531,7 +593,7 @@ public class PlayerController : Racer
         vfx.SetTarget(target);
     }
 
-    public void SetPlayerIndex(int playerIndex, int maxPlayers)
+    public void RedrawPlayerUI(int playerIndex, int maxPlayers)
     {
         ui.SetScale(playerIndex, maxPlayers);
         cameraController.SetScale(playerIndex, maxPlayers);
@@ -550,6 +612,7 @@ public class PlayerController : Racer
                     }
                     ui.SetGameHUD(true);
                     ui.SetPauseMenu(false);
+                    ui.SetDebugConsole(false);
                     EnablePhotoMode(false);
                     Cursor.visible = false;
                     Cursor.lockState = CursorLockMode.Locked;
@@ -564,11 +627,12 @@ public class PlayerController : Racer
                     }
                     if (isPlayerInControl)
                     {
-                        playerInput.currentActionMap = playerInput.actions.actionMaps[11];  // Paused
+                        playerInput.currentActionMap = playerInput.actions.FindActionMap("Paused");  // Paused
                     }
                     ui.SetGameHUD(true);
                     EnablePhotoMode(false);
                     ui.SetPauseMenu(isPlayerInControl);
+                    ui.SetDebugConsole(false);
                     if (controlScheme == ControlScheme.Keyboard)
                     {
                         if (isPlayerInControl)
@@ -590,7 +654,19 @@ public class PlayerController : Racer
                 {
                     ui.SetGameHUD(false);
                     ui.SetPauseMenu(false);
+                    ui.SetDebugConsole(false);
                     EnablePhotoMode(isPlayerInControl);
+                    Cursor.visible = false;
+                    Cursor.lockState = CursorLockMode.Locked;
+                    Cursor.visible = false;
+                }
+                break;
+            case GameState.DebugConsole:
+                {
+                    ui.SetGameHUD(false);
+                    ui.SetPauseMenu(false);
+                    ui.SetDebugConsole(isPlayerInControl);
+                    EnablePhotoMode(false);
                     Cursor.visible = false;
                     Cursor.lockState = CursorLockMode.Locked;
                     Cursor.visible = false;
@@ -607,7 +683,7 @@ public class PlayerController : Racer
             photoModeController.SetActive(true);
             photoModeController.SetStartingPosition(cameraController);
             photoModeController.SetControlScheme(playerInput);
-            playerInput.currentActionMap = playerInput.actions.actionMaps[11];  // Greenscreen
+            playerInput.currentActionMap = playerInput.actions.FindActionMap("Greenscreen");
             cameraController.gameObject.SetActive(false);
         }
         else
@@ -632,11 +708,14 @@ public class PlayerController : Racer
 
     public override void Die(bool emphasizeTorso, Vector3 newMomentum = default(Vector3))
     {
-        base.Die(emphasizeTorso, newMomentum);
-        Debug.Log("die");
-        // Have the camera start following the ragdoll
-        cameraController.StartFollowingRagdoll();
-        vfx.ShowDamage();
+        if (!invincible)
+        {
+            base.Die(emphasizeTorso, newMomentum);
+            Debug.Log("die");
+            // Have the camera start following the ragdoll
+            cameraController.StartFollowingRagdoll();
+            vfx.ShowDamage();
+        }
     }
 
     public override void Revive(bool forceRevive = false)
@@ -672,7 +751,12 @@ public class PlayerController : Racer
                     mag = velocityBeforePhysicsUpdate.magnitude;
                 }
             }
-            if (mag > dieThreshold)
+            float scaledDieThreshold = dieThreshold;
+            if (movement.PhysicalSpeedScale > 1f)
+            {
+                scaledDieThreshold *= movement.PhysicalSpeedScale;
+            }
+            if (mag > scaledDieThreshold)
             {
                 Debug.Log(gameObject.name + " hit " + other.gameObject.name + " at " + mag + " m/s and died");
                 Die(false);

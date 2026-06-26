@@ -11,7 +11,8 @@ public enum GameState
 {
     Normal,
     Paused,
-    PhotoMode
+    PhotoMode,
+    DebugConsole
 }
 
 public class RaceManager : MonoBehaviour
@@ -27,12 +28,16 @@ public class RaceManager : MonoBehaviour
     private float elapsedTime;
     private GameState gameState;
     private PlayerController playerWhoPausedTheGame = null;
+    private PlayerController playerWhoOpenedDebugConsole = null;
     private PhotoModeController photoModeController;
     private bool isRaceActive = false;
     private static bool canLoadMenu = true;
 
-    private Racer[] racers;
+    private List<Racer> racers;
     private List<PlayerController> playerControllers;
+    public static int NumRacers { get => instance.racers.Count; }
+    public static int NumPlayers { get => instance.racers.OfType<PlayerController>().Count(); }
+    public static int NumNPCs { get => instance.racers.OfType<NPC>().Count(); }
     private int racersAlreadyFinished;
     private int realPlayersInRace;
 
@@ -51,10 +56,10 @@ public class RaceManager : MonoBehaviour
     public static float ElapsedTime { get => instance.elapsedTime; }
     public static bool IsRaceActive { get => instance.isRaceActive; }
     public static GameState CurrentGameState { get => instance.gameState; }
-    public static bool IsPaused { get => instance.gameState == GameState.Paused; }
+    public static bool IsPaused { get => instance.gameState == GameState.Paused || instance.gameState == GameState.DebugConsole; }
     public static bool IsPhotoMode { get => instance.gameState == GameState.PhotoMode; }
     public static PhotoModeController PhotoModeController { get => instance.photoModeController; }
-    public GameObject raceCourseTester;
+    public RaceSettings defaultSettings;
     public bool dontAddRacers = false; // use this for non-racing test scenes
     [SerializeField]
     private bool isTrainingCourse = false;
@@ -86,16 +91,22 @@ public class RaceManager : MonoBehaviour
             Debug.LogWarning("Photo Mode Controller not found, players will not be able to enter photo mode");
         }
 
+        racers = new List<Racer>();
+        playerControllers = new List<PlayerController>();
+
+        raceSettings = FindAnyObjectByType<RaceSettings>();
+        if (raceSettings == null)
+        {
+            Debug.Log("RaceSettings not found, instantiating a race settings for testing!");
+            raceSettings = Instantiate(defaultSettings).GetComponent<RaceSettings>();
+        }
+    }
+
+    private void SpawnPlayers()
+    {
         if (!dontAddRacers)
         {
             // race starter code
-            raceSettings = FindAnyObjectByType<RaceSettings>();
-            if (raceSettings == null)
-            {
-                Debug.Log("RaceSettings not found, instantiating a race settings for testing!");
-                raceSettings = Instantiate(raceCourseTester).GetComponentInChildren<RaceSettings>();
-            }
-
             testRun = raceSettings.testSettings;
 
             // get all the starting positions
@@ -113,13 +124,7 @@ public class RaceManager : MonoBehaviour
                 npcChoices = raceSettings.GetNPCChoices();
                 for (int i = 0; i < npcChoices.Count; i++)
                 {
-                    Racer racer = Instantiate(npcChoices[i].npcObj, startingPositions[i].position, startingPositions[i].rotation).GetComponent<Racer>();
-                    // Change movement mode of NPCs if necessary
-                    if (SceneManager.GetActiveScene().name == "Course 2")
-                    {
-                        racer.movementMode = Movement.Mode.GetOffTheBoat;
-                    }
-                    racer.name = npcChoices[i].displayName;
+                    AddNPC(npcChoices[i], i);
                 }
             }
             // Next instantiate the players
@@ -128,22 +133,7 @@ public class RaceManager : MonoBehaviour
                 List<RaceSettings.PlayerChoice> playerChoices = raceSettings.PlayerChoices;
                 for (int i = 0; i < playerChoices.Count; i++)
                 {
-                    PlayerInput newPlayer = PlayerInput.Instantiate(playerChoices[i].character.playerObj, playerChoices[i].playerNumber,
-                                                                    playerChoices[i].controlScheme.ToString(), -1, playerChoices[i].inputDevices);
-                    newPlayer.transform.position = startingPositions[i + npcChoices.Count].position;
-                    newPlayer.transform.rotation = startingPositions[i + npcChoices.Count].rotation;
-
-                    PlayerController playerRacer = newPlayer.GetComponent<PlayerController>();
-                    playerRacer.name = playerChoices[i].character.displayName + " (P" + (playerChoices[i].playerNumber + 1) + ")";
-                    playerRacer.SetPlayerNumber(playerChoices[i].playerNumber);
-                    playerRacer.SetPlayerIndex(i, playerChoices.Count);
-                    //newPlayer.GetComponentInChildren<UI>().SetScale(i, playerChoices.Count);
-
-                    // remove excess audio listeners
-                    if (i > 0)
-                    {
-                        Destroy(newPlayer.GetComponentInChildren<AudioListener>());
-                    }
+                    AddPlayer(playerChoices[i], i);
                 }
                 // activate dummy camera for 3 player splitscreen
                 ShowDummyUI(true);
@@ -151,31 +141,129 @@ public class RaceManager : MonoBehaviour
             }
             else
             {
-                Transform testPlayer = raceSettings.testCharacterGameObject.transform;
-                testPlayer.position = startingPositions[npcChoices.Count].position;
-                testPlayer.rotation = startingPositions[npcChoices.Count].rotation;
+                RaceSettings.PlayerChoice choice = new RaceSettings.PlayerChoice(0, 
+                                                                                 RaceSettings.instance.defaultCharacterRegistry,
+                                                                                 ControlScheme.Keyboard,
+                                                                                 new InputDevice[] { Keyboard.current, Mouse.current });    // TODD get actual device here
+                AddPlayer(choice, 0);
                 realPlayersInRace = 1;
 
             }
             //Destroy(raceSettings.gameObject);
         }
+        else
+        {
+            // test scene - player game object exists but need to initialize
+            PlayerController firstPlayer = FindFirstObjectByType<PlayerController>();
+            if (firstPlayer != null)
+            {
+                InitializePlayer(firstPlayer, "Test Player", 0);
+            }
+            foreach (NPC npc in FindObjectsByType<NPC>(FindObjectsSortMode.None))
+            {
+                racers.Add(npc);
+            }
+        }
+
+        ReassignRacerIDs();
+    }
+
+    public static bool AddDummyPlayer()
+    {
+        int nextPlayerIdx = NumPlayers;
+        if (nextPlayerIdx >= 4)
+        {
+            return false;
+        }
+        RaceSettings.PlayerChoice choice = new RaceSettings.PlayerChoice(nextPlayerIdx, 
+                                                                        RaceSettings.instance.defaultCharacterRegistry,
+                                                                        ControlScheme.Gamepad,  // keyboard breaks pause controls, default to Gamepad
+                                                                        new InputDevice[] { });
+        PlayerController newPlayer = instance.AddPlayer(choice, nextPlayerIdx);
+        if (instance.chain != null)
+        {
+            newPlayer.nextCheckpoint = instance.chain.GetFirstCheckpoint();
+        }
+        instance.ReassignRacerIDs();
+        return true;
+    }
+
+    private PlayerController AddPlayer(RaceSettings.PlayerChoice playerChoice, int playerIndex)
+    {
+        PlayerInput playerInput = PlayerInput.Instantiate(playerChoice.character.playerObj, playerChoice.playerNumber,
+                                                          playerChoice.controlScheme.ToString(), -1, playerChoice.inputDevices);
+        PlayerController playerController = playerInput.GetComponent<PlayerController>();
+
+        if (startingPositions != null)
+        {
+            int positionIndex = (playerIndex + NumNPCs) % startingPositions.Length; // wraparound in case we add too many players
+            playerController.transform.position = startingPositions[positionIndex].position;
+            playerController.transform.rotation = startingPositions[positionIndex].rotation;
+        }
+        else if (racers.Count > 0)
+        {
+            Transform origin = racers[0].transform;
+            playerController.transform.position = origin.position - origin.forward * 2f + origin.up * 1f;
+            playerController.transform.rotation = origin.rotation; 
+        }
+
+        InitializePlayer(playerController, playerChoice.character.displayName, playerIndex);
+        return playerController;
+    }
+
+    private void InitializePlayer(PlayerController playerController, string displayName, int playerIndex)
+    {
+        playerController.name = displayName + " (P" + (playerIndex + 1) + ")";
+        playerController.SetPlayerNumber(playerIndex);
+
+        // remove excess audio listeners
+        if (playerIndex > 0)
+        {
+            Destroy(playerController.GetComponentInChildren<AudioListener>());
+        }
+
+        playerControllers.Add(playerController);
+        racers.Add(playerController);
+    }
+
+    private void AddNPC(CharacterRegistry characterRegistry, int racerIndex)
+    {
+        Racer racer = Instantiate(characterRegistry.npcObj, startingPositions[racerIndex].position, startingPositions[racerIndex].rotation).GetComponent<Racer>();
+        // Change movement mode of NPCs if necessary
+        if (SceneManager.GetActiveScene().name == "Course 2")
+        {
+            racer.movementMode = Movement.Mode.GetOffTheBoat;
+        }
+        racer.name = characterRegistry.displayName;
+        
+        racers.Add(racer);
+    }
+
+    private void ReassignRacerIDs()
+    {
+        int nextRacerID = 0;
+        foreach (PlayerController player in playerControllers)
+        {
+            player.racerID = nextRacerID++;
+            player.RedrawPlayerUI(player.racerID, NumPlayers);
+        }
+        ShowDummyUI(true);
+        foreach (Racer racer in racers)
+        {
+            if (!(racer is PlayerController))
+            {
+                racer.racerID = nextRacerID++;
+            }
+        }
     }
 
     private void Start() 
     {
-        racers = FindObjectsByType<Racer>(FindObjectsSortMode.None);
-        positions = new List<(Racer, int, float)>(racers.Length);
-        finalPositions = new List<(Racer, float)>(racers.Length);
-        
-        playerControllers = new List<PlayerController>();
-        foreach (Racer racer in racers)
-        {
-            if (racer is PlayerController player)
-            {
-                playerControllers.Add(player);
-            }
-        }
+        SpawnPlayers();
 
+        positions = new List<(Racer, int, float)>(racers.Count);
+        finalPositions = new List<(Racer, float)>(racers.Count);
+        
         if (!isTrainingCourse)
         {
             foreach(Racer r in racers)
@@ -295,10 +383,16 @@ public class RaceManager : MonoBehaviour
                     Time.timeScale = 0f;
                 }
                 break;
+            case GameState.DebugConsole:
+                {
+                    Time.timeScale = 0f;
+                }
+                break;
         }
         foreach (PlayerController pc in instance.playerControllers)
         {
-            pc.OnGameStateChanged(prevState, pc == instance.playerWhoPausedTheGame);
+            pc.OnGameStateChanged(prevState, newState == GameState.Paused && pc == instance.playerWhoPausedTheGame ||
+                                             newState == GameState.DebugConsole && pc == instance.playerWhoOpenedDebugConsole);
         }
     }
 
@@ -328,6 +422,11 @@ public class RaceManager : MonoBehaviour
                     SetGameState(GameState.Paused);
                 }
                 break;
+            case GameState.DebugConsole:
+                {
+                    SetGameState(GameState.Paused);
+                }
+                break;
         }
         return true;
     }
@@ -344,9 +443,30 @@ public class RaceManager : MonoBehaviour
         return false;
     }
 
+    public static bool ToggleDebugConsole(PlayerController playerAttemptingToOpenDebugConsole)
+    {
+        if (instance.playerWhoOpenedDebugConsole != null && playerAttemptingToOpenDebugConsole != instance.playerWhoOpenedDebugConsole)
+        {
+            return false;
+        }
+
+        if (CurrentGameState == GameState.Normal)
+        {
+            instance.playerWhoOpenedDebugConsole = playerAttemptingToOpenDebugConsole;
+            SetGameState(GameState.DebugConsole);
+            return true;
+        }
+        else
+        {
+            instance.playerWhoOpenedDebugConsole = null;
+            SetGameState(GameState.Normal);
+        }
+        return false;
+    }
+
     public static void ShowDummyUI(bool enabled)
     {
-        instance.dummyUI.SetActive(enabled && instance.raceSettings.PlayerChoices.Count == 3);
+        instance.dummyUI.SetActive(enabled && NumPlayers == 3);
     }
 
     public static int GetPosition(Racer racer)
@@ -367,7 +487,7 @@ public class RaceManager : MonoBehaviour
         yield return new WaitForSeconds(2f);
         string names = "";
         string times = "";
-        for (int i = 0; i < racers.Length; i++)
+        for (int i = 0; i < racers.Count; i++)
         {
             names += (i+1) + (i < 9 ? "    " : "   ") + finalPositions[i].Item1.name;
           /*
@@ -447,12 +567,40 @@ public class RaceManager : MonoBehaviour
     {
         return instance.racers;
     }
+
+    public static Racer GetRacerByIndex(int racerIndex)
+    {
+        foreach (Racer racer in instance.racers)
+        {
+            if (racer.racerID == racerIndex)
+            {
+                return racer;
+            }
+        }
+        return null;
+    }
+
+    public static PlayerController GetPlayerByIndex(int playerIndex)
+    {
+        foreach (Racer racer in instance.racers)
+        {
+            if (racer is PlayerController pc)
+            {
+                if (pc.GetPlayerNumber() == playerIndex)
+                {
+                    return pc;
+                }
+            }
+        }
+        return null;
+    }
+
     public static Racer GetRacerOtherThanThisOne(Racer racer)
     {
         Racer chosen = racer;
         while (chosen == racer)
         {
-            chosen = instance.racers[Random.Range(0, instance.racers.Length)];
+            chosen = instance.racers[Random.Range(0, instance.racers.Count)];
         }
         return chosen;
     }

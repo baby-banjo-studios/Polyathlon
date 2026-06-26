@@ -22,6 +22,7 @@ GameObject:
   - component: {fileID: -2653389588791342418}
   - component: {fileID: -806804065813373411}
   - component: {fileID: 2591413572169800918}
+  - component: {fileID: 3826419593597496676}
   m_Layer: 10
   m_Name: PlayerBase
   m_TagString: Player
@@ -209,6 +210,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   name: 
+  racerID: 0
   movementMode: 0
   prevMovementMode: 0
   movementOptions:
@@ -218,8 +220,10 @@ MonoBehaviour:
   - {fileID: 411290082333151911}
   - {fileID: 411290082333151928}
   - {fileID: 2591413572169800918}
+  - {fileID: 3826419593597496676}
   characterMesh: {fileID: 0}
   hips: {fileID: 0}
+  invincible: 0
   place: 0
   dieThreshold: 40
   lastCheckpoint: {fileID: 0}
@@ -1140,6 +1144,122 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 95f655d9-43da-40a1-a07b-2e5ff63d11c2
     m_ActionName: 'Wheeling/Pause[/Keyboard/escape]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5786434344950617427}
+        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+        m_MethodName: OnNoclipMovement
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 39e218e7-2fa2-4907-b557-0472b3e8b409
+    m_ActionName: 'Noclip/Movement[/Keyboard/w,/Keyboard/s,/Keyboard/a,/Keyboard/d]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5786434344950617427}
+        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+        m_MethodName: OnNoclipDown
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: fd01bb41-4aea-4074-8090-7c4724df0d09
+    m_ActionName: 'Noclip/Down[/Keyboard/q]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5786434344950617427}
+        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+        m_MethodName: OnNoclipUp
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: faf9df7d-ec7c-4ba6-9c09-d053800889cc
+    m_ActionName: 'Noclip/Up[/Keyboard/e]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5786434344950617427}
+        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+        m_MethodName: OnNoclipLook
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: ee868e54-fe36-4b5f-bc5b-dd43f63831f5
+    m_ActionName: 'Noclip/Look[/Mouse/delta,/Keyboard/upArrow,/Keyboard/downArrow,/Keyboard/leftArrow,/Keyboard/rightArrow]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 7111255d-f132-47e2-aef7-6915a9c9aa65
+    m_ActionName: 'Noclip/Jump[/Keyboard/space]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5786434344950617427}
+        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+        m_MethodName: OnUseItem
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 4c0edce2-fe45-4ef5-bd6f-f0934c4ebfdf
+    m_ActionName: 'Noclip/Item[/Mouse/leftButton,/Mouse/rightButton,/Keyboard/e]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5786434344950617427}
+        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+        m_MethodName: OnPause
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: e61816bc-9cef-4cd0-a287-c6cec7dfe332
+    m_ActionName: 'Noclip/Pause[/Keyboard/escape]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5786434344950617427}
+        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+        m_MethodName: OnDebugConsoleOpen
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 3c608445-d0f4-46f7-8b19-4b71e34e111e
+    m_ActionName: 'Debug/ToggleConsole[/Keyboard/backquote]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Running
@@ -1183,6 +1303,22 @@ MonoBehaviour:
   itemDropPoint: {fileID: 1265897368244378925}
   driveForce: 800
   wheeler: {fileID: 7652232265114800504}
+--- !u!114 &3826419593597496676
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 411290082333151904}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e75c492272121a40be0b7621bd1ae4c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Noclip
+  maxSpeed: 0
+  acceleration: 0
+  angularSpeed: 0
+  itemDropPoint: {fileID: 0}
 --- !u!1 &4550237746107024480
 GameObject:
   m_ObjectHideFlags: 0
@@ -1575,6 +1711,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7785471539622730386, guid: 2de82fdb6e1ca5a4e9a18467566d9ee5,
         type: 3}
+      propertyPath: vfxCam
+      value: 
+      objectReference: {fileID: 8717629249547570720}
+    - target: {fileID: 7785471539622730386, guid: 2de82fdb6e1ca5a4e9a18467566d9ee5,
+        type: 3}
       propertyPath: playerCam
       value: 
       objectReference: {fileID: 84457364481031826}
@@ -1693,6 +1834,18 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2de82fdb6e1ca5a4e9a18467566d9ee5, type: 3}
+--- !u!114 &618751524619308655 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7785471539622730386, guid: 2de82fdb6e1ca5a4e9a18467566d9ee5,
+    type: 3}
+  m_PrefabInstance: {fileID: 7250146851499414781}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5427982094564c849b6e772999c78b07, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!224 &718279922784106784 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7884226173693947357, guid: 2de82fdb6e1ca5a4e9a18467566d9ee5,
@@ -1869,6 +2022,11 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1074559107989996861, guid: 370b3844169253345bb455bc48ccf436,
+        type: 3}
+      propertyPath: vfx
+      value: 
+      objectReference: {fileID: 618751524619308655}
     - target: {fileID: 1083308876546646362, guid: 370b3844169253345bb455bc48ccf436,
         type: 3}
       propertyPath: m_AnchorMax.y

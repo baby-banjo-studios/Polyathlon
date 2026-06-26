@@ -13,6 +13,7 @@ public abstract class Movement : MonoBehaviour
         Swimming,
         Biking,
         Wheeling,
+        Noclip,
         GetOffTheBoat,
         None,
     }
@@ -43,6 +44,7 @@ public abstract class Movement : MonoBehaviour
 
     protected Animator anim;
     protected Rigidbody rb;
+    protected Collider mainCollider;
     protected Racer racer;
 
     protected Vector3 velocity = Vector3.zero;
@@ -55,7 +57,9 @@ public abstract class Movement : MonoBehaviour
     protected Vector3 smoothSpeedDirection;
     protected const float dampTime = 0.05f; // reduce jittering in animator by providing dampening
 
-    protected float bonusSpeed = 1f;
+    protected float boostSpeedScale = 1f;
+    protected float permanentSpeedScale = 1f;
+    protected float physicalSpeedScale = 1f;
 
     // keep track of these because some movement modes will change these
     private float defaultMass;
@@ -75,18 +79,26 @@ public abstract class Movement : MonoBehaviour
     public Vector3 Velocity { get => actualVelocity; set => velocity = value; }
     public bool Falling { get => falling; set => falling = value; } 
     public bool Grounded { get => grounded; set => grounded = value; }
-    public float BonusSpeed { get => bonusSpeed; set => bonusSpeed = value; }
+    public float BoostSpeedScale { get => boostSpeedScale; set => boostSpeedScale = value; }
+    public float PermanentSpeedScale { get => permanentSpeedScale; set => permanentSpeedScale = value; }
+    public float PhysicalSpeedScale { get => transform.localScale.x; }
     public CameraController CameraController { get => cameraController; set => cameraController = value; }
     public virtual Vector3 Forward { get => characterMesh.forward; }
     public virtual Vector3 ItemDropPoint { get => itemDropPoint.position; }
     protected virtual void OnEnable()
     {
         rb = GetComponent<Rigidbody>();
+        rb.isKinematic = false;
+        rb.useGravity = true;
         defaultMass = rb.mass;
         defaultDrag = rb.linearDamping;
         defaultAngularDrag = rb.angularDamping;
         defaultConstraints = rb.constraints;
         defaultCenterOfMass = rb.centerOfMass;
+
+        mainCollider = GetComponent<CapsuleCollider>();
+        mainCollider.enabled = true;
+
         racer = GetComponent<Racer>();
         characterMesh = transform.GetChild(0);
         defaultCharacterMeshPos = characterMesh.localPosition;
@@ -118,7 +130,7 @@ public abstract class Movement : MonoBehaviour
     }
 
     /*  moves the player rigidbody */
-    public virtual void AddMovement(float forward, float right)
+    public virtual void AddMovement(float forward, float up, float right)
     {
         if (Time.deltaTime > 0)
         {

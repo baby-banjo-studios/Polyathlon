@@ -43,9 +43,9 @@ public class Wheeler : Movement
     }
 
     // Calculate camera-relative steering.
-    public override void AddMovement(float inputForward, float inputRight)
+    public override void AddMovement(float inputForward, float inputUp, float inputRight)
     {
-        base.AddMovement(inputForward, inputRight);
+        base.AddMovement(inputForward, inputUp, inputRight);
 
         float rawForward = inputRight;   // W/S
         float rawTurn    = inputForward; // A/D
@@ -108,9 +108,9 @@ public class Wheeler : Movement
         
         Vector3 horizontalVel = Vector3.ProjectOnPlane(rb.linearVelocity, Vector3.up);
 
-        if (horizontalVel.magnitude > maxSpeed * BonusSpeed)
+        if (horizontalVel.magnitude > maxSpeed * BoostSpeedScale * PermanentSpeedScale * PhysicalSpeedScale)
         {
-            Vector3 clampedHorizontal = horizontalVel.normalized * maxSpeed * BonusSpeed;
+            Vector3 clampedHorizontal = horizontalVel.normalized * maxSpeed * BoostSpeedScale * PermanentSpeedScale * PhysicalSpeedScale;
             rb.linearVelocity = clampedHorizontal + Vector3.up * rb.linearVelocity.y;
         }
 
@@ -153,7 +153,7 @@ public class Wheeler : Movement
                 - Vector3.Cross(pitchAxis, Vector3.up).normalized;
 
             rb.AddForce(
-                driveDir * forward * driveForce * BonusSpeed,
+                driveDir * forward * driveForce * BoostSpeedScale * PermanentSpeedScale * PhysicalSpeedScale,
                 ForceMode.Force
             );
         }

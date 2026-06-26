@@ -64,9 +64,9 @@ public class Bicycle : Movement
         bike.SetActive(false);
     }
 
-    public override void AddMovement(float forward, float right)
+    public override void AddMovement(float forward, float up, float right)
     {
-        base.AddMovement(forward, right);
+        base.AddMovement(forward, up, right);
         if (!launched)
         {
             Vector3 translation = Vector3.zero;
@@ -90,7 +90,7 @@ public class Bicycle : Movement
             if (velocity.magnitude > 0)
             {
                 rb.linearVelocity = new Vector3(velocity.normalized.x * smoothSpeed, rb.linearVelocity.y, velocity.normalized.z * smoothSpeed);
-                smoothSpeed = Mathf.Lerp(smoothSpeed, maxSpeed * bonusSpeed, Time.deltaTime);    
+                smoothSpeed = Mathf.Lerp(smoothSpeed, maxSpeed * boostSpeedScale * PermanentSpeedScale * PhysicalSpeedScale, Time.deltaTime);    
             }
             else
             {

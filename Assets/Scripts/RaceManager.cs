@@ -392,6 +392,7 @@ public class RaceManager : MonoBehaviour
         foreach (PlayerController pc in instance.playerControllers)
         {
             pc.OnGameStateChanged(prevState, newState == GameState.Paused && pc == instance.playerWhoPausedTheGame ||
+                                             newState == GameState.PhotoMode && pc == instance.playerWhoPausedTheGame ||
                                              newState == GameState.DebugConsole && pc == instance.playerWhoOpenedDebugConsole);
         }
     }

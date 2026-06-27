@@ -683,7 +683,7 @@ public class PlayerController : Racer
             photoModeController.SetActive(true);
             photoModeController.SetStartingPosition(cameraController);
             photoModeController.SetControlScheme(playerInput);
-            playerInput.currentActionMap = playerInput.actions.FindActionMap("Greenscreen");
+            playerInput.currentActionMap = playerInput.actions.FindActionMap("PhotoMode");
             cameraController.gameObject.SetActive(false);
         }
         else

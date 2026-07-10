@@ -9,7 +9,7 @@ public class Floater : MonoBehaviour
     public float offset = 0f;
 
     //private bool underwater = false;
-    private bool inWater = false;
+    public bool InWater { get; private set; } = false;
 
     private float waterHeight;
     private float prevDrag;
@@ -27,26 +27,29 @@ public class Floater : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-        if (inWater)
+        if (!RaceManager.IsPaused)
         {
-            Vector3 gravity = Physics.gravity;
-            if (waterHeight > transform.position.y + offset)
+            if (InWater)
             {
-                rb.linearDamping = waterDrag;
-                gravity = -0.5f * Physics.gravity;
+                Vector3 gravity = Physics.gravity;
+                if (waterHeight > transform.position.y + offset)
+                {
+                    rb.linearDamping = waterDrag;
+                    gravity = -0.5f * Physics.gravity;
+                }
+                rb.AddForce(gravity * Mathf.Clamp(Mathf.Abs(waterHeight - (transform.position.y + offset)), 0, 1));
             }
-            rb.AddForce(gravity * Mathf.Clamp(Mathf.Abs(waterHeight - (transform.position.y + offset)), 0, 1));
+            //float y = Mathf.SmoothStep(transform.position.)
+            //transform.position = new Vector3(transform.position.x, y, transform.position.z);
         }
-        //float y = Mathf.SmoothStep(transform.position.)
-        //transform.position = new Vector3(transform.position.x, y, transform.position.z);
     }
 
     public void EnterWater(float height)
     {
-        Debug.Log("enter");
-        inWater = true;
+        Debug.Log("enter water");
+        InWater = true;
         rb.useGravity = false;
         rb.angularDamping = 10f;
         waterHeight = height;
@@ -64,9 +67,9 @@ public class Floater : MonoBehaviour
 
     public void ExitWater()
     {
-        Debug.Log("exit");
+        Debug.Log("exit water");
 
-        inWater = false;
+        InWater = false;
         rb.useGravity = true;
         rb.linearDamping = prevDrag;
         rb.angularDamping = prevAngularDrag;

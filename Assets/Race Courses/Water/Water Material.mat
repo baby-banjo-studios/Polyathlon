@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Water Material
-  m_Shader: {fileID: -6465566751694194690, guid: f067f617b6cc3fb41a3a70db8e743979,
+  m_Shader: {fileID: -6465566751694194690, guid: a219d548c61e5ab47ba3289eb7ad0171,
     type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -25,8 +25,16 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _MainNormal:
+        m_Texture: {fileID: 2800000, guid: a577bc78ccf65604ea658521ffaedac0, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _Main_Normal:
         m_Texture: {fileID: 2800000, guid: a577bc78ccf65604ea658521ffaedac0, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SecondNormal:
+        m_Texture: {fileID: 2800000, guid: 2dd3788f8589b40bf82a92d76ffc5091, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Secondary_Normal:
@@ -48,15 +56,18 @@ Material:
     m_Ints: []
     m_Floats:
     - _Depth: 0.5
-    - _Displacement: 0.5
+    - _Displacement: 0.05
+    - _NormalStrength: 1
     - _Normal_Strength: 1
     - _QueueControl: 0
     - _QueueOffset: 0
     - _Smoothness: 0.938
     - _Strength: 0.5
     m_Colors:
-    - _Deep_Water_Color: {r: 0.021626905, g: 0.3993432, b: 0.509434, a: 0.80784315}
-    - _Shallow_Water_Color: {r: 0.35933605, g: 0.86912537, b: 0.8962264, a: 0.4745098}
+    - _DeepWater: {r: 0.023529414, g: 0.23137257, b: 0.29411766, a: 0.80784315}
+    - _Deep_Water_Color: {r: 0.023451408, g: 0.2317105, b: 0.2924528, a: 0.80784315}
+    - _ShallowWater: {r: 0.28627452, g: 0.7411765, b: 0.7647059, a: 0.4745098}
+    - _Shallow_Water_Color: {r: 0.28475437, g: 0.7396562, b: 0.764151, a: 0.4745098}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 --- !u!114 &6001027778391271051

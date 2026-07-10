@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -8,12 +9,23 @@ public class Swim : Movement
 {    
     public float Direction { get => actualVelocity == Vector3.zero ? 0f : Mathf.Abs(Quaternion.LookRotation(actualVelocity, Vector3.up).eulerAngles.y - characterMesh.transform.rotation.eulerAngles.y); }
 
+    private Floater floater;
+
+    /// <summary>
+    /// Awake is called when the script instance is being loaded.
+    /// </summary>
+    private void Awake()
+    {
+        floater = GetComponent<Floater>();
+    }
+
     protected override void OnEnable() 
     {
         base.OnEnable();
         rb.mass = 1;
         rb.angularDamping = 0.5f;
         rb.constraints = RigidbodyConstraints.FreezeRotation;
+        rb.useGravity = !floater.InWater;
 
         maxSpeed = runSpeed;
         acceleration = swimAcceleration;

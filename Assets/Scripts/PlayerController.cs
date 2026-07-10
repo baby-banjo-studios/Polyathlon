@@ -499,16 +499,19 @@ public class PlayerController : Racer
 
     protected override void Update()
     {
-        // when we press an arrow key, change the sensitivity to expect looking with arrow keys
-        if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow) ||
-            Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow))
+        if (RaceManager.CurrentGameState != GameState.DebugConsole)
         {
-            keyboardSchemeSensitivity = arrowKeysLookSensitivity;
-        }
-        // when we click the mouse, change the sensitivity to expect looking with mouse movement
-        else if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
-        {
-            keyboardSchemeSensitivity = mouseLookSensisitivity;
+            // when we press an arrow key, change the sensitivity to expect looking with arrow keys
+            if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow) ||
+                Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow))
+            {
+                keyboardSchemeSensitivity = arrowKeysLookSensitivity;
+            }
+            // when we click the mouse, change the sensitivity to expect looking with mouse movement
+            else if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
+            {
+                keyboardSchemeSensitivity = mouseLookSensisitivity;
+            }
         }
         base.Update();
         if (!RaceManager.IsPaused)

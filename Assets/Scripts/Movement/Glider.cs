@@ -55,9 +55,9 @@ public class Glider : Movement
     }
 
     /*  moves the player rigidbody */
-    public override void AddMovement(float forward, float right)
+    public override void AddMovement(float forward, float up, float right)
     {
-        base.AddMovement(forward, right);
+        base.AddMovement(forward, up, right);
 
         Vector3 translation = Vector3.zero;
         // for npcs
@@ -91,7 +91,7 @@ public class Glider : Movement
                 if (smoothSpeed > maxSpeed)
                     smoothSpeed = smoothSpeed * Mathf.Max(Vector3.Dot(smoothSpeedDirection, velocity.normalized), 0);
                 rb.linearVelocity = new Vector3(velocity.normalized.x * smoothSpeed, racer is NPC ? 0 : rb.linearVelocity.y, velocity.normalized.z * smoothSpeed);
-                smoothSpeed = Mathf.Lerp(smoothSpeed, maxSpeed * bonusSpeed, Time.deltaTime);
+                smoothSpeed = Mathf.Lerp(smoothSpeed, maxSpeed * boostSpeedScale * PermanentSpeedScale * PhysicalSpeedScale, Time.deltaTime);
                 // rotate the character mesh if enabled
                 
                 characterMesh.rotation = Quaternion.Lerp(characterMesh.rotation, Quaternion.LookRotation(velocity), Time.deltaTime * rotationSpeed);
@@ -131,7 +131,7 @@ public class Glider : Movement
         
         speed = Mathf.SmoothStep(speed, actualVelocity.magnitude, Time.deltaTime * 20);
     
-        anim.SetFloat("speed", speed, dampTime, Time.deltaTime);
+        anim.SetFloat("speed", speed / PhysicalSpeedScale, dampTime, Time.deltaTime);
         anim.SetBool("grounded", grounded);
         
     }

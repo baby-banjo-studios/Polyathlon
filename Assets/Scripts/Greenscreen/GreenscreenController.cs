@@ -29,15 +29,15 @@ public class GreenscreenController : MonoBehaviour
     {
         inputActions = new InputActions();
 
-        inputActions.Greeenscreen.Move.performed += ctx => moveInput = ctx.ReadValue<Vector3>();
-        inputActions.Greeenscreen.Move.canceled += ctx => moveInput = Vector3.zero;
+        inputActions.Greenscreen.Move.performed += ctx => moveInput = ctx.ReadValue<Vector3>();
+        inputActions.Greenscreen.Move.canceled += ctx => moveInput = Vector3.zero;
 
-        inputActions.Greeenscreen.Scrub.performed += ctx => ui.Scrub(ctx.ReadValue<float>() > 0);
+        inputActions.Greenscreen.Scrub.performed += ctx => ui.Scrub(ctx.ReadValue<float>() > 0);
 
-        inputActions.Greeenscreen.TakeSnapshot.performed += ctx => TakeSnapshot(ImageWidth, ImageHeight);
+        inputActions.Greenscreen.TakeSnapshot.performed += ctx => TakeSnapshot(ImageWidth, ImageHeight);
         
-        inputActions.Greeenscreen.SwapControl.performed += ctx => ToggleMode();
-        inputActions.Greeenscreen.SwapTarget.performed += ctx => ToggleTarget();
+        inputActions.Greenscreen.SwapControl.performed += ctx => ToggleMode();
+        inputActions.Greenscreen.SwapTarget.performed += ctx => ToggleTarget();
 
         foreach (Transform t in targetTransformParent)
         {
@@ -69,12 +69,12 @@ public class GreenscreenController : MonoBehaviour
 
     private void OnEnable()
     {
-        inputActions.Greeenscreen.Enable();
+        inputActions.Greenscreen.Enable();
     }
 
     private void OnDisable()
     {
-        inputActions.Greeenscreen.Disable();
+        inputActions.Greenscreen.Disable();
     }
 
     private void Update()

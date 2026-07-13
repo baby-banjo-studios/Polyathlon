@@ -65,9 +65,9 @@ public class Jetpack : Movement
     }
 
     /*  moves the player rigidbody */
-    public override void AddMovement(float forward, float right)
+    public override void AddMovement(float forward, float up, float right)
     {
-        base.AddMovement(forward, right);
+        base.AddMovement(forward, up, right);
 
         // keep track of how long we have been launched for
         // if we pass the predefined threshold, un-launch
@@ -122,7 +122,7 @@ public class Jetpack : Movement
                 if (smoothSpeed > maxSpeed)
                     smoothSpeed = smoothSpeed * Mathf.Max(Vector3.Dot(smoothSpeedDirection, velocity.normalized), 0);
                 rb.linearVelocity = new Vector3(velocity.normalized.x * smoothSpeed, rb.linearVelocity.y, velocity.normalized.z * smoothSpeed);
-                smoothSpeed = Mathf.Lerp(smoothSpeed, maxSpeed * bonusSpeed, Time.deltaTime);
+                smoothSpeed = Mathf.Lerp(smoothSpeed, maxSpeed * boostSpeedScale * PermanentSpeedScale * PhysicalSpeedScale, Time.deltaTime);
                 // rotate the character mesh if enabled
                 
                 characterMesh.rotation = Quaternion.Lerp(characterMesh.rotation, Quaternion.LookRotation(velocity), Time.deltaTime * rotationSpeed);
@@ -152,7 +152,7 @@ public class Jetpack : Movement
         
         speed = Mathf.SmoothStep(speed, actualVelocity.magnitude, Time.deltaTime * 20);
     
-        anim.SetFloat("speed", speed, dampTime, Time.deltaTime);
+        anim.SetFloat("speed", speed / PhysicalSpeedScale, dampTime, Time.deltaTime);
         anim.SetBool("grounded", grounded);
         
     }
@@ -200,8 +200,8 @@ public class Jetpack : Movement
         // INTERRUPTABLE: if fireJetpack is false, exit
         while(fireJetpack && !racer.IsDead())
         {
-            rb.AddForce(racer.BackpackMount.jetpack.transform.transform.up * jetpackForce * Time.deltaTime * bonusSpeed);
-            Vector3 clampedVelocity = Vector3.ClampMagnitude(rb.linearVelocity, jetpackSpeed * bonusSpeed);
+            rb.AddForce(racer.BackpackMount.jetpack.transform.transform.up * jetpackForce * Time.deltaTime * boostSpeedScale * PermanentSpeedScale * PhysicalSpeedScale);
+            Vector3 clampedVelocity = Vector3.ClampMagnitude(rb.linearVelocity, jetpackSpeed * boostSpeedScale * PhysicalSpeedScale);
             if (launched)
             {
                 if (launchElapsedTime > launchDuration)

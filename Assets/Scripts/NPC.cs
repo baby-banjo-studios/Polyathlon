@@ -154,10 +154,10 @@ public class NPC : Racer
         {
             if (movementMode == Movement.Mode.Running || movementMode == Movement.Mode.Jetpacking && movement.Grounded)
             {
-                if (movement.BonusSpeed == 1)
+                if (movement.BoostSpeedScale == 1 && movement.PermanentSpeedScale == 1)
                     rb.linearVelocity = Vector3.ClampMagnitude(rb.linearVelocity, 20);
             }
-            else if (movementMode == Movement.Mode.Biking && movement.BonusSpeed == 1)
+            else if (movementMode == Movement.Mode.Biking && movement.BoostSpeedScale == 1 && movement.PermanentSpeedScale == 1)
             {
                 rb.linearVelocity = Vector3.ClampMagnitude(rb.linearVelocity, 50);
             }
@@ -270,9 +270,15 @@ public class NPC : Racer
             item.Use(this);
     }
 
+    public override void SetPermanentSpeedScale(float magnitude)
+    {
+        base.SetPermanentSpeedScale(magnitude);
+        agent.speed = agentSpeed * magnitude;
+    }
+
     protected override IEnumerator SpeedBoostCoroutine(float magnitude)
     {
-        movement.BonusSpeed = magnitude;
+        movement.BoostSpeedScale = magnitude;
         anim.speed = magnitude;
         agent.speed = agentSpeed * magnitude;
 
@@ -283,7 +289,7 @@ public class NPC : Racer
         }
 
         // reset everything
-        movement.BonusSpeed = 1f;
+        movement.BoostSpeedScale = 1f;
         anim.speed = 1f;
         agent.speed = agentSpeed;
         remainingBoostTime = 0f;
@@ -312,10 +318,13 @@ public class NPC : Racer
 
     public override void Die(bool emphasizeTorso, Vector3 newMomentum = default)
     {
-        base.Die(emphasizeTorso, newMomentum);
-        if (agent.isOnNavMesh)
+        if (!invincible)
         {
-            agent.isStopped = true;
+            base.Die(emphasizeTorso, newMomentum);
+            if (agent.isOnNavMesh)
+            {
+                agent.isStopped = true;
+            }
         }
     }
 

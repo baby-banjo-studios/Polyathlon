@@ -4,7 +4,7 @@ using System.Collections;
 public class Racer : MonoBehaviour
 {
     public new string name;
-    
+    public int racerID;
 
     public Movement.Mode movementMode;
     public Movement.Mode prevMovementMode; // sometimes its helpful to know what we had previously
@@ -26,9 +26,12 @@ public class Racer : MonoBehaviour
     protected AudioSource audioSource;
     
     protected Vector2 move;
+    protected float moveUp, moveDown;
     protected Vector3 velocityBeforePhysicsUpdate;
     protected bool dead;
     protected bool canRevive; // when this is true, a dead racer can be revived.
+    public bool invincible = false;
+    protected float permanentSpeedScale = 1f;
 
     protected Coroutine boostCoroutine;
     protected float remainingBoostTime = 0f;
@@ -82,7 +85,7 @@ public class Racer : MonoBehaviour
     {
         if (!dead && RaceManager.IsRaceActive && !RaceManager.IsPaused)
         {
-            movement.AddMovement(move.x, move.y);
+            movement.AddMovement(move.x, moveUp - moveDown, move.y);
         }
 
         Debug.DrawRay(transform.position, rb.linearVelocity.normalized * 3f, Color.green);
@@ -174,13 +177,20 @@ public class Racer : MonoBehaviour
                         movement.Land();
                     movement = movementOptions[(int)Movement.Mode.Wheeling];
                     break;
+                case Movement.Mode.Noclip:
+                    if (!(movement is Noclip))
+                        movement.Land();
+                    movement = movementOptions[(int)Movement.Mode.Noclip];
+                    break;
                 case Movement.Mode.GetOffTheBoat:
                     movement = movementOptions[(int)Movement.Mode.Running];
                     break;
                 
             }
             movement.enabled = true;
+            movement.PermanentSpeedScale = permanentSpeedScale;
             animEvents.movement = movement;
+            anim.speed = movement.PermanentSpeedScale;
             anim.SetInteger("movement_mode", (int)movementMode % 6);
         }
     }
@@ -191,34 +201,37 @@ public class Racer : MonoBehaviour
     // When newMomentum is 0,0,0, the momentum used will be simply the character's current momentum
     public virtual void Die(bool emphasizeTorso, Vector3 newMomentum = default(Vector3))
     {
-        anim.enabled = false;
-        rb.isKinematic = true;
-        GetComponent<Collider>().enabled = false;
-        ragdoll.SetRagdoll(true);
-        Vector3 momentum;
-        if (newMomentum == Vector3.zero)
+        if (!invincible)
         {
-            //momentum = Vector3.ClampMagnitude(velocityBeforePhysicsUpdate, 30);
-            momentum = velocityBeforePhysicsUpdate;
+            anim.enabled = false;
+            rb.isKinematic = true;
+            GetComponent<Collider>().enabled = false;
+            ragdoll.SetRagdoll(true);
+            Vector3 momentum;
+            if (newMomentum == Vector3.zero)
+            {
+                //momentum = Vector3.ClampMagnitude(velocityBeforePhysicsUpdate, 30);
+                momentum = velocityBeforePhysicsUpdate;
+            }
+            else
+            {
+                momentum = newMomentum;
+            }
+            ragdoll.AddMomentum(momentum, emphasizeTorso);
+            dead = true;
+            canRevive = false;
+            try
+            {
+                // Deactivate jetpack particles if we're jetpacking
+                Jetpack jetpack = (Jetpack)movement;
+                jetpack.SetParticles(false);
+            }
+            catch (System.Exception)
+            {
+                
+            }
+            StartCoroutine(RevivalEnabler());
         }
-        else
-        {
-            momentum = newMomentum;
-        }
-        ragdoll.AddMomentum(momentum, emphasizeTorso);
-        dead = true;
-        canRevive = false;
-        try
-        {
-            // Deactivate jetpack particles if we're jetpacking
-            Jetpack jetpack = (Jetpack)movement;
-            jetpack.SetParticles(false);
-        }
-        catch (System.Exception)
-        {
-            
-        }
-        StartCoroutine(RevivalEnabler());
     }
 
     public virtual void ApplyJumpSplosion(Vector3 force)
@@ -265,12 +278,23 @@ public class Racer : MonoBehaviour
     {
         if (dead && (canRevive || forceRevive))
         {
+            Vector3 landingPosition = hips.position;
             ragdoll.SetRagdoll(false);
+            
+            // Re-enable components
             anim.enabled = true;
             rb.isKinematic = false;
             GetComponent<Collider>().enabled = true;
-            transform.position = hips.position;
+
+            // Force the position update
+            transform.position = landingPosition;
             hips.localPosition = Vector3.zero;
+
+            // Clear velocity and sync transforms
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+            Physics.SyncTransforms();
+
             dead = false;
         }
     }
@@ -298,10 +322,17 @@ public class Racer : MonoBehaviour
         }
     }
 
+    public virtual void SetPermanentSpeedScale(float magnitude)
+    {
+        permanentSpeedScale = magnitude;
+        movement.PermanentSpeedScale = permanentSpeedScale;
+        anim.speed = magnitude;
+    }
+
     protected virtual IEnumerator SpeedBoostCoroutine(float magnitude)
     {
-        movement.BonusSpeed = magnitude;
-        anim.speed = magnitude;
+        movement.BoostSpeedScale = magnitude;
+        anim.speed = movement.BoostSpeedScale * movement.PermanentSpeedScale;
 
         // Continue looping as long as there is time left
         while (remainingBoostTime > 0)
@@ -311,8 +342,8 @@ public class Racer : MonoBehaviour
         }
 
         // Reset values once the total accumulated time is up
-        movement.BonusSpeed = 1f;
-        anim.speed = 1f;
+        movement.BoostSpeedScale = 1f;
+        anim.speed = movement.PermanentSpeedScale;
         
         remainingBoostTime = 0f;
         boostCoroutine = null;

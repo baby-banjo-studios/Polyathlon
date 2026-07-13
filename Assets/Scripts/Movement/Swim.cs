@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -8,12 +9,23 @@ public class Swim : Movement
 {    
     public float Direction { get => actualVelocity == Vector3.zero ? 0f : Mathf.Abs(Quaternion.LookRotation(actualVelocity, Vector3.up).eulerAngles.y - characterMesh.transform.rotation.eulerAngles.y); }
 
+    private Floater floater;
+
+    /// <summary>
+    /// Awake is called when the script instance is being loaded.
+    /// </summary>
+    private void Awake()
+    {
+        floater = GetComponent<Floater>();
+    }
+
     protected override void OnEnable() 
     {
         base.OnEnable();
         rb.mass = 1;
         rb.angularDamping = 0.5f;
         rb.constraints = RigidbodyConstraints.FreezeRotation;
+        rb.useGravity = !floater.InWater;
 
         maxSpeed = runSpeed;
         acceleration = swimAcceleration;
@@ -26,9 +38,9 @@ public class Swim : Movement
     }
 
     /*  moves the player rigidbody */
-    public override void AddMovement(float forward, float right)
+    public override void AddMovement(float forward, float up, float right)
     {
-        base.AddMovement(forward, right);
+        base.AddMovement(forward, up, right);
         Vector3 translation = Vector3.zero;
         // for npcs
         if (cameraController == null)
@@ -56,7 +68,7 @@ public class Swim : Movement
         if (velocity.magnitude > 0)
         {
             rb.linearVelocity = new Vector3(velocity.normalized.x * smoothSpeed, rb.linearVelocity.y, velocity.normalized.z * smoothSpeed);
-            smoothSpeed = Mathf.Lerp(smoothSpeed, maxSpeed * bonusSpeed, Time.deltaTime);
+            smoothSpeed = Mathf.Lerp(smoothSpeed, maxSpeed * boostSpeedScale * PermanentSpeedScale * PhysicalSpeedScale, Time.deltaTime);
             // rotate the character mesh if enabled
             characterMesh.rotation = Quaternion.Lerp(characterMesh.rotation, Quaternion.LookRotation(velocity), Time.deltaTime * rotationSpeed);
         }
@@ -68,7 +80,7 @@ public class Swim : Movement
         // blend speed in animator to match pace of footsteps
         // normal movement (character moves independent of camera)
         speed = Mathf.SmoothStep(speed, actualVelocity.magnitude, Time.deltaTime * 20);
-        anim.SetFloat("speed", speed, dampTime, Time.deltaTime);
+        anim.SetFloat("speed", speed / PhysicalSpeedScale, dampTime, Time.deltaTime);
         anim.SetBool("grounded", grounded);
     }
 

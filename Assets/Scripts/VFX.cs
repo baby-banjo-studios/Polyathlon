@@ -6,8 +6,14 @@ using UnityEngine.UI;
 public class VFX : MonoBehaviour
 {
     [SerializeField] private RectTransform screenOverlayCanvas;
+    [SerializeField] private RectTransform overlayScaleTransform;
+    [SerializeField] private RectTransform unscaledOverlayCanvas;
+    [SerializeField] private RectTransform unscaledOCSplitscreenMask;
+    private Vector2 startingOCSplitscreenMaskSizeDelta;
+
     [SerializeField] private RectTransform cameraSpaceCanvas;
     [SerializeField] private Camera playerCam;
+    [SerializeField] private Camera vfxCam;
     public GameObject speedLinesObj;
     public Image damageImage;
     public float damageFadeTime = 1f;
@@ -16,10 +22,37 @@ public class VFX : MonoBehaviour
     private Transform target;
     private bool targeting;
 
+    private void Awake()
+    {
+        startingOCSplitscreenMaskSizeDelta = unscaledOCSplitscreenMask.sizeDelta;
+    }
+
     private void Start()
     {
         SetSpeedLines(false);   
         SetTarget(null);
+    }
+
+    public void SetPlayerIndex(int playerIndex)
+    {
+        if (playerIndex < 0 || playerIndex > 3)
+        {
+            Debug.LogError(string.Format("VFX cannot accomodate player index {0}", playerIndex));
+        }
+        else
+        {
+            int layer = LayerMask.NameToLayer(string.Format("VFX_{0}", playerIndex + 1));
+            if (layer < 0)
+            {
+                Debug.LogError(string.Format("layer VFX_{0} not found", playerIndex + 1));
+            }
+            else
+            {
+                int layerMask = 1 << layer;
+                vfxCam.cullingMask = layerMask;
+                speedLinesObj.layer = layer;
+            }
+        }
     }
 
     private void Update()
@@ -31,7 +64,9 @@ public class VFX : MonoBehaviour
             if (viewportPos.z >= 0)
             {
                 targetLockObj.SetActive(true);
-                Vector3 finalPosition = new Vector3(viewportPos.x * screenOverlayCanvas.sizeDelta.x, viewportPos.y * screenOverlayCanvas.sizeDelta.y, 0);
+                float canvasX = playerCam.rect.x + viewportPos.x * playerCam.rect.width;
+                float canvasY = playerCam.rect.y + viewportPos.y * playerCam.rect.height;
+                Vector3 finalPosition = new Vector3(canvasX * unscaledOverlayCanvas.sizeDelta.x, canvasY * unscaledOverlayCanvas.sizeDelta.y, 0);
                 targetLockObj.transform.position = finalPosition;
             }
             else
@@ -39,6 +74,21 @@ public class VFX : MonoBehaviour
                 targetLockObj.SetActive(false);
             }
         }
+    }
+
+    public void SetScale(RectTransform referenceRectTransform)
+    {
+        overlayScaleTransform.pivot = referenceRectTransform.pivot;
+        overlayScaleTransform.anchorMax = referenceRectTransform.anchorMax;
+        overlayScaleTransform.anchorMin = referenceRectTransform.anchorMin;
+        overlayScaleTransform.anchoredPosition = referenceRectTransform.anchoredPosition;
+        overlayScaleTransform.localScale = referenceRectTransform.localScale;
+        overlayScaleTransform.sizeDelta = referenceRectTransform.sizeDelta;
+    }
+
+    public void SetOverlayMask(int playerIndex, int maxPlayers)
+    {
+        SplitscreenUtility.ScaleTransform(unscaledOCSplitscreenMask, playerIndex, maxPlayers, startingOCSplitscreenMaskSizeDelta);
     }
 
     public void SetSpeedLines(bool enable)

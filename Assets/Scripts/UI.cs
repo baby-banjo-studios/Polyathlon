@@ -14,6 +14,9 @@ public class UI : MonoBehaviour
     private GameObject pauseMenu;
 
     [SerializeField]
+    private GameObject debugConsole;
+
+    [SerializeField]
     protected Selectable firstSelectable;
 
     public TextMeshProUGUI positionText;
@@ -30,6 +33,7 @@ public class UI : MonoBehaviour
     
     public Sprite defaultItemSprite;
     private Racer racer;
+    [SerializeField]
     private VFX vfx;
 
     private bool isPrimaryUI;
@@ -74,6 +78,8 @@ public class UI : MonoBehaviour
             itemText.text = "Respawn: Left Trigger (Gamepad)\nRight/Left Click (Mouse)";
             itemText.gameObject.SetActive(true);
         }
+
+        SetDebugConsole(false);
     }
 
     // Update is called once per frame
@@ -105,67 +111,12 @@ public class UI : MonoBehaviour
 
     public void SetScale(int player, int maxPlayers)
     {
-
-        if (maxPlayers == 1)
-        {
-            scaleTransform.anchorMax = new Vector2(0.5f, 0.5f);
-            scaleTransform.anchorMin = new Vector2(0.5f, 0.5f);
-            scaleTransform.anchoredPosition = new Vector3(0, 0, 0);
-            scaleTransform.localScale = new Vector3(1, 1, 1);
-            scaleTransform.sizeDelta = new Vector2(maxScreenSize.x, maxScreenSize.y);
-        }
-        else if (maxPlayers < 3)
-        {
-            switch (player)
-            {
-                case 0:
-                    scaleTransform.pivot = new Vector2(0, 0.5f);
-                    scaleTransform.anchorMax = new Vector2(0, 0.5f);
-                    scaleTransform.anchorMin = new Vector2(0, 0.5f);
-                    break;
-                case 1:
-                    scaleTransform.pivot = new Vector2(1, 0.5f);
-                    scaleTransform.anchorMax = new Vector2(1, 0.5f);
-                    scaleTransform.anchorMin = new Vector2(1, 0.5f);
-                    break;
-            }
-            scaleTransform.anchoredPosition = new Vector3(0, 0, 0);
-            scaleTransform.localScale = new Vector3(1, 1, 1);
-            scaleTransform.sizeDelta = new Vector2(maxScreenSize.x / 2, maxScreenSize.y);
-            //scaleTransform.localScale = new Vector3(0.5f, 1, 1);
-
-        }
-        else
-        {
-            switch (player)
-            {
-                case 0:
-                    scaleTransform.pivot = new Vector2(0, 1);
-                    scaleTransform.anchorMax = new Vector2(0, 1);
-                    scaleTransform.anchorMin = new Vector2(0, 1);
-                    break;
-                case 1:
-                    scaleTransform.pivot = new Vector2(1, 1);
-                    scaleTransform.anchorMax = new Vector2(1, 1);
-                    scaleTransform.anchorMin = new Vector2(1, 1);
-                    break;
-                case 2:
-                    scaleTransform.pivot = new Vector2(0, 0);
-                    scaleTransform.anchorMax = new Vector2(0, 0);
-                    scaleTransform.anchorMin = new Vector2(0, 0);
-                    break;
-                case 3:
-                    scaleTransform.pivot = new Vector2(1, 0);
-                    scaleTransform.anchorMax = new Vector2(1, 0);
-                    scaleTransform.anchorMin = new Vector2(1, 0);
-                    break;
-
-            }
-            scaleTransform.anchoredPosition = new Vector3(0, 0, 0);
-            scaleTransform.localScale = new Vector3(0.5f, 0.5f, 1);
-            scaleTransform.sizeDelta = new Vector2(maxScreenSize.x, maxScreenSize.y);
-            //scaleTransform.sizeDelta = new Vector2(scaleTransform.sizeDelta.x / 2, scaleTransform.sizeDelta.y / 2);
-        }
+        SplitscreenUtility.ScaleTransform(scaleTransform, player, maxPlayers, maxScreenSize);
+        
+        // also set scaleTransform on VFX
+        vfx.SetScale(scaleTransform);
+        vfx.SetPlayerIndex(player);
+        vfx.SetOverlayMask(player, maxPlayers);
     }
 
     /*  returns time in the form "minutes:seconds.milliseconds" */
@@ -297,6 +248,11 @@ public class UI : MonoBehaviour
                 //Debug.Log("NO nav events");
             }
         }
+    }
+
+    public void SetDebugConsole(bool active)
+    {
+        debugConsole.SetActive(active);
     }
 
     public void SetGameHUD(bool active)

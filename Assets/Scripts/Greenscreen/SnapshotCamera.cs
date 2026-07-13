@@ -10,6 +10,8 @@ public class SnapshotCamera : MonoBehaviour
     public int resWidth;// = 256;
     public int resHeight;// = 256;
 
+    // protected DateTime dt;
+
     private void Awake()
     {
         snapCam = GetComponent<Camera>();
@@ -24,15 +26,13 @@ public class SnapshotCamera : MonoBehaviour
         snapCam.targetTexture = new RenderTexture(resWidth, resHeight, 24);
     }
 
-    public void TakeSnapshot(bool alsoCreateThumbnail)
+    public void RenderAndExport(int width, int height, string filename)
     {
-        Texture2D snapshot = new Texture2D(resWidth, resHeight, TextureFormat.RGBA32, false);
+        Texture2D snapshot = new Texture2D(width, height, TextureFormat.RGBA32, false);
         snapCam.Render();
         RenderTexture.active = snapCam.targetTexture;
-        snapshot.ReadPixels(new Rect(0, 0, resWidth, resHeight), 0, 0);
+        snapshot.ReadPixels(new Rect(0, 0, width, height), 0, 0);
         byte[] bytes = snapshot.EncodeToPNG();
-        DateTime dt = DateTime.Now;
-        string filename = SnapshotName(false, dt);
         
         string directoryName = Path.GetDirectoryName(filename);
         if (!Directory.Exists(directoryName))
@@ -42,6 +42,13 @@ public class SnapshotCamera : MonoBehaviour
 
         File.WriteAllBytes(filename, bytes);
         Debug.Log(string.Format("Snapshot saved to {0}", filename));
+    }
+
+    public void TakeSnapshot(bool alsoCreateThumbnail)
+    {
+        DateTime dt = DateTime.Now;
+        
+        RenderAndExport(resWidth, resHeight, SnapshotName(false, dt));
 
         // also create thumbnail for gallery if needed
         if (alsoCreateThumbnail)
@@ -62,17 +69,8 @@ public class SnapshotCamera : MonoBehaviour
             RenderTexture thumbRT = new RenderTexture(thumbWidth, thumbHeight, 24);
             Graphics.Blit(RenderTexture.active, thumbRT);
             RenderTexture.active = thumbRT;
-            Texture2D thumb = new Texture2D(thumbWidth, thumbHeight, TextureFormat.RGBA32, false);
-            thumb.ReadPixels(new Rect(0, 0, thumbWidth, thumbHeight), 0, 0);
-            byte[] thumbBytes = thumb.EncodeToPNG();
-            filename = SnapshotName(true, dt);
-            directoryName = Path.GetDirectoryName(filename);
-            if (!Directory.Exists(directoryName))
-            {
-                Directory.CreateDirectory(directoryName);    
-            }
-            File.WriteAllBytes(filename, thumbBytes);
-            Debug.Log(string.Format("Thumbnail saved to {0}", filename));
+           
+            RenderAndExport(thumbWidth, thumbHeight, SnapshotName(true, dt));
         }
 
 #if UNITY_EDITOR
@@ -80,7 +78,7 @@ public class SnapshotCamera : MonoBehaviour
 #endif
     }
 
-    private string SnapshotName(bool thumbnail, DateTime dt)
+    protected virtual string SnapshotName(bool thumbnail, DateTime dt)
     {
         string basePath;
 #if UNITY_EDITOR

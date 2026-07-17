@@ -33,10 +33,10 @@ public class MelonObject : MonoBehaviour
     /*  if you hit somebody, they die */
     protected virtual void OnCollisionEnter(Collision other)
     {
-        Racer racer = other.transform.GetComponent<Racer>();
-        if (racer != null && other.relativeVelocity.magnitude > 7)
+        Entity target = other.transform.GetComponent<Entity>();
+        if (target != null && other.relativeVelocity.magnitude > 7)
         {
-            racer.Die(true);        
+            target.Die(true);        
             if (impactSounds.Count > 0)
             {
                 AudioClip clip = impactSounds[Random.Range(0, impactSounds.Count)];

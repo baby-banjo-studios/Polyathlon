@@ -8,10 +8,10 @@ public class PropellerKO : MonoBehaviour
     void OnCollisionEnter(Collision other)
     {
         Debug.Log("collision!!!!");
-        Racer racer = other.gameObject.GetComponent<Racer>();
-        if(racer != null)
+        Entity target = other.gameObject.GetComponent<Entity>();
+        if(target != null)
         {
-            racer.Die(false);
+            target.Die(false);
         }
     }
 }

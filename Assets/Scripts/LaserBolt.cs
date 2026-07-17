@@ -36,18 +36,18 @@ public class LaserBolt : MonoBehaviour
     // Kill the racer if we hit them
     void OnTriggerEnter(Collider other)
     {
-        Racer racer = other.gameObject.GetComponentInParent<Racer>();
-        if (owner == null || (owner != null && racer != owner))
+        Entity target = other.gameObject.GetComponentInParent<Entity>();
+        if (owner == null || (owner != null && target != owner))
         {
-            if (racer != null)
+            if (target != null)
             {
-                racer.Die(true, Vector3.ClampMagnitude(rb.linearVelocity, impactVelMax));
+                target.Die(true, Vector3.ClampMagnitude(rb.linearVelocity, impactVelMax));
                 Destroy(laserChild.gameObject);
                 rb.linearVelocity = Vector3.zero;
                 StartCoroutine(DestroyAfterPlayingSound());
             }
         }
-        if ((owner == null || owner != racer) && !other.isTrigger)
+        if ((owner == null || owner != target) && !other.isTrigger)
         {
             Destroy(laserChild.gameObject);
             rb.linearVelocity = Vector3.zero;

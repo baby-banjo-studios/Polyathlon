@@ -530,14 +530,6 @@ public class PlayerController : Racer
         return playerNumber;
     }
 
-    protected override void ReviveText()
-    {
-        if (!isFinished)
-        {
-            ui.ReviveText(true);
-        }
-    }
-
     public override void EquipItem(Item item)
     {
         base.EquipItem(item);
@@ -721,6 +713,14 @@ public class PlayerController : Racer
         }
     }
 
+    protected override void EnableRevive()
+    {
+        if (!isFinished)
+        {
+            ui.ReviveText(true);
+        }
+    }
+    
     public override void Revive(bool forceRevive = false)
     {
         if (dead && (canRevive || forceRevive))

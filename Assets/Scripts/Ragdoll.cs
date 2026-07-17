@@ -24,7 +24,7 @@ public class Ragdoll : MonoBehaviour
     {
         rigidbodies = GetComponentsInChildren<Rigidbody>();
         colliders = GetComponentsInChildren<Collider>();
-        hips = transform.parent.GetComponent<Racer>().GetHips().GetComponent<Rigidbody>();
+        hips = transform.parent.GetComponent<Entity>().GetHips().GetComponent<Rigidbody>();
         SetRagdoll(false);
     }
 

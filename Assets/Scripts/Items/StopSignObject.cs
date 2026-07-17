@@ -109,12 +109,12 @@ public class StopSignObject : MonoBehaviour
 
     public void CollisionDetected(Collision other)
     {
-        if (other.gameObject.TryGetComponent(out Racer racer))
+        if (other.gameObject.TryGetComponent(out Entity target))
         {
             audioSource.clip = hitSounds[Random.Range(0, hitSounds.Length)];
             audioSource.Play();
 
-            racer.Die(false, transform.forward * -killForce);
+            target.Die(false, transform.forward * -killForce);
             //Destroy(this.gameObject, 2f);
             StartCoroutine(ChangeTextCoroutine());
         }

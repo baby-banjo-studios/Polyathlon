@@ -1,43 +1,22 @@
 using UnityEngine;
 using System.Collections;
 
-public class Racer : MonoBehaviour
+public class Racer : Entity
 {
-    public new string name;
     public int racerID;
 
     public Movement.Mode movementMode;
     public Movement.Mode prevMovementMode; // sometimes its helpful to know what we had previously
     public Movement[] movementOptions;
 
-    public Transform characterMesh;
-    public Transform hips;
 
     protected Item item;
     
-    protected AnimatorOverrideController animOverride;
     protected PlayerAnimationEvents animEvents;
 
-    protected Movement movement;
-    protected Ragdoll ragdoll;
     protected BackpackMount backpackMount;
-    protected Rigidbody rb;
-    protected Animator anim;
-    protected AudioSource audioSource;
-    
-    protected Vector2 move;
-    protected float moveUp, moveDown;
-    protected Vector3 velocityBeforePhysicsUpdate;
-    protected bool dead;
-    protected bool canRevive; // when this is true, a dead racer can be revived.
-    public bool invincible = false;
-    protected float permanentSpeedScale = 1f;
-
-    protected Coroutine boostCoroutine;
-    protected float remainingBoostTime = 0f;
 
     public int place;
-    public float dieThreshold = 40f;
     public Checkpoint lastCheckpoint;
     public Checkpoint nextCheckpoint;
     public bool isFinished = false;
@@ -48,41 +27,26 @@ public class Racer : MonoBehaviour
     public AudioClip equipSound;
 
     public BackpackMount BackpackMount { get => backpackMount; }
-    public Vector3 Forward { get => movement.Forward; }
     public Vector3 ItemDropPoint { get => movement.ItemDropPoint; }
 
-    public float Speed
-    {
-        get
-        {
-            if (ragdoll.IsEnabled)
-            {
-                return ragdoll.Speed;
-            }
-            return rb.linearVelocity.magnitude;
-        }
-    }
 
-    protected virtual void Awake()
+    protected override void Awake()
     {
-        rb = GetComponent<Rigidbody>();
-        ragdoll = GetComponentInChildren<Ragdoll>();
-        anim = characterMesh.GetComponent<Animator>();
+        base.Awake();
         animEvents = GetComponentInChildren<PlayerAnimationEvents>();
 
-        //animOverride = GetComponent<AnimatorOverrideController>();
-        audioSource = GetComponentInChildren<AudioSource>();
         backpackMount = GetComponentInChildren<BackpackMount>();
     }
 
-    protected virtual void Start() 
+    protected override void Start() 
     {
-        ragdoll.SetRagdoll(false);
+        base.Start();
         SetMovementMode(movementMode, true);
     } 
 
-    protected virtual void Update()
+    protected override void Update()
     {
+        base.Update();
         if (!dead && RaceManager.IsRaceActive && !RaceManager.IsPaused)
         {
             movement.AddMovement(move.x, moveUp - moveDown, move.y);
@@ -119,14 +83,9 @@ public class Racer : MonoBehaviour
         
     }
 
-    protected virtual void FixedUpdate() {
-        velocityBeforePhysicsUpdate = rb.linearVelocity;
-    }
-
-    public Transform GetHips()
-    {
-        return hips;
-    }
+    // protected override void FixedUpdate() 
+    // {
+    // }
 
     /*  updates player's movement mode and maxSpeed/locomotion accordingly */
     public virtual void SetMovementMode(Movement.Mode mode, bool initial = false)
@@ -199,7 +158,7 @@ public class Racer : MonoBehaviour
     // when they ragdoll, preventing them from simply retaining their animation pose
     // if hit by a laser midair
     // When newMomentum is 0,0,0, the momentum used will be simply the character's current momentum
-    public virtual void Die(bool emphasizeTorso, Vector3 newMomentum = default(Vector3))
+    public override void Die(bool emphasizeTorso, Vector3 newMomentum = default(Vector3))
     {
         if (!invincible)
         {
@@ -258,45 +217,6 @@ public class Racer : MonoBehaviour
         //     }
         //     break;
         // }
-    }
-
-    protected virtual IEnumerator RevivalEnabler()
-    {
-        // Don't allow a revival until one second after we stop moving on the ground
-        yield return new WaitUntil(() => !ragdoll.IsMoving());
-        yield return new WaitForSeconds(1.5f);
-        canRevive = true;
-        ReviveText();
-    }
-
-    protected virtual void ReviveText()
-    {
-        //do nothing in base class;
-    }
-
-    public virtual void Revive(bool forceRevive = false)
-    {
-        if (dead && (canRevive || forceRevive))
-        {
-            Vector3 landingPosition = hips.position;
-            ragdoll.SetRagdoll(false);
-            
-            // Re-enable components
-            anim.enabled = true;
-            rb.isKinematic = false;
-            GetComponent<Collider>().enabled = true;
-
-            // Force the position update
-            transform.position = landingPosition;
-            hips.localPosition = Vector3.zero;
-
-            // Clear velocity and sync transforms
-            rb.linearVelocity = Vector3.zero;
-            rb.angularVelocity = Vector3.zero;
-            Physics.SyncTransforms();
-
-            dead = false;
-        }
     }
 
     public void ArriveAtCheckpoint(Checkpoint checkpoint)
@@ -388,21 +308,14 @@ public class Racer : MonoBehaviour
         return transform.position + 2f * characterMesh.transform.forward + up * characterMesh.transform.up;
     }
 
-    /*  plays a miscellaneus animation that is NOT defined in the animation controller */
-    public void PlayMiscAnimation(AnimationClip clip)
-    {
-        animOverride["miscAnimation"] = clip;
-        anim.runtimeAnimatorController = animOverride;
-        anim.SetTrigger("misc");
-    }
-
     public void PlayMiscSound(AudioClip clip)
     {
         audioSource.PlayOneShot(clip);
     }
 
-    private void OnTriggerEnter(Collider other)
+    protected override void OnTriggerEnter(Collider other)
     {
+        base.OnTriggerEnter(other);
         // Pick up an item
         if (other.gameObject.CompareTag("Item"))
         {
@@ -412,29 +325,13 @@ public class Racer : MonoBehaviour
     }
 
     /*  check if we hit something too fast */
-    protected virtual void OnCollisionEnter(Collision other)
+    protected override void OnCollisionEnter(Collision other)
     {
-        
-    }
-
-    // Returns whether or not this racer is currently "dead"
-    public bool IsDead()
-    {
-        return dead;
+        base.OnCollisionEnter(other);
     }
 
     public Movement.Mode GetCurrentMovementMode()
     {
         return movementMode;
-    }
-
-    public bool isGrounded()
-    {
-        return movement.Grounded;
-    }
-
-    public void Land()
-    {
-        movement.Land();
     }
 }

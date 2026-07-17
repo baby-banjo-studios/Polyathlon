@@ -4,10 +4,10 @@ public class BananaObject : MonoBehaviour
 {
     private void OnTriggerEnter(Collider other) 
     {
-        Racer racer = other.gameObject.GetComponentInParent<Racer>();
-        if (racer != null)
+        Entity target = other.gameObject.GetComponentInParent<Entity>();
+        if (target != null)
         {
-            racer.Die(false);
+            target.Die(false);
             Destroy(this.gameObject, 2f);
         }    
     }   

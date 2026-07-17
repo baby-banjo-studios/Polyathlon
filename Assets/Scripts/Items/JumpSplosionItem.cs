@@ -19,19 +19,19 @@ public class JumpSplosionItem : Item
     {
         expStart = racer.transform.position;
         Collider[] nearbyColliders = Physics.OverlapSphere(racer.transform.position, explosionRange/*, LayerMask.NameToLayer("Racer")*/);
-        List<Racer> nearbyRacers = new List<Racer>();
+        List<Entity> nearbyTargets = new List<Entity>();
         foreach (Collider coll in nearbyColliders)
         {
             if (coll.TryGetComponent<Racer>(out Racer otherRacer) && otherRacer != racer)
             {
-                nearbyRacers.Add(otherRacer);
+                nearbyTargets.Add(otherRacer);
             }    
         }
 
-        foreach (Racer otherRacer in nearbyRacers)
+        foreach (Entity other in nearbyTargets)
         {
-            Vector3 force = (otherRacer.transform.position - racer.transform.position).normalized * opponentForce;
-            otherRacer.Die(true, force);
+            Vector3 force = (other.transform.position - racer.transform.position).normalized * opponentForce;
+            other.Die(true, force);
         }
 
         Vector3 playerForceV3 = racer.Forward * playerForce;

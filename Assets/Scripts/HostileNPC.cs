@@ -1,16 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
 
 public class HostileNPC : Entity
 {    
 
-    protected Racer target = null;
     [SerializeField]
     protected float engageDistance = 25f;
+    [SerializeField]
+    protected float maxRotationPerSecond_deg = 90f;
     protected Sensor sensor;
-    public Entity target2;
+    public Entity target = null;
 
     protected override void Awake()
     {
@@ -23,8 +25,19 @@ public class HostileNPC : Entity
         base.Update();
         if (sensor != null)
         {
-            Entity target = sensor.GetClosestVisibleTarget();
-            target2 = target;
+            target = sensor.GetClosestVisibleTarget();
+        }
+
+        if (target != null)
+        {
+            // get direction to target
+            Vector3 dirToTarget = target.transform.position - transform.position;
+            Quaternion rotToTarget = Quaternion.LookRotation(dirToTarget);
+            Quaternion targetRotation = Quaternion.Euler(0f, rotToTarget.eulerAngles.y, 0f);
+
+            // rotate to face target
+            float maxRotationThisFrame = maxRotationPerSecond_deg * Time.deltaTime;
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, maxRotationThisFrame);
         }
     }
 }

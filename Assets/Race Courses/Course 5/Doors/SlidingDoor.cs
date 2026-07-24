@@ -34,10 +34,6 @@ public class SlidingDoor : MonoBehaviour
     void OnTriggerStay(Collider other)
     {
         Rigidbody rb = other.attachedRigidbody;
-        if (rb != null)
-        {
-            Debug.Log("Door sees " + other.gameObject.name + " with speed " + rb.linearVelocity.magnitude);
-        }
 
         // Don't open for inanimate objects, slow-moving non-racers, or broken glass
         if (rb == null
@@ -49,7 +45,6 @@ public class SlidingDoor : MonoBehaviour
         // Open the door if it isn't already.
         if (!isOpen)
         {
-            Debug.Log("Opening door because door sees " + other.gameObject.name);
             isOpen = true;
 
             if (moveCoroutine != null)

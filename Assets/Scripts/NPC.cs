@@ -348,7 +348,7 @@ public class NPC : Racer
     /*  updates player's movement mode and maxSpeed/locomotion accordingly */
     public override void SetMovementMode(Movement.Mode mode, bool initial = false)
     {
-        Debug.Log("Setting mode: " + mode);
+        Debug.Log(gameObject.name + " is setting mode: " + mode);
         base.SetMovementMode(mode, initial);
         move = new Vector2(0, 0);
         if (mode == Movement.Mode.Swimming || mode == Movement.Mode.GetOffTheBoat)
@@ -412,6 +412,7 @@ public class NPC : Racer
             if (agent.enabled && agent.isOnNavMesh)
                 agent.SetDestination(nextWaypoint.GetPos(this));
         }
+        Debug.Log(gameObject.name + " has arrived at " + ((MonoBehaviour)waypoint).gameObject.name + " and is now going to " + ((MonoBehaviour)nextWaypoint).gameObject.name);
     }
 
     // When you end up not where you'd like to be, the best way out is a jetpack. Or the finish line.

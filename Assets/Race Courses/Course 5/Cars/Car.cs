@@ -2,9 +2,10 @@ using UnityEngine;
 using EasyRoads3Dv3; // Requires EasyRoads3D Pro
 
 [RequireComponent(typeof(Rigidbody))]
-public class CarWaypointFollower : MonoBehaviour
+public class Car : MonoBehaviour
 {
-    
+    public AudioClip[] impactSounds;
+    public AudioClip[] horn;
     private string targetRoadName;
     private float speed;
     private float rotationSpeed;
@@ -22,10 +23,12 @@ public class CarWaypointFollower : MonoBehaviour
     private bool isInitialized = false;
 
     private Rigidbody rb;
+    private AudioSource audioSource;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        audioSource = GetComponent<AudioSource>();
         
         // Ensure interpolation is enabled for smooth visual movement at low physics tick rates
         rb.interpolation = RigidbodyInterpolation.Interpolate;
@@ -177,6 +180,34 @@ public class CarWaypointFollower : MonoBehaviour
         if (racer != null)
         {
             racer.Die(true);
+            // play them at once to create a bigger impact
+            foreach(AudioClip impactSound in impactSounds)
+            {
+                audioSource.PlayOneShot(impactSound);
+            }
+            
+        }
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        // Honk at racers who are in the way
+        if (other.gameObject.layer == LayerMask.NameToLayer("Racer"))
+        {
+            // Pick a random clip
+            AudioClip clip = horn[Random.Range(0, horn.Length)];
+
+            // Store original pitch so we don't permanently mess up other sounds
+            float originalPitch = audioSource.pitch;
+
+            // Randomize pitch: e.g., 0.7f (lower/deeper/slower)
+            audioSource.pitch = Random.Range(0.4f, 1f);
+
+            // Play the honk with the modified pitch
+            audioSource.PlayOneShot(clip);
+
+            // Reset pitch back to normal (1.0)
+            audioSource.pitch = originalPitch;
         }
     }
 

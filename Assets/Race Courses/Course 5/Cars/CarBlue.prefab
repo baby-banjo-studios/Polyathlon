@@ -73,6 +73,11 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 5809404759e3ffd44aee2a78b2f63875, type: 2}
+    - target: {fileID: 5212410335754907640, guid: 8e7d94788676e874886efcef6e1f25b2,
+        type: 3}
+      propertyPath: m_Resource
+      value: 
+      objectReference: {fileID: 8300000, guid: e9643d8581d235f45a62997cba851988, type: 3}
     - target: {fileID: 5990207601082870323, guid: 8e7d94788676e874886efcef6e1f25b2,
         type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -81,7 +86,7 @@ PrefabInstance:
     - target: {fileID: 6127315100661809050, guid: 8e7d94788676e874886efcef6e1f25b2,
         type: 3}
       propertyPath: m_Name
-      value: BlueCar
+      value: CarBlue
       objectReference: {fileID: 0}
     - target: {fileID: 7078773541488895237, guid: 8e7d94788676e874886efcef6e1f25b2,
         type: 3}

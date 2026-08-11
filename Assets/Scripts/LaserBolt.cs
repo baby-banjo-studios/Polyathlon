@@ -10,31 +10,30 @@ public class LaserBolt : MonoBehaviour
     private float speed;
     private AudioSource audioSource;
     private Transform laserChild;
-    private Racer owner;
+    private Entity owner;
 
-    public void Initialize(float speed, Racer owner = null)
+    public virtual void Initialize(float speed, Entity owner = null)
     {
         this.speed = speed;
         this.owner = owner;
     }
 
-    private void Awake()
-    {
-
-    }
-
-    private void Start()
+    protected virtual  void Awake()
     {
         audioSource = GetComponent<AudioSource>();
+        rb = GetComponent<Rigidbody>();
+    }
+
+    protected virtual  void Start()
+    {
         audioSource.clip = laserImpact;
         laserChild = transform.GetChild(0);
-        rb = GetComponent<Rigidbody>();
         rb.linearVelocity = transform.forward * speed;
         StartCoroutine(DestroyIfMissed());
     }
 
     // Kill the racer if we hit them
-    void OnTriggerEnter(Collider other)
+    protected virtual void OnTriggerEnter(Collider other)
     {
         Entity target = other.gameObject.GetComponentInParent<Entity>();
         if (owner == null || (owner != null && target != owner))

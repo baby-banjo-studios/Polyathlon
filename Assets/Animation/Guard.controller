@@ -21,7 +21,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: -203655887218126122, guid: f22cad99d2c54d044adc072fe0cfc8de,
+  m_Motion: {fileID: -203655887218126122, guid: 199a46298e7f5ea4d9be4e3f73fa939f,
     type: 3}
   m_Tag: 
   m_SpeedParameter: 
@@ -114,7 +114,7 @@ AnimatorController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Wizard
+  m_Name: Guard
   serializedVersion: 5
   m_AnimatorParameters:
   - m_Name: speed
@@ -151,7 +151,7 @@ BlendTree:
   m_Name: Blend Tree
   m_Childs:
   - serializedVersion: 2
-    m_Motion: {fileID: -203655887218126122, guid: 693780fadf66f334a96df544e894808a,
+    m_Motion: {fileID: -203655887218126122, guid: 9d9a16ce9ecc3814183d79fafa3b0f58,
       type: 3}
     m_Threshold: 0
     m_Position: {x: 0, y: 0}
@@ -160,7 +160,7 @@ BlendTree:
     m_DirectBlendParameter: moveX
     m_Mirror: 0
   - serializedVersion: 2
-    m_Motion: {fileID: -203655887218126122, guid: e06d0a9c5d8d2e84593770271b56e720,
+    m_Motion: {fileID: -203655887218126122, guid: 81b470b93a575ac40995c2fdc4900e5f,
       type: 3}
     m_Threshold: 0.5
     m_Position: {x: 0, y: 0}
@@ -169,7 +169,7 @@ BlendTree:
     m_DirectBlendParameter: moveX
     m_Mirror: 0
   - serializedVersion: 2
-    m_Motion: {fileID: -203655887218126122, guid: b169a60fd7c63394f926bfe86ee1657a,
+    m_Motion: {fileID: -203655887218126122, guid: 0538a146ca0a5a24d9b371e61c1e6eb3,
       type: 3}
     m_Threshold: 1
     m_Position: {x: 0, y: 0}

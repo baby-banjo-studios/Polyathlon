@@ -47,7 +47,10 @@ public class Ragdoll : MonoBehaviour
 
         foreach (Collider c in colliders)
         {
-            c.enabled = value;
+            if (!c.gameObject.TryGetComponent<MeleeWeapon>(out _))
+            {
+                c.enabled = value;
+            }
         }
         if (value)
         {

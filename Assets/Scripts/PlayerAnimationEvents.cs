@@ -7,6 +7,7 @@ using UnityEngine;
 public class PlayerAnimationEvents : MonoBehaviour
 {
     public Movement movement;
+    private Entity parent;
     private AudioSource aud;
     [Header("Footstep sounds")]
     public AudioClip[] concreteSteps;
@@ -16,6 +17,7 @@ public class PlayerAnimationEvents : MonoBehaviour
     void Start()
     {
         aud = GetComponent<AudioSource>();
+        parent = GetComponentInParent<Entity>();
     }
 
     /*  plays a footstep sound when triggered by an animation */
@@ -43,6 +45,33 @@ public class PlayerAnimationEvents : MonoBehaviour
     public void StartFalling()
     {
         movement.Falling = true;
+    }
+
+    /*  called when a NPC Wizard uses a fireball attack */ 
+    public void CastFireball()
+    {
+        if (parent is HostileNPC hnpc)
+        {
+            hnpc.SpawnProjectile();
+        }
+    }
+
+    /*  called when a NPC begins a melee attack */ 
+    public void AttackStart()
+    {
+        if (parent is HostileNPC hnpc)
+        {
+            hnpc.SetAttacking(true);
+        }
+    }
+
+    /*  called when a NPC ends a melee attack */ 
+    public void AttackEnd()
+    {
+        if (parent is HostileNPC hnpc)
+        {
+            hnpc.SetAttacking(false);
+        }
     }
 
     /*  returns the movement state category of a float passed in through an animation */

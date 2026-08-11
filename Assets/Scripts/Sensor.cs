@@ -3,6 +3,13 @@ using UnityEngine;
 
 public class Sensor : MonoBehaviour
 {
+    public enum TargetType
+    {
+        PlayersOnly,
+        RacersOnly,
+        AllEntities
+    }
+
     private class TargetInfo
     {
         public TargetInfo(Entity target, float distance, bool visible)
@@ -16,6 +23,8 @@ public class Sensor : MonoBehaviour
         public bool visible;
     }
 
+    [SerializeField]
+    private TargetType targetType;
     private SphereCollider triggerCollider;
     public float range;
     public LayerMask blockingMask;
@@ -63,7 +72,8 @@ public class Sensor : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.TryGetComponent(out Entity target))
+        Entity target = FilterTargetTypeFromCollider(other);
+        if (target != null)
         {
             TargetInfo newTarget = new TargetInfo(target, Vector3.Distance(transform.position, target.hips.position), IsTargetVisible(target));
             targetsInRange.Add(newTarget);
@@ -72,7 +82,8 @@ public class Sensor : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.TryGetComponent(out Entity target))
+        Entity target = FilterTargetTypeFromCollider(other);
+        if (target != null)
         {
             foreach (TargetInfo existingTarget in targetsInRange)
             {
@@ -83,6 +94,26 @@ public class Sensor : MonoBehaviour
                 }
             }
         }
+    }
+
+    private Entity FilterTargetTypeFromCollider(Collider other)
+    {
+        switch (targetType)
+        {
+            case TargetType.PlayersOnly:
+                {
+                    return other.GetComponent<PlayerController>();
+                }
+            case TargetType.RacersOnly:
+                {
+                    return other.GetComponent<Racer>();
+                }
+            case TargetType.AllEntities:
+                {
+                    return other.GetComponent<Entity>();
+                }
+        }
+        return null;
     }
 
     private bool IsTargetVisible(Entity target)

@@ -16,8 +16,8 @@ public class NPC : Racer
 
     protected const float agentSpeed = 5;
 
-    private bool gliderControlActive = false;
-    private bool isGoingToJetpack = false;
+    protected bool gliderControlActive = false;
+    protected bool isGoingToJetpack = false;
 
     protected override void Awake()
     {
@@ -50,8 +50,8 @@ public class NPC : Racer
         base.Start();
     }
 
-    private Vector3 smoothedDesired;
-    private const float desiredSmoothTime = 0.15f;
+    protected Vector3 smoothedDesired;
+    protected const float desiredSmoothTime = 0.15f;
 
 
     protected override void Update()
@@ -148,8 +148,9 @@ public class NPC : Racer
 
     }
 
-    void FixedUpdate()
+    protected override void FixedUpdate()
     {
+        base.FixedUpdate();
         if (!rb.isKinematic)
         {
             if (movementMode == Movement.Mode.Running || movementMode == Movement.Mode.Jetpacking && movement.Grounded)
@@ -165,7 +166,7 @@ public class NPC : Racer
     }
 
 
-    IEnumerator GliderControl()
+    protected IEnumerator GliderControl()
     {
         gliderControlActive = true;
         bool landOnHead = Random.Range(0, 2) == 1;
@@ -262,7 +263,7 @@ public class NPC : Racer
         }
     }
 
-    private IEnumerator UseItem()
+    protected IEnumerator UseItem()
     {
         float s = Random.Range(0.2f, 10f);
         yield return new WaitForSeconds(s);
@@ -421,7 +422,7 @@ public class NPC : Racer
             StartCoroutine(GoToNearestJetpackOnceOnNavMesh());
     }
 
-    private IEnumerator GoToNearestJetpackOnceOnNavMesh()
+    protected IEnumerator GoToNearestJetpackOnceOnNavMesh()
     {
         isGoingToJetpack = true;
         while(!(agent.enabled && agent.isOnNavMesh))
@@ -475,7 +476,7 @@ public class NPC : Racer
     }
 
     // Interruptable coroutine!
-    private IEnumerator FallMonitor()
+    protected IEnumerator FallMonitor()
     {
         float ypos = transform.position.y;
         while (movementMode == Movement.Mode.Wheeling)
@@ -489,7 +490,7 @@ public class NPC : Racer
         }
     }
 
-    private IEnumerator PathRefresher()
+    protected IEnumerator PathRefresher()
     {
         while (movementMode == Movement.Mode.Wheeling)
         {
@@ -500,7 +501,7 @@ public class NPC : Racer
         }
     }
 
-    private void ResetNavMeshAgent()
+    protected void ResetNavMeshAgent()
     {
         Vector3 currentDestination = agent.destination;
         if (NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 3f, NavMesh.AllAreas))
@@ -511,7 +512,7 @@ public class NPC : Racer
         }
     }
 
-    private IEnumerator ResumeAgentNextFrame(Vector3 destination)
+    protected IEnumerator ResumeAgentNextFrame(Vector3 destination)
     {
         yield return null; 
 

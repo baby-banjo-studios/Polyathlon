@@ -6,7 +6,7 @@ using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class HostileNPC : Entity
+public class HostileNPC : NPC
 {    
 
     // public enum AttackMode
@@ -20,12 +20,6 @@ public class HostileNPC : Entity
     [SerializeField]
     protected float minEngageDistance = 25f, nominalEngageDistance = 25f, maxEngageDistance = 25f;
     protected Vector3 navigationTargetPosition;
-    protected NavMeshAgent agent;
-
-    
-    // used to smooth out speed transition an animation
-    protected float speed = 0;
-    protected float smoothSpeed = 0;
 
     [SerializeField]
     protected float maxRotationPerSecond_deg = 90f;
@@ -84,60 +78,59 @@ public class HostileNPC : Entity
         //     }
         // }
         
-        if (sensor != null)
+        if (!dead && RaceManager.IsRaceActive && !RaceManager.IsPaused)
         {
-            target = sensor.GetClosestVisibleTarget();
-        }
-
-        if (target != null)
-        {
-            // get direction to target
-            Vector3 dirToTarget = target.transform.position - transform.position;
-            float distToTarget = dirToTarget.magnitude;
-
-            if (distToTarget > maxEngageDistance || distToTarget < minEngageDistance)
+            if (sensor != null)
             {
-                // move closer to or farther away from  target
-                Vector3 nominalPointOnLine = target.transform.position - dirToTarget.normalized * nominalEngageDistance;
-                if (NavMesh.SamplePosition(nominalPointOnLine, out NavMeshHit hit, 4f, NavMesh.AllAreas))
-                {
-                    Debug.DrawLine(transform.position, navigationTargetPosition, Color.aliceBlue);
-                    navigationTargetPosition = hit.position;
-                    agent.SetDestination(navigationTargetPosition);
-                }
-                
+                target = sensor.GetClosestVisibleTarget();
             }
-            // else if (distToTarget < minEngageDistance)
-            // {
-            //     // move away from target
-            //     Vector3 nominalPointOnLine = target.transform.position - dirToTarget * nominalEngageDistance;
-            // }
+
+            if (target != null)
+            {
+                // get direction to target
+                Vector3 dirToTarget = target.transform.position - transform.position;
+                float distToTarget = dirToTarget.magnitude;
+
+                if (distToTarget > maxEngageDistance || distToTarget < minEngageDistance)
+                {
+                    // move closer to or farther away from  target
+                    Vector3 nominalPointOnLine = target.transform.position - dirToTarget.normalized * nominalEngageDistance;
+                    if (NavMesh.SamplePosition(nominalPointOnLine, out NavMeshHit hit, 4f, NavMesh.AllAreas))
+                    {
+                        Debug.DrawLine(transform.position, navigationTargetPosition, Color.aliceBlue);
+                        navigationTargetPosition = hit.position;
+                        agent.SetDestination(navigationTargetPosition);
+                    }
+                    
+                }
+                // else if (distToTarget < minEngageDistance)
+                // {
+                //     // move away from target
+                //     Vector3 nominalPointOnLine = target.transform.position - dirToTarget * nominalEngageDistance;
+                // }
+                else
+                {
+                    // good distance to target - face target and attack
+                    Quaternion rotToTarget = Quaternion.LookRotation(dirToTarget);
+                    Quaternion targetRotation = Quaternion.Euler(0f, rotToTarget.eulerAngles.y, 0f);
+
+                    // rotate to face target
+                    float maxRotationThisFrame = maxRotationPerSecond_deg * Time.deltaTime;
+                    transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, maxRotationThisFrame);
+
+                    countdownToAttack -= Time.deltaTime;
+                    if (countdownToAttack <= 0)
+                    {
+                        countdownToAttack = timeBetweenAttacks;
+                        Attack();
+                    }
+                }
+            }
             else
             {
-                // good distance to target - face target and attack
-                Quaternion rotToTarget = Quaternion.LookRotation(dirToTarget);
-                Quaternion targetRotation = Quaternion.Euler(0f, rotToTarget.eulerAngles.y, 0f);
-
-                // rotate to face target
-                float maxRotationThisFrame = maxRotationPerSecond_deg * Time.deltaTime;
-                transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, maxRotationThisFrame);
-
-                countdownToAttack -= Time.deltaTime;
-                if (countdownToAttack <= 0)
-                {
-                    countdownToAttack = timeBetweenAttacks;
-                    Attack();
-                }
+                countdownToAttack = timeBetweenAttacks;
             }
         }
-        else
-        {
-            countdownToAttack = timeBetweenAttacks;
-        }
-
-        speed = Mathf.SmoothStep(speed, rb.linearVelocity.magnitude, Time.deltaTime * 20);
-    
-        anim.SetFloat("speed", speed, 0.05f, Time.deltaTime);
     }
 
     protected virtual void Attack()

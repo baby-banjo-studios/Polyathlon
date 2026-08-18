@@ -67,8 +67,8 @@ public class SnapshotCamera : MonoBehaviour
             }
 
             RenderTexture thumbRT = new RenderTexture(thumbWidth, thumbHeight, 24);
-            Graphics.Blit(RenderTexture.active, thumbRT);
-            RenderTexture.active = thumbRT;
+            Graphics.Blit(snapCam.targetTexture, thumbRT);
+            snapCam.targetTexture = thumbRT;
            
             RenderAndExport(thumbWidth, thumbHeight, SnapshotName(true, dt));
         }

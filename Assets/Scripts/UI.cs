@@ -12,6 +12,8 @@ public class UI : MonoBehaviour
     private GameObject gameHUD;
     [SerializeField]
     private GameObject pauseMenu;
+    [SerializeField]
+    private GameObject settingsMenu;
 
     [SerializeField]
     private GameObject debugConsole;
@@ -55,6 +57,7 @@ public class UI : MonoBehaviour
         isPrimaryTaken = true;
 
         pauseMenu.SetActive(false);
+        settingsMenu.SetActive(false);
 
         SetSpeedUnit((SpeedUnits)PlayerPrefs.GetInt(PlayerPrefsKeys.SPEED_UNITS, 0));
 
@@ -234,6 +237,7 @@ public class UI : MonoBehaviour
     public void SetPauseMenu(bool active)
     {
         pauseMenu.SetActive(active);
+        settingsMenu.SetActive(false);
         if (active)
         {
             // receivedFirstNavEvent = false;
@@ -273,6 +277,18 @@ public class UI : MonoBehaviour
         //     pauseMenu.SetActive(!RaceManager.IsPhotoMode);
         //     gameHUD.SetActive(!RaceManager.IsPhotoMode);
         // }
+    }
+
+    public void OnSettingsEnter()
+    {
+        pauseMenu.SetActive(false);
+        settingsMenu.SetActive(true);
+    }
+
+    public void OnSettingsExit()
+    {
+        pauseMenu.SetActive(true);
+        settingsMenu.SetActive(false);
     }
 
     public void OnReturnToMenu()

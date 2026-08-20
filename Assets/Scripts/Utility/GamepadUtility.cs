@@ -17,7 +17,7 @@ public class GamepadUtility
                 {
                     s = "Mouse";
                 }
-                return s;
+                return GetFirstBindingInDisplayString(s);
             }
             
             if (i < action.bindings.Count - 1 && binding.isComposite)
@@ -28,9 +28,19 @@ public class GamepadUtility
                 {
                     //return binding.name;
                     // alternatively use this for built-in composite string constructor:
-                    return action.GetBindingDisplayString(i);
+                    return GetFirstBindingInDisplayString(action.GetBindingDisplayString(i));
                 }
             }
+        }
+        return string.Empty;
+    }
+
+    public static string GetFirstBindingInDisplayString(string multiBindingStr)
+    {
+        string[] multiBindingToks = multiBindingStr.Split('|');
+        if (multiBindingToks.Length > 0)
+        {
+            return multiBindingToks[0].Trim();
         }
         return string.Empty;
     }

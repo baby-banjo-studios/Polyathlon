@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 
 //[RequireComponent(typeof(Racer))]
 public class UI : MonoBehaviour
@@ -12,6 +13,8 @@ public class UI : MonoBehaviour
     private GameObject gameHUD;
     [SerializeField]
     private GameObject pauseMenu;
+    [SerializeField]
+    private GameObject settingsMenu;
 
     [SerializeField]
     private GameObject debugConsole;
@@ -55,6 +58,7 @@ public class UI : MonoBehaviour
         isPrimaryTaken = true;
 
         pauseMenu.SetActive(false);
+        settingsMenu.SetActive(false);
 
         SetSpeedUnit((SpeedUnits)PlayerPrefs.GetInt(PlayerPrefsKeys.SPEED_UNITS, 0));
 
@@ -75,10 +79,8 @@ public class UI : MonoBehaviour
         {
             timeText.enabled = false;
             positionText.enabled = false;
-            itemText.text = "Respawn: Left Trigger (Gamepad)\nRight/Left Click (Mouse)";
-            itemText.gameObject.SetActive(true);
         }
-
+        
         SetDebugConsole(false);
     }
 
@@ -119,6 +121,30 @@ public class UI : MonoBehaviour
         vfx.SetOverlayMask(player, maxPlayers);
     }
 
+    public void UpdateControlsText(PlayerInput playerInput)
+    {
+        //InputActionMap actionMap = playerInput.actions.FindActionMap("PhotoMode");
+        InputActionMap actionMap = playerInput.currentActionMap;
+        InputAction itemAction = actionMap.FindAction("Item");
+        if (itemAction != null)
+        {
+            string itemButton = GamepadUtility.GetButtonFromInput(itemAction, playerInput.currentControlScheme);
+            if (RaceManager.RespawnOnUse)
+            {
+                itemText.text = string.Format("[{0}] Respawn", itemButton);
+                itemText.gameObject.SetActive(true);
+            }
+            else
+            {
+                itemText.text = string.Format("[{0}] Use", itemButton);
+            }
+        }
+        else
+        {
+            itemText.gameObject.SetActive(false);
+        }
+    }
+
     /*  returns time in the form "minutes:seconds.milliseconds" */
     public static string FormatTime(float seconds)
     {
@@ -136,7 +162,10 @@ public class UI : MonoBehaviour
         {
             // itemImage.sprite = defaultItemSprite;
             itemImage.gameObject.SetActive(false);
-            itemText.gameObject.SetActive(false);
+            if (!RaceManager.RespawnOnUse)
+            {
+                itemText.gameObject.SetActive(false);
+            }
         }
         else
         {
@@ -234,6 +263,7 @@ public class UI : MonoBehaviour
     public void SetPauseMenu(bool active)
     {
         pauseMenu.SetActive(active);
+        settingsMenu.SetActive(false);
         if (active)
         {
             // receivedFirstNavEvent = false;
@@ -273,6 +303,18 @@ public class UI : MonoBehaviour
         //     pauseMenu.SetActive(!RaceManager.IsPhotoMode);
         //     gameHUD.SetActive(!RaceManager.IsPhotoMode);
         // }
+    }
+
+    public void OnSettingsEnter()
+    {
+        pauseMenu.SetActive(false);
+        settingsMenu.SetActive(true);
+    }
+
+    public void OnSettingsExit()
+    {
+        pauseMenu.SetActive(true);
+        settingsMenu.SetActive(false);
     }
 
     public void OnReturnToMenu()

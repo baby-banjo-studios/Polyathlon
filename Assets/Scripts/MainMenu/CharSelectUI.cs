@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class CharSelectUI : BaseMenuUI
@@ -22,6 +23,8 @@ public class CharSelectUI : BaseMenuUI
     private List<Selector> selectors;
     private List<MainMenuPlayer> players;
     private List<PlayerReadyIndicator> indicators;
+    [SerializeField]
+    private List<CharSelectPreview> charSelectPreviews;
     [SerializeField]
     private AllReadyOverlay allReadyOverlay;
     protected override void Awake()
@@ -70,7 +73,7 @@ public class CharSelectUI : BaseMenuUI
 
     protected override void OnEnable()
     {
-
+        base.OnEnable();
     }
 
     public override void Reset()
@@ -139,6 +142,12 @@ public class CharSelectUI : BaseMenuUI
                         selector.selectedEntry.RemoveSelector(selector);
                         selector.selectedEntry = nextEntry;
                         selector.selectedEntry.AddSelector(selector, false);
+                        
+                        CharSelectPreview preview = GetPreviewForPlayer(player);
+                        if (preview != null)
+                        {
+                            preview.SelectCharacter((CharacterRegistry)selector.selectedEntry.Registry);
+                        }
                     }    
                 }
             }
@@ -257,7 +266,7 @@ public class CharSelectUI : BaseMenuUI
     private void AddCharacter(CharacterRegistry character)
     {
         GridEntry entry = Instantiate(entryTemplate, entryParent);
-        entry.Initialize(character, character.displayName, character.icon, maxLocalPlayers, 0, null); // TODO get row index
+        entry.Initialize(character, character.displayName, character.icon, maxLocalPlayers, 0, OnGridEntrySelected); // TODO get row index
         entries.Add(entry);
         if (firstSelectable == null)
         {
@@ -338,7 +347,6 @@ public class CharSelectUI : BaseMenuUI
         }
         return null;
     }
-
     private PlayerReadyIndicator GetIndicatorForPlayer(MainMenuPlayer player)
     {
         if (player.PlayerNum >= 0 && player.PlayerNum < maxLocalPlayers)
@@ -347,4 +355,23 @@ public class CharSelectUI : BaseMenuUI
         }
         return null;
     }
+    private CharSelectPreview GetPreviewForPlayer(MainMenuPlayer player)
+    {
+        if (player.PlayerNum >= 0 && player.PlayerNum < maxLocalPlayers)
+        {
+            return charSelectPreviews[player.PlayerNum];
+        }
+        return null;
+    }
+
+    protected void OnGridEntrySelected(GridEntry gridEntry, BaseEventData eventData)
+    {
+        MainMenuPlayer player = eventData.currentInputModule.GetComponent<MainMenuPlayer>();
+        CharSelectPreview preview = GetPreviewForPlayer(player);
+        if (preview != null)
+        {
+            preview.SelectCharacter((CharacterRegistry)gridEntry.Registry);
+        }
+    }
+
 }

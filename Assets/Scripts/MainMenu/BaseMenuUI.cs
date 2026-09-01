@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -11,7 +12,12 @@ public class BaseMenuUI : MonoBehaviour
     protected RaceSettings raceSettings;
     protected bool usingKeyboardMouse;
     
+    [SerializeField]
+    protected CinemachineCamera virtualCamera;
     private bool receivedFirstNavEvent;
+
+    private const int activeCameraPriority = 2;
+    private const int inactiveCameraPriority = 0;
 
     protected virtual void Awake()
     {
@@ -40,11 +46,18 @@ public class BaseMenuUI : MonoBehaviour
             //EventSystem.current.SetSelectedGameObject(null);
             //Debug.Log("NO nav events");
         }
+        if (virtualCamera != null)
+        {
+            virtualCamera.Priority = activeCameraPriority;
+        }
     }
 
     protected virtual void OnDisable()
     {
-
+        if (virtualCamera != null)
+        {
+            virtualCamera.Priority = inactiveCameraPriority;
+        }
     }
 
     public virtual void Reset()

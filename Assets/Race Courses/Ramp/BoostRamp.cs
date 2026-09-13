@@ -1,14 +1,18 @@
+using BabyBanjo.Polyathlon.Entities;
 using UnityEngine;
 
-public class BoostRamp : MonoBehaviour
+namespace BabyBanjo.Polyathlon.World
 {
-
-    void OnTriggerEnter (Collider other)
+    public class BoostRamp : MonoBehaviour
     {
-        Racer racer = other.gameObject.GetComponent<Racer>();
-        if (racer != null)
+
+        void OnTriggerEnter(Collider other)
         {
-            racer.SpeedBoost(4, 1.5f);
+            Racer racer = other.gameObject.GetComponent<Racer>();
+            if (racer != null)
+            {
+                racer.SpeedBoost(4, 1.5f);
+            }
         }
     }
 }

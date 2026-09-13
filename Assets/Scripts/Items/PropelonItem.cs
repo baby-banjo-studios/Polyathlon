@@ -1,33 +1,38 @@
+using BabyBanjo.Polyathlon.Entities;
+using BabyBanjo.Polyathlon.Race;
 using UnityEngine;
 
-public class PropelonItem : Item
+namespace BabyBanjo.Polyathlon.Items
 {
-    public override void Pickup(Racer racer)
+    public class PropelonItem : Item
     {
-        base.Pickup(racer);
-    }
-
-    public override void Use(Racer racer)
-    {
-        // target can be null
-        Racer target = RaceManager.GetClosestRacerAheadOfThisOne(racer);
-        
-        Vector3 pos = racer.GetItemSpawnPos();
-        Quaternion startingRot = racer.characterMesh.rotation;
-        if (target != null)
+        public override void Pickup(Racer racer)
         {
-            startingRot *= Quaternion.Euler(Vector3.left * 30f); 
+            base.Pickup(racer);
         }
-        GameObject obj = Instantiate(Child, pos, startingRot);
 
-        PropelonObject projectile = obj.GetComponent<PropelonObject>();
-
-        if (target != null)
+        public override void Use(Racer racer)
         {
-            projectile.target = target.GetComponent<Rigidbody>();
-        }
-        projectile.source = racer.GetComponent<Rigidbody>();
+            // target can be null
+            Racer target = RaceManager.GetClosestRacerAheadOfThisOne(racer);
 
-        racer.EquipItem(null);
+            Vector3 pos = racer.GetItemSpawnPos();
+            Quaternion startingRot = racer.characterMesh.rotation;
+            if (target != null)
+            {
+                startingRot *= Quaternion.Euler(Vector3.left * 30f);
+            }
+            GameObject obj = Instantiate(Child, pos, startingRot);
+
+            PropelonObject projectile = obj.GetComponent<PropelonObject>();
+
+            if (target != null)
+            {
+                projectile.target = target.GetComponent<Rigidbody>();
+            }
+            projectile.source = racer.GetComponent<Rigidbody>();
+
+            racer.EquipItem(null);
+        }
     }
 }

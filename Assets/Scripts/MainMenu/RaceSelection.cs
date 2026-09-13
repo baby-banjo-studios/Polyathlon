@@ -1,11 +1,14 @@
 using System.ComponentModel;
 
-public enum RaceSelection
+namespace BabyBanjo.Polyathlon.Race
 {
-    [Description("P1 Choose")]
-    P1Choose,
-    [Description("In Order")]
-    InOrder,
-    [Description("Random")]
-    Random
+    public enum RaceSelection
+    {
+        [Description("P1 Choose")]
+        P1Choose,
+        [Description("In Order")]
+        InOrder,
+        [Description("Random")]
+        Random
+    }
 }

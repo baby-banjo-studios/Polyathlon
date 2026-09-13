@@ -1,19 +1,22 @@
 using UnityEngine;
 
-public class StopSignCollider : MonoBehaviour
+namespace BabyBanjo.Polyathlon.Items
 {
-    private StopSignObject parent;
-    private void Awake()
+    public class StopSignCollider : MonoBehaviour
     {
-        parent = GetComponentInParent<StopSignObject>();
-        if (parent == null)
+        private StopSignObject parent;
+        private void Awake()
         {
-            Debug.LogError("StopSignCollider failed to locate parent StopSignObject");
+            parent = GetComponentInParent<StopSignObject>();
+            if (parent == null)
+            {
+                Debug.LogError("StopSignCollider failed to locate parent StopSignObject");
+            }
         }
-    }
 
-    private void OnCollisionEnter(Collision other)
-    {
-        parent.CollisionDetected(other);
+        private void OnCollisionEnter(Collision other)
+        {
+            parent.CollisionDetected(other);
+        }
     }
 }

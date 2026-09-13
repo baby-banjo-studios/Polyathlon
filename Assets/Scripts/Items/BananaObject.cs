@@ -1,14 +1,18 @@
+using BabyBanjo.Polyathlon.Entities;
 using UnityEngine;
 
-public class BananaObject : MonoBehaviour
+namespace BabyBanjo.Polyathlon.Items
 {
-    private void OnTriggerEnter(Collider other) 
+    public class BananaObject : MonoBehaviour
     {
-        Racer racer = other.gameObject.GetComponentInParent<Racer>();
-        if (racer != null)
+        private void OnTriggerEnter(Collider other) 
         {
-            racer.Die(false);
-            Destroy(this.gameObject, 2f);
-        }    
-    }   
+            Racer racer = other.gameObject.GetComponentInParent<Racer>();
+            if (racer != null)
+            {
+                racer.Die(false);
+                Destroy(this.gameObject, 2f);
+            }    
+        }   
+    }
 }

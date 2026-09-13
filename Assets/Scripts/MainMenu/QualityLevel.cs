@@ -1,19 +1,22 @@
 using System.ComponentModel;
 
-public enum QualityLevel
+namespace BabyBanjo.Core.Rendering
 {
-    //{"Very Low", "Low", "Medium", "High", "Very High", "Ultra"};
-    [Description("Very Low")]
-    VeryLow,
-    [Description("Low")]
-    Low,
-    [Description("Medium")]
+    public enum QualityLevel
+    {
+        //{"Very Low", "Low", "Medium", "High", "Very High", "Ultra"};
+        [Description("Very Low")]
+        VeryLow,
+        [Description("Low")]
+        Low,
+        [Description("Medium")]
 
-    Medium,
-    [Description("High")]
-    High,
-    [Description("Very High")]
-    VeryHigh,
-    [Description("Ultra")]
-    Ultra,
+        Medium,
+        [Description("High")]
+        High,
+        [Description("Very High")]
+        VeryHigh,
+        [Description("Ultra")]
+        Ultra,
+    }
 }

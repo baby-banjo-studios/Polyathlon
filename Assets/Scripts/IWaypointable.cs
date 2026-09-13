@@ -1,10 +1,14 @@
-﻿using UnityEngine;
+﻿using BabyBanjo.Polyathlon.Entities;
+using UnityEngine;
 
-public interface IWaypointable
+namespace BabyBanjo.Polyathlon.Race
 {
-    IWaypointable Next { get; set; }
-    int Seq { get; set; }
-    Vector3 GetPos(NPC npc);
-    float GetHeight();
-    IWaypointable[] GetFork();
+    public interface IWaypointable
+    {
+        IWaypointable Next { get; set; }
+        int Seq { get; set; }
+        Vector3 GetPos(NPC npc);
+        float GetHeight();
+        IWaypointable[] GetFork();
+    }
 }

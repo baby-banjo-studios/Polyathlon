@@ -1,63 +1,66 @@
 using UnityEngine;
 
-public class DebugCharacterSwitcher : MonoBehaviour
+namespace BabyBanjo.Polyathlon.Entities
 {
-    private int playerIdx = 0;
-    private PlayerController[] players;
-    private bool playerChangedThisFrame = false;
-
-    private void Awake()
+    public class DebugCharacterSwitcher : MonoBehaviour
     {
-        players = GetComponentsInChildren<PlayerController>(true);
-    }
+        private int playerIdx = 0;
+        private PlayerController[] players;
+        private bool playerChangedThisFrame = false;
 
-    private void Start()
-    {
-        foreach (PlayerController player in players)
+        private void Awake()
         {
-            player.EnableDebugControls();
+            players = GetComponentsInChildren<PlayerController>(true);
         }
-        SetPlayer(playerIdx);
-    }
 
-    private void Update()
-    {
-        playerChangedThisFrame = false;
-    }
-
-    public void NextChar()
-    {
-        if (!playerChangedThisFrame)
+        private void Start()
         {
-            playerIdx++;
-            if (playerIdx > players.Length)
+            foreach (PlayerController player in players)
             {
-                playerIdx = 0;
+                player.EnableDebugControls();
             }
             SetPlayer(playerIdx);
         }
-    }
 
-    public void PrevChar()
-    {
-        if (!playerChangedThisFrame)
+        private void Update()
         {
-            playerIdx--;
-            if (playerIdx < 0)
+            playerChangedThisFrame = false;
+        }
+
+        public void NextChar()
+        {
+            if (!playerChangedThisFrame)
             {
-                playerIdx = players.Length - 1;
+                playerIdx++;
+                if (playerIdx > players.Length)
+                {
+                    playerIdx = 0;
+                }
+                SetPlayer(playerIdx);
             }
-            SetPlayer(playerIdx);
         }
-    }
 
-    private void SetPlayer(int idx)
-    {
-        playerChangedThisFrame = true;
-        for (int i = 0; i < players.Length; i++)
+        public void PrevChar()
         {
-            players[i].gameObject.SetActive(false);
+            if (!playerChangedThisFrame)
+            {
+                playerIdx--;
+                if (playerIdx < 0)
+                {
+                    playerIdx = players.Length - 1;
+                }
+                SetPlayer(playerIdx);
+            }
         }
-        players[idx].gameObject.SetActive(true);
+
+        private void SetPlayer(int idx)
+        {
+            playerChangedThisFrame = true;
+            for (int i = 0; i < players.Length; i++)
+            {
+                players[i].gameObject.SetActive(false);
+            }
+            players[idx].gameObject.SetActive(true);
+        }
     }
 }

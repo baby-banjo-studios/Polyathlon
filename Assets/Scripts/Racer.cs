@@ -1,440 +1,447 @@
+using BabyBanjo.Polyathlon.Items;
+using BabyBanjo.Polyathlon.Movement;
+using BabyBanjo.Polyathlon.Race;
 using UnityEngine;
 using System.Collections;
 
-public class Racer : MonoBehaviour
+namespace BabyBanjo.Polyathlon.Entities
 {
-    public new string name;
-    public int racerID;
-
-    public Movement.Mode movementMode;
-    public Movement.Mode prevMovementMode; // sometimes its helpful to know what we had previously
-    public Movement[] movementOptions;
-
-    public Transform characterMesh;
-    public Transform hips;
-
-    protected Item item;
-    
-    protected AnimatorOverrideController animOverride;
-    protected PlayerAnimationEvents animEvents;
-
-    protected Movement movement;
-    protected Ragdoll ragdoll;
-    protected BackpackMount backpackMount;
-    protected Rigidbody rb;
-    protected Animator anim;
-    protected AudioSource audioSource;
-    
-    protected Vector2 move;
-    protected float moveUp, moveDown;
-    protected Vector3 velocityBeforePhysicsUpdate;
-    protected bool dead;
-    protected bool canRevive; // when this is true, a dead racer can be revived.
-    public bool invincible = false;
-    protected float permanentSpeedScale = 1f;
-
-    protected Coroutine boostCoroutine;
-    protected float remainingBoostTime = 0f;
-
-    public int place;
-    public float dieThreshold = 40f;
-    public Checkpoint lastCheckpoint;
-    public Checkpoint nextCheckpoint;
-    public bool isFinished = false;
-
-    [Header("Sound Effects")]
-    public AudioClip bikeSound;
-    public AudioClip waterSound;
-    public AudioClip equipSound;
-
-    public BackpackMount BackpackMount { get => backpackMount; }
-    public Vector3 Forward { get => movement.Forward; }
-    public Vector3 ItemDropPoint { get => movement.ItemDropPoint; }
-
-    public float Speed
+    public class Racer : MonoBehaviour
     {
-        get
+        public new string name;
+        public int racerID;
+
+        public MovementMode movementMode;
+        public MovementMode prevMovementMode; // sometimes its helpful to know what we had previously
+        public BaseMovement[] movementOptions;
+
+        public Transform characterMesh;
+        public Transform hips;
+
+        protected Item item;
+
+        protected AnimatorOverrideController animOverride;
+        protected PlayerAnimationEvents animEvents;
+
+        protected BaseMovement movement;
+        protected Ragdoll ragdoll;
+        protected BackpackMount backpackMount;
+        protected Rigidbody rb;
+        protected Animator anim;
+        protected AudioSource audioSource;
+
+        protected Vector2 move;
+        protected float moveUp, moveDown;
+        protected Vector3 velocityBeforePhysicsUpdate;
+        protected bool dead;
+        protected bool canRevive; // when this is true, a dead racer can be revived.
+        public bool invincible = false;
+        protected float permanentSpeedScale = 1f;
+
+        protected Coroutine boostCoroutine;
+        protected float remainingBoostTime = 0f;
+
+        public int place;
+        public float dieThreshold = 40f;
+        public Checkpoint lastCheckpoint;
+        public Checkpoint nextCheckpoint;
+        public bool isFinished = false;
+
+        [Header("Sound Effects")]
+        public AudioClip bikeSound;
+        public AudioClip waterSound;
+        public AudioClip equipSound;
+
+        public BackpackMount BackpackMount { get => backpackMount; }
+        public Vector3 Forward { get => movement.Forward; }
+        public Vector3 ItemDropPoint { get => movement.ItemDropPoint; }
+
+        public float Speed
         {
-            if (ragdoll.IsEnabled)
+            get
             {
-                return ragdoll.Speed;
+                if (ragdoll.IsEnabled)
+                {
+                    return ragdoll.Speed;
+                }
+                return rb.linearVelocity.magnitude;
             }
-            return rb.linearVelocity.magnitude;
-        }
-    }
-
-    protected virtual void Awake()
-    {
-        rb = GetComponent<Rigidbody>();
-        ragdoll = GetComponentInChildren<Ragdoll>();
-        anim = characterMesh.GetComponent<Animator>();
-        animEvents = GetComponentInChildren<PlayerAnimationEvents>();
-
-        //animOverride = GetComponent<AnimatorOverrideController>();
-        audioSource = GetComponentInChildren<AudioSource>();
-        backpackMount = GetComponentInChildren<BackpackMount>();
-    }
-
-    protected virtual void Start() 
-    {
-        ragdoll.SetRagdoll(false);
-        SetMovementMode(movementMode, true);
-    } 
-
-    protected virtual void Update()
-    {
-        if (!dead && RaceManager.IsRaceActive && !RaceManager.IsPaused)
-        {
-            movement.AddMovement(move.x, moveUp - moveDown, move.y);
         }
 
-        Debug.DrawRay(transform.position, rb.linearVelocity.normalized * 3f, Color.green);
-    }
-
-    public virtual void StartRace()
-    {
-
-    }
-
-    public virtual void FinishRace(bool forced)
-    {
-        isFinished = true;
-        float extraTime = 0;
-        if (forced)
+        protected virtual void Awake()
         {
-            extraTime = Vector3.Distance(transform.position, nextCheckpoint.transform.position);
-            Checkpoint c = nextCheckpoint;
-            while (c.next != null)
-            {
-                extraTime += c.distance;
-                c = c.next;
-            }
-            extraTime /= movement.maxSpeed;
+            rb = GetComponent<Rigidbody>();
+            ragdoll = GetComponentInChildren<Ragdoll>();
+            anim = characterMesh.GetComponent<Animator>();
+            animEvents = GetComponentInChildren<PlayerAnimationEvents>();
+
+            //animOverride = GetComponent<AnimatorOverrideController>();
+            audioSource = GetComponentInChildren<AudioSource>();
+            backpackMount = GetComponentInChildren<BackpackMount>();
         }
-        RaceManager.FinishRace(this, extraTime);
-    }
 
-    public virtual void RaceIsOver()
-    {
-        
-    }
-
-    protected virtual void FixedUpdate() {
-        velocityBeforePhysicsUpdate = rb.linearVelocity;
-    }
-
-    public Transform GetHips()
-    {
-        return hips;
-    }
-
-    /*  updates player's movement mode and maxSpeed/locomotion accordingly */
-    public virtual void SetMovementMode(Movement.Mode mode, bool initial = false)
-    {
-        if (initial || mode != movementMode)
+        protected virtual void Start()
         {
-            prevMovementMode = movementMode;
-            movementMode = mode;
-            if (movement != null)
-                movement.enabled = false;
-            switch (mode)
-            {
-                // case MovementMode.Walking:
-                //     break;
-                case Movement.Mode.Running:
-                    movement = movementOptions[(int)Movement.Mode.Running];
-                    break;
-                case Movement.Mode.Jetpacking:
-                    if (!(movement is Jetpack))
-                        movement.Land();
-                    movement = movementOptions[(int)Movement.Mode.Jetpacking];
-                    audioSource.clip = equipSound;
-                    audioSource.Play();
-                    break;
-                case Movement.Mode.Gliding:
-                    if (!(movement is Glider))
-                        movement.Land();
-                    movement = movementOptions[(int)Movement.Mode.Gliding];
-                    audioSource.clip = equipSound;
-                    audioSource.Play();
-                    break;
-                case Movement.Mode.Swimming:
-                    if (!(movement is Swim))
-                        movement.Land();
-                    movement = movementOptions[(int)Movement.Mode.Swimming];
-                    audioSource.clip = waterSound;
-                    audioSource.Play();
-                    break;
-                case Movement.Mode.Biking:
-                    if (!(movement is Bicycle))
-                        movement.Land();
-                    movement = movementOptions[(int)Movement.Mode.Biking];
-                    audioSource.clip = bikeSound;
-                    audioSource.Play();
-                    break;
-                case Movement.Mode.Wheeling:
-                    if (!(movement is Wheeler))
-                        movement.Land();
-                    movement = movementOptions[(int)Movement.Mode.Wheeling];
-                    break;
-                case Movement.Mode.Noclip:
-                    if (!(movement is Noclip))
-                        movement.Land();
-                    movement = movementOptions[(int)Movement.Mode.Noclip];
-                    break;
-                case Movement.Mode.GetOffTheBoat:
-                    movement = movementOptions[(int)Movement.Mode.Running];
-                    break;
-                
-            }
-            movement.enabled = true;
-            movement.PermanentSpeedScale = permanentSpeedScale;
-            animEvents.movement = movement;
-            anim.speed = movement.PermanentSpeedScale;
-            anim.SetInteger("movement_mode", (int)movementMode % 6);
-        }
-    }
-
-    // If emphasizeTorso is true, then extra force will be added to the racer's hips
-    // when they ragdoll, preventing them from simply retaining their animation pose
-    // if hit by a laser midair
-    // When newMomentum is 0,0,0, the momentum used will be simply the character's current momentum
-    public virtual void Die(bool emphasizeTorso, Vector3 newMomentum = default(Vector3))
-    {
-        if (!invincible)
-        {
-            anim.enabled = false;
-            rb.isKinematic = true;
-            GetComponent<Collider>().enabled = false;
-            ragdoll.SetRagdoll(true);
-            Vector3 momentum;
-            if (newMomentum == Vector3.zero)
-            {
-                //momentum = Vector3.ClampMagnitude(velocityBeforePhysicsUpdate, 30);
-                momentum = velocityBeforePhysicsUpdate;
-            }
-            else
-            {
-                momentum = newMomentum;
-            }
-            ragdoll.AddMomentum(momentum, emphasizeTorso);
-            dead = true;
-            canRevive = false;
-            try
-            {
-                // Deactivate jetpack particles if we're jetpacking
-                Jetpack jetpack = (Jetpack)movement;
-                jetpack.SetParticles(false);
-            }
-            catch (System.Exception)
-            {
-                
-            }
-            StartCoroutine(RevivalEnabler());
-        }
-    }
-
-    public virtual void ApplyJumpSplosion(Vector3 force)
-    {
-        movement.ApplyJumpSplosion(force);
-        // switch (movementMode)
-        // {
-        //     case Movement.Mode.Running:
-        //     {
-        //         movement.Jump(true);
-        //         movement.Launch(force);
-        //     }
-        //     break;
-        //     case Movement.Mode.Biking:
-        //     {
-        //         force += 300f*Vector3.up;
-        //         movement.Launch(force);
-        //     }
-        //     break;
-        //     case Movement.Mode.Jetpacking:
-        //     {
-        //         //.movement.Jump(true);
-        //         movement.Launch(force);
-        //     }
-        //     break;
-        // }
-    }
-
-    protected virtual IEnumerator RevivalEnabler()
-    {
-        // Don't allow a revival until one second after we stop moving on the ground
-        yield return new WaitUntil(() => !ragdoll.IsMoving());
-        yield return new WaitForSeconds(1.5f);
-        canRevive = true;
-        ReviveText();
-    }
-
-    protected virtual void ReviveText()
-    {
-        //do nothing in base class;
-    }
-
-    public virtual void Revive(bool forceRevive = false)
-    {
-        if (dead && (canRevive || forceRevive))
-        {
-            Vector3 landingPosition = hips.position;
             ragdoll.SetRagdoll(false);
-            
-            // Re-enable components
-            anim.enabled = true;
-            rb.isKinematic = false;
-            GetComponent<Collider>().enabled = true;
-
-            // Force the position update
-            transform.position = landingPosition;
-            hips.localPosition = Vector3.zero;
-
-            // Clear velocity and sync transforms
-            rb.linearVelocity = Vector3.zero;
-            rb.angularVelocity = Vector3.zero;
-            Physics.SyncTransforms();
-
-            dead = false;
+            SetMovementMode(movementMode, true);
         }
-    }
 
-    public void ArriveAtCheckpoint(Checkpoint checkpoint)
-    {
-        lastCheckpoint = checkpoint;
-        if (checkpoint.next != null)
-            nextCheckpoint = checkpoint.next;
-    }
-
-    public virtual void EquipItem(Item item)
-    {
-        this.item = item;
-    }
-
-    public void SpeedBoost(float magnitude = 2f, float duration = 5f)
-    {
-        remainingBoostTime += duration;
-
-        // Only start the coroutine if one isn't already running
-        if (boostCoroutine == null)
+        protected virtual void Update()
         {
-            boostCoroutine = StartCoroutine(SpeedBoostCoroutine(magnitude));
+            if (!dead && RaceManager.IsRaceActive && !RaceManager.IsPaused)
+            {
+                movement.AddMovement(move.x, moveUp - moveDown, move.y);
+            }
+
+            Debug.DrawRay(transform.position, rb.linearVelocity.normalized * 3f, Color.green);
         }
-    }
 
-    public virtual void SetPermanentSpeedScale(float magnitude)
-    {
-        permanentSpeedScale = magnitude;
-        movement.PermanentSpeedScale = permanentSpeedScale;
-        anim.speed = magnitude;
-    }
-
-    protected virtual IEnumerator SpeedBoostCoroutine(float magnitude)
-    {
-        movement.BoostSpeedScale = magnitude;
-        anim.speed = movement.BoostSpeedScale * movement.PermanentSpeedScale;
-
-        // Continue looping as long as there is time left
-        while (remainingBoostTime > 0)
+        public virtual void StartRace()
         {
-            remainingBoostTime -= Time.deltaTime;
-            yield return null; // Wait for the next frame
+
         }
 
-        // Reset values once the total accumulated time is up
-        movement.BoostSpeedScale = 1f;
-        anim.speed = movement.PermanentSpeedScale;
-        
-        remainingBoostTime = 0f;
-        boostCoroutine = null;
-    }
-
-    public virtual void SetTarget(Transform target)
-    {
-        // overridden in subclass
-    }
-
-    public void DropItem()
-    {
-        // float back = (movement is Bicycle ? 3f : 1f);
-        // Vector3 pos = transform.position - back * characterMesh.transform.forward + 0.5f * characterMesh.transform.up;
-        // Instantiate(item.Child, pos, Quaternion.identity);
-        // Debug.Break();
-        // EquipItem(null);
-    }
-
-    public void ThrowItem(Transform target)
-    {
-        // float up = movement is Bicycle ? 5f : 1.5f;
-        // Vector3 pos = transform.position + 2f * characterMesh.transform.forward + up * characterMesh.transform.up;
-        // GameObject obj = Instantiate(item.Child, pos, Quaternion.identity);
-        // Rigidbody itemRb = obj.GetComponent<Rigidbody>();
-        // itemRb.linearVelocity = rb.linearVelocity;
-        // itemRb.AddForce(1000 * (characterMesh.transform.forward + 0.1f * transform.up));
-        // try {
-        //     MelonObject melon = obj.GetComponent<MelonObject>();
-        //     melon.target = target;
-        //     StartCoroutine(melon.Despawn());
-        // }
-        // catch {
-            
-        // }
-        // EquipItem(null);
-    }
-
-    public Vector3 GetItemSpawnPos()
-    {
-        float up = movement is Bicycle ? 5f : 1.5f;
-        return transform.position + 2f * characterMesh.transform.forward + up * characterMesh.transform.up;
-    }
-
-    /*  plays a miscellaneus animation that is NOT defined in the animation controller */
-    public void PlayMiscAnimation(AnimationClip clip)
-    {
-        animOverride["miscAnimation"] = clip;
-        anim.runtimeAnimatorController = animOverride;
-        anim.SetTrigger("misc");
-    }
-
-    public void PlayMiscSound(AudioClip clip)
-    {
-        audioSource.PlayOneShot(clip);
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        // Pick up an item
-        if (other.gameObject.CompareTag("Item"))
+        public virtual void FinishRace(bool forced)
         {
-            Item item = other.GetComponent<Item>();
-            item.Pickup(this);
+            isFinished = true;
+            float extraTime = 0;
+            if (forced)
+            {
+                extraTime = Vector3.Distance(transform.position, nextCheckpoint.transform.position);
+                Checkpoint c = nextCheckpoint;
+                while (c.next != null)
+                {
+                    extraTime += c.distance;
+                    c = c.next;
+                }
+                extraTime /= movement.maxSpeed;
+            }
+            RaceManager.FinishRace(this, extraTime);
         }
-    }
 
-    /*  check if we hit something too fast */
-    protected virtual void OnCollisionEnter(Collision other)
-    {
-        
-    }
+        public virtual void RaceIsOver()
+        {
 
-    // Returns whether or not this racer is currently "dead"
-    public bool IsDead()
-    {
-        return dead;
-    }
+        }
 
-    public Movement.Mode GetCurrentMovementMode()
-    {
-        return movementMode;
-    }
+        protected virtual void FixedUpdate()
+        {
+            velocityBeforePhysicsUpdate = rb.linearVelocity;
+        }
 
-    public bool isGrounded()
-    {
-        return movement.Grounded;
-    }
+        public Transform GetHips()
+        {
+            return hips;
+        }
 
-    public void Land()
-    {
-        movement.Land();
+        /*  updates player's movement mode and maxSpeed/locomotion accordingly */
+        public virtual void SetMovementMode(MovementMode mode, bool initial = false)
+        {
+            if (initial || mode != movementMode)
+            {
+                prevMovementMode = movementMode;
+                movementMode = mode;
+                if (movement != null)
+                    movement.enabled = false;
+                switch (mode)
+                {
+                    // case MovementMode.Walking:
+                    //     break;
+                    case MovementMode.Running:
+                        movement = movementOptions[(int)MovementMode.Running];
+                        break;
+                    case MovementMode.Jetpacking:
+                        if (!(movement is Jetpack))
+                            movement.Land();
+                        movement = movementOptions[(int)MovementMode.Jetpacking];
+                        audioSource.clip = equipSound;
+                        audioSource.Play();
+                        break;
+                    case MovementMode.Gliding:
+                        if (!(movement is Glider))
+                            movement.Land();
+                        movement = movementOptions[(int)MovementMode.Gliding];
+                        audioSource.clip = equipSound;
+                        audioSource.Play();
+                        break;
+                    case MovementMode.Swimming:
+                        if (!(movement is Swim))
+                            movement.Land();
+                        movement = movementOptions[(int)MovementMode.Swimming];
+                        audioSource.clip = waterSound;
+                        audioSource.Play();
+                        break;
+                    case MovementMode.Biking:
+                        if (!(movement is Bicycle))
+                            movement.Land();
+                        movement = movementOptions[(int)MovementMode.Biking];
+                        audioSource.clip = bikeSound;
+                        audioSource.Play();
+                        break;
+                    case MovementMode.Wheeling:
+                        if (!(movement is Wheeler))
+                            movement.Land();
+                        movement = movementOptions[(int)MovementMode.Wheeling];
+                        break;
+                    case MovementMode.Noclip:
+                        if (!(movement is Noclip))
+                            movement.Land();
+                        movement = movementOptions[(int)MovementMode.Noclip];
+                        break;
+                    case MovementMode.GetOffTheBoat:
+                        movement = movementOptions[(int)MovementMode.Running];
+                        break;
+
+                }
+                movement.enabled = true;
+                movement.PermanentSpeedScale = permanentSpeedScale;
+                animEvents.movement = movement;
+                anim.speed = movement.PermanentSpeedScale;
+                anim.SetInteger("movement_mode", (int)movementMode % 6);
+            }
+        }
+
+        // If emphasizeTorso is true, then extra force will be added to the racer's hips
+        // when they ragdoll, preventing them from simply retaining their animation pose
+        // if hit by a laser midair
+        // When newMomentum is 0,0,0, the momentum used will be simply the character's current momentum
+        public virtual void Die(bool emphasizeTorso, Vector3 newMomentum = default(Vector3))
+        {
+            if (!invincible)
+            {
+                anim.enabled = false;
+                rb.isKinematic = true;
+                GetComponent<Collider>().enabled = false;
+                ragdoll.SetRagdoll(true);
+                Vector3 momentum;
+                if (newMomentum == Vector3.zero)
+                {
+                    //momentum = Vector3.ClampMagnitude(velocityBeforePhysicsUpdate, 30);
+                    momentum = velocityBeforePhysicsUpdate;
+                }
+                else
+                {
+                    momentum = newMomentum;
+                }
+                ragdoll.AddMomentum(momentum, emphasizeTorso);
+                dead = true;
+                canRevive = false;
+                try
+                {
+                    // Deactivate jetpack particles if we're jetpacking
+                    Jetpack jetpack = (Jetpack)movement;
+                    jetpack.SetParticles(false);
+                }
+                catch (System.Exception)
+                {
+
+                }
+                StartCoroutine(RevivalEnabler());
+            }
+        }
+
+        public virtual void ApplyJumpSplosion(Vector3 force)
+        {
+            movement.ApplyJumpSplosion(force);
+            // switch (movementMode)
+            // {
+            //     case MovementMode.Running:
+            //     {
+            //         movement.Jump(true);
+            //         movement.Launch(force);
+            //     }
+            //     break;
+            //     case MovementMode.Biking:
+            //     {
+            //         force += 300f*Vector3.up;
+            //         movement.Launch(force);
+            //     }
+            //     break;
+            //     case MovementMode.Jetpacking:
+            //     {
+            //         //.movement.Jump(true);
+            //         movement.Launch(force);
+            //     }
+            //     break;
+            // }
+        }
+
+        protected virtual IEnumerator RevivalEnabler()
+        {
+            // Don't allow a revival until one second after we stop moving on the ground
+            yield return new WaitUntil(() => !ragdoll.IsMoving());
+            yield return new WaitForSeconds(1.5f);
+            canRevive = true;
+            ReviveText();
+        }
+
+        protected virtual void ReviveText()
+        {
+            //do nothing in base class;
+        }
+
+        public virtual void Revive(bool forceRevive = false)
+        {
+            if (dead && (canRevive || forceRevive))
+            {
+                Vector3 landingPosition = hips.position;
+                ragdoll.SetRagdoll(false);
+
+                // Re-enable components
+                anim.enabled = true;
+                rb.isKinematic = false;
+                GetComponent<Collider>().enabled = true;
+
+                // Force the position update
+                transform.position = landingPosition;
+                hips.localPosition = Vector3.zero;
+
+                // Clear velocity and sync transforms
+                rb.linearVelocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
+                Physics.SyncTransforms();
+
+                dead = false;
+            }
+        }
+
+        public void ArriveAtCheckpoint(Checkpoint checkpoint)
+        {
+            lastCheckpoint = checkpoint;
+            if (checkpoint.next != null)
+                nextCheckpoint = checkpoint.next;
+        }
+
+        public virtual void EquipItem(Item item)
+        {
+            this.item = item;
+        }
+
+        public void SpeedBoost(float magnitude = 2f, float duration = 5f)
+        {
+            remainingBoostTime += duration;
+
+            // Only start the coroutine if one isn't already running
+            if (boostCoroutine == null)
+            {
+                boostCoroutine = StartCoroutine(SpeedBoostCoroutine(magnitude));
+            }
+        }
+
+        public virtual void SetPermanentSpeedScale(float magnitude)
+        {
+            permanentSpeedScale = magnitude;
+            movement.PermanentSpeedScale = permanentSpeedScale;
+            anim.speed = magnitude;
+        }
+
+        protected virtual IEnumerator SpeedBoostCoroutine(float magnitude)
+        {
+            movement.BoostSpeedScale = magnitude;
+            anim.speed = movement.BoostSpeedScale * movement.PermanentSpeedScale;
+
+            // Continue looping as long as there is time left
+            while (remainingBoostTime > 0)
+            {
+                remainingBoostTime -= Time.deltaTime;
+                yield return null; // Wait for the next frame
+            }
+
+            // Reset values once the total accumulated time is up
+            movement.BoostSpeedScale = 1f;
+            anim.speed = movement.PermanentSpeedScale;
+
+            remainingBoostTime = 0f;
+            boostCoroutine = null;
+        }
+
+        public virtual void SetTarget(Transform target)
+        {
+            // overridden in subclass
+        }
+
+        public void DropItem()
+        {
+            // float back = (movement is Bicycle ? 3f : 1f);
+            // Vector3 pos = transform.position - back * characterMesh.transform.forward + 0.5f * characterMesh.transform.up;
+            // Instantiate(item.Child, pos, Quaternion.identity);
+            // Debug.Break();
+            // EquipItem(null);
+        }
+
+        public void ThrowItem(Transform target)
+        {
+            // float up = movement is Bicycle ? 5f : 1.5f;
+            // Vector3 pos = transform.position + 2f * characterMesh.transform.forward + up * characterMesh.transform.up;
+            // GameObject obj = Instantiate(item.Child, pos, Quaternion.identity);
+            // Rigidbody itemRb = obj.GetComponent<Rigidbody>();
+            // itemRb.linearVelocity = rb.linearVelocity;
+            // itemRb.AddForce(1000 * (characterMesh.transform.forward + 0.1f * transform.up));
+            // try {
+            //     MelonObject melon = obj.GetComponent<MelonObject>();
+            //     melon.target = target;
+            //     StartCoroutine(melon.Despawn());
+            // }
+            // catch {
+
+            // }
+            // EquipItem(null);
+        }
+
+        public Vector3 GetItemSpawnPos()
+        {
+            float up = movement is Bicycle ? 5f : 1.5f;
+            return transform.position + 2f * characterMesh.transform.forward + up * characterMesh.transform.up;
+        }
+
+        /*  plays a miscellaneus animation that is NOT defined in the animation controller */
+        public void PlayMiscAnimation(AnimationClip clip)
+        {
+            animOverride["miscAnimation"] = clip;
+            anim.runtimeAnimatorController = animOverride;
+            anim.SetTrigger("misc");
+        }
+
+        public void PlayMiscSound(AudioClip clip)
+        {
+            audioSource.PlayOneShot(clip);
+        }
+
+        private void OnTriggerEnter(Collider other)
+        {
+            // Pick up an item
+            if (other.gameObject.CompareTag("Item"))
+            {
+                Item item = other.GetComponent<Item>();
+                item.Pickup(this);
+            }
+        }
+
+        /*  check if we hit something too fast */
+        protected virtual void OnCollisionEnter(Collision other)
+        {
+
+        }
+
+        // Returns whether or not this racer is currently "dead"
+        public bool IsDead()
+        {
+            return dead;
+        }
+
+        public MovementMode GetCurrentMovementMode()
+        {
+            return movementMode;
+        }
+
+        public bool isGrounded()
+        {
+            return movement.Grounded;
+        }
+
+        public void Land()
+        {
+            movement.Land();
+        }
     }
 }

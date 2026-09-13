@@ -2,14 +2,17 @@ using System;
 using TMPro;
 using UnityEngine;
 
-public class CreditsUI : BaseMenuUI
+namespace BabyBanjo.Polyathlon.UI
 {
-    [SerializeField]
-    protected TextMeshProUGUI yearsText;
-
-    protected override void Awake()
+    public class CreditsUI : BaseMenuUI
     {
-        base.Awake();
-        yearsText.text = string.Format("2020 - {0}", DateTime.Now.Year);
+        [SerializeField]
+        protected TextMeshProUGUI yearsText;
+
+        protected override void Awake()
+        {
+            base.Awake();
+            yearsText.text = string.Format("2020 - {0}", DateTime.Now.Year);
+        }
     }
 }

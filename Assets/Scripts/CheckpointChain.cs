@@ -1,25 +1,28 @@
 using UnityEngine;
 
-public class CheckpointChain : MonoBehaviour
+namespace BabyBanjo.Polyathlon.Race
 {
-    private Checkpoint[] checkpoints;
-
-    private void Awake()
+    public class CheckpointChain : MonoBehaviour
     {
-        checkpoints = GetComponentsInChildren<Checkpoint>();
-        for (int i = checkpoints.Length - 1; i >= 0; i--)
+        private Checkpoint[] checkpoints;
+
+        private void Awake()
         {
-            checkpoints[i].seq = i;
-            if (i < checkpoints.Length - 1)
+            checkpoints = GetComponentsInChildren<Checkpoint>();
+            for (int i = checkpoints.Length - 1; i >= 0; i--)
             {
-                checkpoints[i].next = checkpoints[i + 1];
-                checkpoints[i].distance = Vector3.Distance(checkpoints[i].transform.position, checkpoints[i + 1].transform.position);
+                checkpoints[i].seq = i;
+                if (i < checkpoints.Length - 1)
+                {
+                    checkpoints[i].next = checkpoints[i + 1];
+                    checkpoints[i].distance = Vector3.Distance(checkpoints[i].transform.position, checkpoints[i + 1].transform.position);
+                }
             }
         }
-    }
 
-    public Checkpoint GetFirstCheckpoint()
-    {
-        return checkpoints[0];
+        public Checkpoint GetFirstCheckpoint()
+        {
+            return checkpoints[0];
+        }
     }
 }

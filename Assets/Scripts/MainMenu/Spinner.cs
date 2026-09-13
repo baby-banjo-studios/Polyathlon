@@ -1,3 +1,4 @@
+using BabyBanjo.Core.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,183 +8,186 @@ using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class Spinner : Selectable, IPointerEnterHandler, IPointerExitHandler
+namespace BabyBanjo.Core.UI
 {
-    [SerializeField]
-    private Image leftArrow, rightArrow;
-    [SerializeField]
-    private TextMeshProUGUI text;
-    [SerializeField]
-    private List<string> values;
-    private int index = 0;
-    private List<SpinnerArrow> arrows;
-
-    public bool wrapAround = false;
-    public bool automaticSize = true;
-
-    public UnityEvent onValueChanged;
-
-    public string Value { get => values[index]; }
-
-
-
-    protected override void Awake()
+    public class Spinner : Selectable, IPointerEnterHandler, IPointerExitHandler
     {
-        arrows = GetComponentsInChildren<SpinnerArrow>().ToList();
+        [SerializeField]
+        private Image leftArrow, rightArrow;
+        [SerializeField]
+        private TextMeshProUGUI text;
+        [SerializeField]
+        private List<string> values;
+        private int index = 0;
+        private List<SpinnerArrow> arrows;
 
-        if (automaticSize)
+        public bool wrapAround = false;
+        public bool automaticSize = true;
+
+        public UnityEvent onValueChanged;
+
+        public string Value { get => values[index]; }
+
+
+
+        protected override void Awake()
         {
-            float maxWidth = text.rectTransform.sizeDelta.x;
-            
-            ContentSizeFitter fitter = text.gameObject.AddComponent<ContentSizeFitter>();
-            fitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
-            fitter.verticalFit = ContentSizeFitter.FitMode.Unconstrained;
+            arrows = GetComponentsInChildren<SpinnerArrow>().ToList();
 
-            foreach (string val in values)
+            if (automaticSize)
             {
-                text.text = val;
-                text.ForceMeshUpdate();
-                Canvas.ForceUpdateCanvases();
-                maxWidth = Mathf.Max(maxWidth, text.rectTransform.sizeDelta.x);
+                float maxWidth = text.rectTransform.sizeDelta.x;
+
+                ContentSizeFitter fitter = text.gameObject.AddComponent<ContentSizeFitter>();
+                fitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
+                fitter.verticalFit = ContentSizeFitter.FitMode.Unconstrained;
+
+                foreach (string val in values)
+                {
+                    text.text = val;
+                    text.ForceMeshUpdate();
+                    Canvas.ForceUpdateCanvases();
+                    maxWidth = Mathf.Max(maxWidth, text.rectTransform.sizeDelta.x);
+                }
+
+                fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+                text.rectTransform.sizeDelta = new Vector2(maxWidth, text.rectTransform.sizeDelta.y);
+                Destroy(fitter);
             }
 
-            fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
-            text.rectTransform.sizeDelta = new Vector2(maxWidth, text.rectTransform.sizeDelta.y);
-            Destroy(fitter);
-        }
-
-        if (values.Count > 0)
-        {
-            text.text = values[0];
-        }
-    }
-
-    public void ClearValues()
-    {
-        values.Clear();
-    }
-
-    public void AddValue(string value)
-    {
-        values.Add(value);
-        if (values.Count == 1)
-        {
-            text.text = values[0];
-        }
-    }
-
-    public void Navigate(bool isRight)
-    {
-        if (isRight)
-        {
-            if (wrapAround || index < values.Count - 1)
+            if (values.Count > 0)
             {
-                index++;
-            }
-            if (index >= values.Count)
-            {
-                index = 0;
-            }
-        }
-        else
-        {
-            if (wrapAround || index > 0)
-            {
-                index --;
-            }
-            if (index < 0)
-            {
-                index = values.Count - 1;
+                text.text = values[0];
             }
         }
 
-        text.text = values[index];
-
-        if (onValueChanged != null)
+        public void ClearValues()
         {
-            onValueChanged.Invoke();
+            values.Clear();
         }
-    }
 
-    public void SkipToValue(string value)
-    {
-        for (int i = 0; i < values.Count; i++)
+        public void AddValue(string value)
         {
-            if (values[i] == value)
+            values.Add(value);
+            if (values.Count == 1)
             {
-                index = i;
-                text.text = values[index];
-                onValueChanged.Invoke();
-                break;
+                text.text = values[0];
             }
         }
-    }
 
-    public void FillWithEnum<T> ()
-    {
-        foreach (T t in Enum.GetValues(typeof(T)))
+        public void Navigate(bool isRight)
         {
-            if (EnumUtility.TryGetDescriptionFromValue(t, out string desc))
+            if (isRight)
             {
-                AddValue(desc);
+                if (wrapAround || index < values.Count - 1)
+                {
+                    index++;
+                }
+                if (index >= values.Count)
+                {
+                    index = 0;
+                }
             }
             else
             {
-                AddValue(t.ToString());
+                if (wrapAround || index > 0)
+                {
+                    index--;
+                }
+                if (index < 0)
+                {
+                    index = values.Count - 1;
+                }
+            }
+
+            text.text = values[index];
+
+            if (onValueChanged != null)
+            {
+                onValueChanged.Invoke();
             }
         }
-    }
 
-    public override void OnSelect(BaseEventData eventData)
-    {
-        base.OnSelect(eventData);
-        animator.SetBool("SelfSelected", true);
-    }
-
-    public override void OnDeselect(BaseEventData eventData)
-    {
-        base.OnSelect(eventData);
-        animator.SetBool("SelfSelected", false);
-    }
-
-    public override void OnPointerEnter(PointerEventData eventData)
-    {
-        animator.SetBool("SelfSelected", true);
-    }
-
-    public override void OnPointerExit(PointerEventData eventData)
-    {
-        animator.SetBool("SelfSelected", false);
-    }
-
-    public void SpinnerArrowSelected()
-    {
-        animator.SetBool("ChildSelected", true);
-    }
-
-    public void SpinnerArrowDeselected()
-    {
-        foreach (SpinnerArrow arrow in arrows)
+        public void SkipToValue(string value)
         {
-            if (arrow.Selected)
+            for (int i = 0; i < values.Count; i++)
             {
-                return;
+                if (values[i] == value)
+                {
+                    index = i;
+                    text.text = values[index];
+                    onValueChanged.Invoke();
+                    break;
+                }
             }
         }
-        animator.SetBool("ChildSelected", false);
-    }
 
-    private void LimitSelectionArrows()
-    {
-        if (!wrapAround)
+        public void FillWithEnum<T>()
         {
-            if (index == 0)
+            foreach (T t in Enum.GetValues(typeof(T)))
             {
-                // disable left arrow
+                if (EnumUtility.TryGetDescriptionFromValue(t, out string desc))
+                {
+                    AddValue(desc);
+                }
+                else
+                {
+                    AddValue(t.ToString());
+                }
             }
-            else if (index == values.Count - 1)
+        }
+
+        public override void OnSelect(BaseEventData eventData)
+        {
+            base.OnSelect(eventData);
+            animator.SetBool("SelfSelected", true);
+        }
+
+        public override void OnDeselect(BaseEventData eventData)
+        {
+            base.OnSelect(eventData);
+            animator.SetBool("SelfSelected", false);
+        }
+
+        public override void OnPointerEnter(PointerEventData eventData)
+        {
+            animator.SetBool("SelfSelected", true);
+        }
+
+        public override void OnPointerExit(PointerEventData eventData)
+        {
+            animator.SetBool("SelfSelected", false);
+        }
+
+        public void SpinnerArrowSelected()
+        {
+            animator.SetBool("ChildSelected", true);
+        }
+
+        public void SpinnerArrowDeselected()
+        {
+            foreach (SpinnerArrow arrow in arrows)
             {
-                // disable right arrow
+                if (arrow.Selected)
+                {
+                    return;
+                }
+            }
+            animator.SetBool("ChildSelected", false);
+        }
+
+        private void LimitSelectionArrows()
+        {
+            if (!wrapAround)
+            {
+                if (index == 0)
+                {
+                    // disable left arrow
+                }
+                else if (index == values.Count - 1)
+                {
+                    // disable right arrow
+                }
             }
         }
     }

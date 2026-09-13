@@ -1,28 +1,32 @@
+using BabyBanjo.Polyathlon.Entities;
 using UnityEngine;
 
-[RequireComponent(typeof(BoxCollider))]
-public class Checkpoint : MonoBehaviour 
+namespace BabyBanjo.Polyathlon.Race
 {
-    public int seq;
-    public Checkpoint next;
-    public float distance = 0f;
-
-    private BoxCollider box;
-
-    private void OnTriggerEnter(Collider other) 
+    [RequireComponent(typeof(BoxCollider))]
+    public class Checkpoint : MonoBehaviour
     {
-        Racer racer = other.GetComponent<Racer>();
-        if (racer != null)    // check to make sure agent is part of this route
+        public int seq;
+        public Checkpoint next;
+        public float distance = 0f;
+
+        private BoxCollider box;
+
+        private void OnTriggerEnter(Collider other)
         {
-            //Debug.Log(other);
-            racer.ArriveAtCheckpoint(this);
+            Racer racer = other.GetComponent<Racer>();
+            if (racer != null)    // check to make sure agent is part of this route
+            {
+                //Debug.Log(other);
+                racer.ArriveAtCheckpoint(this);
+            }
         }
-    }
 
-    private void OnDrawGizmos()
-    {
-        Gizmos.matrix = this.transform.localToWorldMatrix;
-        Gizmos.color = new Color(0, 0, 1, 0.5f);
-        Gizmos.DrawCube(Vector3.zero, GetComponent<BoxCollider>().size);
+        private void OnDrawGizmos()
+        {
+            Gizmos.matrix = this.transform.localToWorldMatrix;
+            Gizmos.color = new Color(0, 0, 1, 0.5f);
+            Gizmos.DrawCube(Vector3.zero, GetComponent<BoxCollider>().size);
+        }
     }
 }

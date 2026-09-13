@@ -1,6 +1,9 @@
-public enum Background
+namespace BabyBanjo.Core.Greenscreen
 {
-    Skybox,
-    Green,
-    Black
+    public enum Background
+    {
+        Skybox,
+        Green,
+        Black
+    }
 }

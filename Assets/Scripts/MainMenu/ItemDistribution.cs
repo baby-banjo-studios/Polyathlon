@@ -1,7 +1,10 @@
-public enum ItemDistribution
+namespace BabyBanjo.Polyathlon.Items
 {
-    Balanced,
-    Aggressive,
-    Strategic,
-    Random
+    public enum ItemDistribution
+    {
+        Balanced,
+        Aggressive,
+        Strategic,
+        Random
+    }
 }

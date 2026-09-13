@@ -1,7 +1,10 @@
-public enum CPUDifficulty
+namespace BabyBanjo.Polyathlon.AI
 {
-    Off,
-    Easy,
-    Normal,
-    Hard,
+    public enum CPUDifficulty
+    {
+        Off,
+        Easy,
+        Normal,
+        Hard,
+    }
 }

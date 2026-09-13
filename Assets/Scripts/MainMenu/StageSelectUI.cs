@@ -1,196 +1,203 @@
+using BabyBanjo.Core.Input;
+using BabyBanjo.Core.UI;
+using BabyBanjo.Core.Utility;
+using BabyBanjo.Polyathlon.Race;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class StageSelectUI : BaseMenuUI
+namespace BabyBanjo.Polyathlon.UI
 {
-    
-    public StageList stages;
-    public GridEntry entryTemplate;
-    private List<GridEntry> entries;
-    public Transform entryParent;
-    [SerializeField]
-    private Selector selector;
-    [SerializeField]
-    private AllReadyOverlay allReadyOverlay;
-
-    protected override void Awake()
+    public class StageSelectUI : BaseMenuUI
     {
-        base.Awake();
 
-        entries = new List<GridEntry>();
+        public StageList stages;
+        public GridEntry entryTemplate;
+        private List<GridEntry> entries;
+        public Transform entryParent;
+        [SerializeField]
+        private Selector selector;
+        [SerializeField]
+        private AllReadyOverlay allReadyOverlay;
 
-        selector.Initialize(0, "");
-
-        // clear out any children left in scene??
-        foreach (Transform child in entryParent)
+        protected override void Awake()
         {
-            Destroy(child.gameObject);
-        }
+            base.Awake();
 
-        foreach (StageRegistry stage in stages.stages)
-        {
-            AddStage(stage);
-        }
+            entries = new List<GridEntry>();
 
-    }
+            selector.Initialize(0, "");
 
-    protected override void OnEnable()
-    {
-        if (mainMenuUI.PrimaryControlScheme == ControlScheme.Keyboard)
-        {
-            foreach (GridEntry entry in entries)
+            // clear out any children left in scene??
+            foreach (Transform child in entryParent)
             {
-                entry.SetMouseSelector(selector);
+                Destroy(child.gameObject);
             }
-        }
 
-    }
-
-    public override void Reset()
-    {
-        base.Reset();
-        
-
-        if (stages.stages.Count > 0)
-        {
-            LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)entryParent.transform);
-            Canvas.ForceUpdateCanvases();
-            selector.selectedEntry = entries[0];
-            selector.selectedEntry.AddSelector(selector, false);    // TODO warp=true is broken
-        }
-        allReadyOverlay.SetActive(false);
-    }
-
-    public override void Navigate(MainMenuPlayer player, Vector2 input)
-    {
-        if (player.IsPrimary())
-        {
-            if (selector.selectedEntry != null && !selector.Locked)
+            foreach (StageRegistry stage in stages.stages)
             {
-                UnityEngine.UI.Selectable nextButton = null;
-                if (input.x > 0)
-                {
-                    nextButton = selector.selectedEntry.Button.FindSelectableOnRight();
-                }
-                else if (input.x < 0)
-                {
-                    nextButton = selector.selectedEntry.Button.FindSelectableOnLeft();
-                }
-                else if (input.y > 0)
-                {
-                    nextButton = selector.selectedEntry.Button.FindSelectableOnUp();
-                }
-                else if (input.y < 0)
-                {
-                    nextButton = selector.selectedEntry.Button.FindSelectableOnDown();
-                }
+                AddStage(stage);
+            }
 
-                if (nextButton != null)
+        }
+
+        protected override void OnEnable()
+        {
+            if (mainMenuUI.PrimaryControlScheme == ControlScheme.Keyboard)
+            {
+                foreach (GridEntry entry in entries)
                 {
-                    GridEntry nextEntry = nextButton.GetComponent<GridEntry>();
-                    if (nextEntry != null)
+                    entry.SetMouseSelector(selector);
+                }
+            }
+
+        }
+
+        public override void Reset()
+        {
+            base.Reset();
+
+
+            if (stages.stages.Count > 0)
+            {
+                LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)entryParent.transform);
+                Canvas.ForceUpdateCanvases();
+                selector.selectedEntry = entries[0];
+                selector.selectedEntry.AddSelector(selector, false);    // TODO warp=true is broken
+            }
+            allReadyOverlay.SetActive(false);
+        }
+
+        public override void Navigate(MainMenuPlayer player, Vector2 input)
+        {
+            if (player.IsPrimary())
+            {
+                if (selector.selectedEntry != null && !selector.Locked)
+                {
+                    UnityEngine.UI.Selectable nextButton = null;
+                    if (input.x > 0)
                     {
-                        selector.selectedEntry.RemoveSelector(selector);
-                        selector.selectedEntry = nextEntry;
-                        selector.selectedEntry.AddSelector(selector, false);
-                    }    
+                        nextButton = selector.selectedEntry.Button.FindSelectableOnRight();
+                    }
+                    else if (input.x < 0)
+                    {
+                        nextButton = selector.selectedEntry.Button.FindSelectableOnLeft();
+                    }
+                    else if (input.y > 0)
+                    {
+                        nextButton = selector.selectedEntry.Button.FindSelectableOnUp();
+                    }
+                    else if (input.y < 0)
+                    {
+                        nextButton = selector.selectedEntry.Button.FindSelectableOnDown();
+                    }
+
+                    if (nextButton != null)
+                    {
+                        GridEntry nextEntry = nextButton.GetComponent<GridEntry>();
+                        if (nextEntry != null)
+                        {
+                            selector.selectedEntry.RemoveSelector(selector);
+                            selector.selectedEntry = nextEntry;
+                            selector.selectedEntry.AddSelector(selector, false);
+                        }
+                    }
                 }
             }
         }
-    }
 
-    public override void Submit(MainMenuPlayer player)
-    {
-        if (player.IsPrimary())
+        public override void Submit(MainMenuPlayer player)
         {
-            if (!selector.Locked)
+            if (player.IsPrimary())
             {
-                selector.Lock();
-                                
-                UpdateReadyOverlay();
+                if (!selector.Locked)
+                {
+                    selector.Lock();
+
+                    UpdateReadyOverlay();
+                }
             }
         }
-    }
 
-    public override void Cancel(MainMenuPlayer player)
-    {
-        if (player.IsPrimary())
+        public override void Cancel(MainMenuPlayer player)
         {
+            if (player.IsPrimary())
+            {
+                if (selector.Locked)
+                {
+                    selector.Unlock();
+                    UpdateReadyOverlay();
+                }
+                else
+                {
+                    mainMenuUI.TransitionToPreviousMode();
+                }
+            }
+        }
+
+        public override void Confirm(MainMenuPlayer player)
+        {
+            if (player.IsPrimary())
+            {
+                if (selector.Locked)
+                {
+                    raceSettings.SetSelectedStage((StageRegistry)selector.selectedEntry.Registry);
+                    raceSettings.StartRace();
+                }
+            }
+        }
+
+        private void UpdateReadyOverlay()
+        {
+
             if (selector.Locked)
             {
-                selector.Unlock();
-                UpdateReadyOverlay();
+                allReadyOverlay.SetControlScheme(mainMenuUI.PrimaryControlScheme);
+                allReadyOverlay.SetActive(true);
             }
             else
             {
-                mainMenuUI.TransitionToPreviousMode();
+                allReadyOverlay.SetActive(false);
             }
         }
-    }
 
-    public override void Confirm(MainMenuPlayer player)
-    {
-        if (player.IsPrimary())
+        private void AddStage(StageRegistry stage)
         {
-            if (selector.Locked)
+            GridEntry entry = Instantiate(entryTemplate, entryParent);
+            entry.Initialize(stage, stage.displayName, stage.icon, 1, 0, null); // TODO get row index
+            entries.Add(entry);
+            if (firstSelectable == null)
             {
-                raceSettings.SetSelectedStage((StageRegistry)selector.selectedEntry.Registry);
-                raceSettings.StartRace();
+                firstSelectable = entry.Button;
             }
         }
-    }    
-    
-    private void UpdateReadyOverlay()
-    {
-        
-        if (selector.Locked)
-        {
-            allReadyOverlay.SetControlScheme(mainMenuUI.PrimaryControlScheme);         
-            allReadyOverlay.SetActive(true);
-        }
-        else
-        {
-            allReadyOverlay.SetActive(false);
-        }
-    }
 
-    private void AddStage(StageRegistry stage)
-    {
-        GridEntry entry = Instantiate(entryTemplate, entryParent);
-        entry.Initialize(stage, stage.displayName, stage.icon, 1, 0, null); // TODO get row index
-        entries.Add(entry);
-        if (firstSelectable == null)
+        public List<StageRegistry> GetNStages(int n, bool random)
         {
-            firstSelectable = entry.Button;
-        }
-    }
-
-    public List<StageRegistry> GetNStages(int n, bool random)
-    {
-        List<StageRegistry> registries = new List<StageRegistry>();
-        List<StageRegistry> tempRegistries = new List<StageRegistry>();
-        while (registries.Count < n)
-        {
-            tempRegistries.Clear();
-            foreach (StageRegistry registry in stages.stages)
+            List<StageRegistry> registries = new List<StageRegistry>();
+            List<StageRegistry> tempRegistries = new List<StageRegistry>();
+            while (registries.Count < n)
             {
-                tempRegistries.Add(registry);
-            }
-            if (random)
-            {
-                tempRegistries = ListUtility.FisherYatesShuffle(tempRegistries);
-            }
-            foreach (StageRegistry registry in tempRegistries)
-            {
-                registries.Add(registry);
-                if (registries.Count == n)
+                tempRegistries.Clear();
+                foreach (StageRegistry registry in stages.stages)
                 {
-                    break;
+                    tempRegistries.Add(registry);
+                }
+                if (random)
+                {
+                    tempRegistries = ListUtility.FisherYatesShuffle(tempRegistries);
+                }
+                foreach (StageRegistry registry in tempRegistries)
+                {
+                    registries.Add(registry);
+                    if (registries.Count == n)
+                    {
+                        break;
+                    }
                 }
             }
+            return registries;
         }
-        return registries;
     }
 }

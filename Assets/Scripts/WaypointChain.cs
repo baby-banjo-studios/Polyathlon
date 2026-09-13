@@ -1,22 +1,25 @@
 using UnityEngine;
 
-public class WaypointChain : MonoBehaviour
+namespace BabyBanjo.Polyathlon.Race
 {
-    private IWaypointable[] waypoints;
-
-    private void Awake()
+    public class WaypointChain : MonoBehaviour
     {
-        waypoints = GetComponentsInChildren<IWaypointable>();
-        for (int i = waypoints.Length - 1; i >= 0; i--)
+        private IWaypointable[] waypoints;
+
+        private void Awake()
         {
-            waypoints[i].Seq = i;
-            if (i < waypoints.Length - 1)
-                waypoints[i].Next = waypoints[i + 1];
+            waypoints = GetComponentsInChildren<IWaypointable>();
+            for (int i = waypoints.Length - 1; i >= 0; i--)
+            {
+                waypoints[i].Seq = i;
+                if (i < waypoints.Length - 1)
+                    waypoints[i].Next = waypoints[i + 1];
+            }
         }
-    }
 
-    public IWaypointable GetStartingWaypoint()
-    {
-        return waypoints[0];
+        public IWaypointable GetStartingWaypoint()
+        {
+            return waypoints[0];
+        }
     }
 }

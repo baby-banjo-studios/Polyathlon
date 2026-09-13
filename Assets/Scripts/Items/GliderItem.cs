@@ -1,10 +1,15 @@
-﻿using UnityEngine;
+﻿using BabyBanjo.Polyathlon.Entities;
+using BabyBanjo.Polyathlon.Movement;
+using UnityEngine;
 
-public class GliderItem : Item
+namespace BabyBanjo.Polyathlon.Items
 {
-    public override void Pickup(Racer racer)
+    public class GliderItem : Item
     {
-        racer.SetMovementMode(Movement.Mode.Gliding);
-        base.Pickup(racer);
+        public override void Pickup(Racer racer)
+        {
+            racer.SetMovementMode(MovementMode.Gliding);
+            base.Pickup(racer);
+        }
     }
 }

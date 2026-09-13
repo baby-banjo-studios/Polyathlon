@@ -1,3 +1,8 @@
+using BabyBanjo.Core.Console;
+using BabyBanjo.Polyathlon.Items;
+using BabyBanjo.Polyathlon.Entities;
+using BabyBanjo.Polyathlon.Movement;
+using BabyBanjo.Polyathlon.Race;
 using UnityEngine;
 using TMPro;
 using System.Collections;
@@ -10,47 +15,49 @@ using UnityEngine.UI;
 using System.Linq;
 using UnityEngine.SceneManagement;
 
-public class DebugConsole : MonoBehaviour
+namespace BabyBanjo.Polyathlon.Console
 {
-    public TextMeshProUGUI commandInputText;
-
-    private List<ConsoleCommand> availableCommands;
-    private Dictionary<string, ConsoleCommand> availableCommandsLookup;
-
-    public int maxCommandHistorySize = 100;
-    private LinkedList<string> commandHistory;
-    private LinkedListNode<string> currentCommandHistorySelection = null;
-    private StringBuilder currentCommand;
-    private int cursorPos;
-    public float cursorBlinkTime = 1.0f;
-    private float cursorElapsedTime = 0.0f;
-    private bool cursorVisible = true;
-    private bool autocompleteNeedsToRun = true;
-    private List<string> autocompleteOptions = new List<string>();
-    private List<string> autocompleteFinalizedTokens = new List<string>();
-    private ConsoleCommand autocompleteSelectedCommand = null;
-    private int autoCompleteIndex = 0;
-    public GameObject feedbackLinePrefab;
-    public RectTransform feedbackLineParent;
-    public float feedbackDisplayTime = 10f;
-    public float feedbackFadeTime = 1f;
-    private List<TextMeshProUGUI> feedbackInstances = new List<TextMeshProUGUI>();
-
-    private Racer racer;    // only used to keep track of who opened console
-
-    public LootTable allItems;
-    private Vector3 startingGravity;
-
-    /// <summary>
-    /// Awake is called when the script instance is being loaded.
-    /// </summary>
-    private void Awake()
+    public class DebugConsole : MonoBehaviour
     {
-        commandHistory = new LinkedList<string>();
-        currentCommand = new StringBuilder();
+        public TextMeshProUGUI commandInputText;
 
-        // create command definitions
-        availableCommands = new List<ConsoleCommand>
+        private List<ConsoleCommand> availableCommands;
+        private Dictionary<string, ConsoleCommand> availableCommandsLookup;
+
+        public int maxCommandHistorySize = 100;
+        private LinkedList<string> commandHistory;
+        private LinkedListNode<string> currentCommandHistorySelection = null;
+        private StringBuilder currentCommand;
+        private int cursorPos;
+        public float cursorBlinkTime = 1.0f;
+        private float cursorElapsedTime = 0.0f;
+        private bool cursorVisible = true;
+        private bool autocompleteNeedsToRun = true;
+        private List<string> autocompleteOptions = new List<string>();
+        private List<string> autocompleteFinalizedTokens = new List<string>();
+        private ConsoleCommand autocompleteSelectedCommand = null;
+        private int autoCompleteIndex = 0;
+        public GameObject feedbackLinePrefab;
+        public RectTransform feedbackLineParent;
+        public float feedbackDisplayTime = 10f;
+        public float feedbackFadeTime = 1f;
+        private List<TextMeshProUGUI> feedbackInstances = new List<TextMeshProUGUI>();
+
+        private Racer racer;    // only used to keep track of who opened console
+
+        public LootTable allItems;
+        private Vector3 startingGravity;
+
+        /// <summary>
+        /// Awake is called when the script instance is being loaded.
+        /// </summary>
+        private void Awake()
+        {
+            commandHistory = new LinkedList<string>();
+            currentCommand = new StringBuilder();
+
+            // create command definitions
+            availableCommands = new List<ConsoleCommand>
         {
             new ConsoleCommand("help",          "displays useful info about a command",     new CommandArgument[] { new CommandArgument<string>("command", "") },   HandleHelpCommand),
             new ConsoleCommand("list",          "lists all available commands",             new CommandArgument[] { },                                              HandleListCommand),
@@ -74,179 +81,180 @@ public class DebugConsole : MonoBehaviour
 
         };
 
-        availableCommandsLookup = new Dictionary<string, ConsoleCommand>();
-        foreach (ConsoleCommand command in availableCommands)
-        {
-            availableCommandsLookup[command.name] = command;
-        }
-
-        racer = GetComponentInParent<Racer>();
-
-        startingGravity = Physics.gravity;
-    }
-
-    private void OnDisable()
-    {
-        foreach (TextMeshProUGUI feedbackLine in feedbackInstances)
-        {
-            Destroy(feedbackLine.gameObject);
-        }
-        feedbackInstances.Clear();
-    }
-
-    private void Update()
-    {
-        cursorElapsedTime += Time.unscaledDeltaTime;
-        
-        if (cursorElapsedTime > cursorBlinkTime)
-        {
-            cursorVisible = !cursorVisible;
-            cursorElapsedTime = 0f;
-        }
-
-        string commandStr = currentCommand.ToString();
-        string renderedStr = commandStr;    // if no cursor to render, display exact command input
-        if (cursorVisible)
-        {
-            if (cursorPos < commandStr.Length)
+            availableCommandsLookup = new Dictionary<string, ConsoleCommand>();
+            foreach (ConsoleCommand command in availableCommands)
             {
-                string leftCommand = commandStr.Substring(0, cursorPos);
-                string rightCommand = commandStr.Substring(cursorPos + 1, commandStr.Length - cursorPos - 1);
-                renderedStr = leftCommand + "<u>" + commandStr[cursorPos] + "</u>" + rightCommand; 
+                availableCommandsLookup[command.name] = command;
             }
-            else
+
+            racer = GetComponentInParent<Racer>();
+
+            startingGravity = Physics.gravity;
+        }
+
+        private void OnDisable()
+        {
+            foreach (TextMeshProUGUI feedbackLine in feedbackInstances)
             {
-                renderedStr = commandStr + "<u><color=#00000000>_</color></u>"; 
+                Destroy(feedbackLine.gameObject);
             }
-        }
-        commandInputText.text = ">" + renderedStr;
-    }
-
-    private void OnGUI()
-    {
-        Event e = Event.current;
-        if (e == null || e.type != EventType.KeyDown)
-        {
-            return;
+            feedbackInstances.Clear();
         }
 
-        switch (e.keyCode)
+        private void Update()
         {
-            case KeyCode.Escape:
+            cursorElapsedTime += Time.unscaledDeltaTime;
+
+            if (cursorElapsedTime > cursorBlinkTime)
+            {
+                cursorVisible = !cursorVisible;
+                cursorElapsedTime = 0f;
+            }
+
+            string commandStr = currentCommand.ToString();
+            string renderedStr = commandStr;    // if no cursor to render, display exact command input
+            if (cursorVisible)
+            {
+                if (cursorPos < commandStr.Length)
                 {
-                    e.Use();
-                    RaceManager.ToggleDebugConsole((PlayerController)racer);
+                    string leftCommand = commandStr.Substring(0, cursorPos);
+                    string rightCommand = commandStr.Substring(cursorPos + 1, commandStr.Length - cursorPos - 1);
+                    renderedStr = leftCommand + "<u>" + commandStr[cursorPos] + "</u>" + rightCommand;
                 }
-                break;
-            case KeyCode.BackQuote:
+                else
                 {
-                    // consume the `
-                    e.Use();
+                    renderedStr = commandStr + "<u><color=#00000000>_</color></u>";
                 }
-                break;
-            case KeyCode.Return:
-            case KeyCode.KeypadEnter:
-                {
-                    // submit command
-                    string command = currentCommand.ToString();
-                    SubmitCommand(command);
-                    commandHistory.AddFirst(new LinkedListNode<string>(command));
-                    if (commandHistory.Count > maxCommandHistorySize)
+            }
+            commandInputText.text = ">" + renderedStr;
+        }
+
+        private void OnGUI()
+        {
+            Event e = Event.current;
+            if (e == null || e.type != EventType.KeyDown)
+            {
+                return;
+            }
+
+            switch (e.keyCode)
+            {
+                case KeyCode.Escape:
                     {
-                        commandHistory.RemoveLast();
+                        e.Use();
+                        RaceManager.ToggleDebugConsole((PlayerController)racer);
                     }
-                    currentCommandHistorySelection = null;
-                    currentCommand.Clear();
-                    cursorPos = 0;
-                    cursorElapsedTime = 0f;
-                    cursorVisible = true;
-                    autocompleteNeedsToRun = true;
-                }
-                break;
-            case KeyCode.Backspace:
-                {
-                    // delete character before cursor
-                    if (cursorPos > 0)
+                    break;
+                case KeyCode.BackQuote:
                     {
-                        currentCommand.Remove(cursorPos - 1, 1);
-                        cursorPos--;
-                        cursorElapsedTime = 0f;
-                        cursorVisible = true;
-                        autocompleteNeedsToRun = true;
+                        // consume the `
+                        e.Use();
                     }
-                }
-                break;
-            case KeyCode.Delete:
-                {
-                    // delete character after cursor
-                    if (currentCommand.Length > 0 && cursorPos < currentCommand.Length)
+                    break;
+                case KeyCode.Return:
+                case KeyCode.KeypadEnter:
                     {
-                        currentCommand.Remove(cursorPos, 1);
-                        cursorElapsedTime = 0f;
-                        cursorVisible = true;
-                        autocompleteNeedsToRun = true;
-                    }
-                }
-                break;
-            case KeyCode.Tab:
-                {
-                    // autocomplete
-                    if (autocompleteNeedsToRun)
-                    {
-                        // populate autocomplete options if first time hitting tab
-                        autocompleteNeedsToRun = false;
-                        autocompleteOptions.Clear();
-                        autocompleteFinalizedTokens.Clear();
-                        autoCompleteIndex = -1;
-                        string[] commandToks = currentCommand.ToString().Split(' ');
-                        if (commandToks.Length == 1)
+                        // submit command
+                        string command = currentCommand.ToString();
+                        SubmitCommand(command);
+                        commandHistory.AddFirst(new LinkedListNode<string>(command));
+                        if (commandHistory.Count > maxCommandHistorySize)
                         {
-                            string partialCommmand = commandToks[0];
-                            // prune list of commands
-                            foreach (ConsoleCommand command in availableCommands)
+                            commandHistory.RemoveLast();
+                        }
+                        currentCommandHistorySelection = null;
+                        currentCommand.Clear();
+                        cursorPos = 0;
+                        cursorElapsedTime = 0f;
+                        cursorVisible = true;
+                        autocompleteNeedsToRun = true;
+                    }
+                    break;
+                case KeyCode.Backspace:
+                    {
+                        // delete character before cursor
+                        if (cursorPos > 0)
+                        {
+                            currentCommand.Remove(cursorPos - 1, 1);
+                            cursorPos--;
+                            cursorElapsedTime = 0f;
+                            cursorVisible = true;
+                            autocompleteNeedsToRun = true;
+                        }
+                    }
+                    break;
+                case KeyCode.Delete:
+                    {
+                        // delete character after cursor
+                        if (currentCommand.Length > 0 && cursorPos < currentCommand.Length)
+                        {
+                            currentCommand.Remove(cursorPos, 1);
+                            cursorElapsedTime = 0f;
+                            cursorVisible = true;
+                            autocompleteNeedsToRun = true;
+                        }
+                    }
+                    break;
+                case KeyCode.Tab:
+                    {
+                        // autocomplete
+                        if (autocompleteNeedsToRun)
+                        {
+                            // populate autocomplete options if first time hitting tab
+                            autocompleteNeedsToRun = false;
+                            autocompleteOptions.Clear();
+                            autocompleteFinalizedTokens.Clear();
+                            autoCompleteIndex = -1;
+                            string[] commandToks = currentCommand.ToString().Split(' ');
+                            if (commandToks.Length == 1)
                             {
-                                if (command.name.StartsWith(partialCommmand, StringComparison.OrdinalIgnoreCase))
+                                string partialCommmand = commandToks[0];
+                                // prune list of commands
+                                foreach (ConsoleCommand command in availableCommands)
                                 {
-                                    autocompleteOptions.Add(command.name);
+                                    if (command.name.StartsWith(partialCommmand, StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        autocompleteOptions.Add(command.name);
+                                    }
                                 }
                             }
-                        }
-                        else
-                        {
-                            for (int i = 0; i < commandToks.Length - 1; i++)
+                            else
                             {
-                                autocompleteFinalizedTokens.Add(commandToks[i]);
-                            }
-                            string partialArgument = commandToks[commandToks.Length - 1];
-                            // based on command, cycle through predetermined lists of acceptable arguments
-                            string commandName = autocompleteFinalizedTokens[0];
-                            if (availableCommandsLookup.TryGetValue(commandName, out ConsoleCommand command))
-                            {
-                                int argumentIndex = commandToks.Length - 2;
-                                if (command.arguments.Length > argumentIndex)
+                                for (int i = 0; i < commandToks.Length - 1; i++)
                                 {
-                                    CommandArgument argument = command.arguments[argumentIndex];
-                                    if (argument.name == "itemName")
+                                    autocompleteFinalizedTokens.Add(commandToks[i]);
+                                }
+                                string partialArgument = commandToks[commandToks.Length - 1];
+                                // based on command, cycle through predetermined lists of acceptable arguments
+                                string commandName = autocompleteFinalizedTokens[0];
+                                if (availableCommandsLookup.TryGetValue(commandName, out ConsoleCommand command))
+                                {
+                                    int argumentIndex = commandToks.Length - 2;
+                                    if (command.arguments.Length > argumentIndex)
                                     {
-                                        foreach (ItemRegistry registry in allItems.GetAllItems())
+                                        CommandArgument argument = command.arguments[argumentIndex];
+                                        if (argument.name == "itemName")
                                         {
-                                            string itemCommandName = registry.name.ToLower().Replace(" ", "");
-                                            if (itemCommandName.StartsWith(partialArgument, StringComparison.OrdinalIgnoreCase))
+                                            foreach (ItemRegistry registry in allItems.GetAllItems())
                                             {
-                                                autocompleteOptions.Add(itemCommandName);
+                                                string itemCommandName = registry.name.ToLower().Replace(" ", "");
+                                                if (itemCommandName.StartsWith(partialArgument, StringComparison.OrdinalIgnoreCase))
+                                                {
+                                                    autocompleteOptions.Add(itemCommandName);
+                                                }
                                             }
                                         }
-                                    }
-                                    if (argument.name == "movementMode")
-                                    {
-                                        foreach (Movement.Mode mode in Enum.GetValues(typeof(Movement.Mode)))
+                                        if (argument.name == "movementMode")
                                         {
-                                            if (mode < Movement.Mode.Noclip)
+                                            foreach (MovementMode mode in Enum.GetValues(typeof(MovementMode)))
                                             {
-                                                string modeName = mode.ToString().ToLower();
-                                                if (modeName.StartsWith(partialArgument, StringComparison.OrdinalIgnoreCase))
+                                                if (mode < MovementMode.Noclip)
                                                 {
-                                                    autocompleteOptions.Add(modeName);
+                                                    string modeName = mode.ToString().ToLower();
+                                                    if (modeName.StartsWith(partialArgument, StringComparison.OrdinalIgnoreCase))
+                                                    {
+                                                        autocompleteOptions.Add(modeName);
+                                                    }
                                                 }
                                             }
                                         }
@@ -254,444 +262,444 @@ public class DebugConsole : MonoBehaviour
                                 }
                             }
                         }
-                    }
-                    // cycle through options if not first time hitting tab
-                    if (autocompleteOptions.Count > 0)
-                    {
-                        autoCompleteIndex++;
-                        autoCompleteIndex %= autocompleteOptions.Count;
-                        currentCommand.Clear();
-                        foreach (string tok in autocompleteFinalizedTokens)
+                        // cycle through options if not first time hitting tab
+                        if (autocompleteOptions.Count > 0)
                         {
-                            currentCommand.Append(tok);
-                            currentCommand.Append(" ");
+                            autoCompleteIndex++;
+                            autoCompleteIndex %= autocompleteOptions.Count;
+                            currentCommand.Clear();
+                            foreach (string tok in autocompleteFinalizedTokens)
+                            {
+                                currentCommand.Append(tok);
+                                currentCommand.Append(" ");
+                            }
+                            currentCommand.Append(autocompleteOptions[autoCompleteIndex]);
+                            cursorElapsedTime = 0f;
+                            cursorPos = currentCommand.Length;
+                            cursorVisible = true;
                         }
-                        currentCommand.Append(autocompleteOptions[autoCompleteIndex]);
-                        cursorElapsedTime = 0f;
-                        cursorPos = currentCommand.Length;
-                        cursorVisible = true;
                     }
-                }
-                break;
-            case KeyCode.LeftArrow:
-                {
-                    // move cursor left
-                    if (cursorPos > 0)
+                    break;
+                case KeyCode.LeftArrow:
                     {
-                        cursorPos--;
-                        cursorElapsedTime = 0f;
-                        cursorVisible = true;
-                    }
-                }
-                break;
-            case KeyCode.RightArrow:
-                {
-                    // move cursor right
-                    if (cursorPos < currentCommand.Length)
-                    {
-                        cursorPos++;
-                        cursorElapsedTime = 0f;
-                        cursorVisible = true;
-                    }
-                }
-                break;
-            case KeyCode.UpArrow:
-                {
-                    // select previous command
-                    if (commandHistory.Count > 0)
-                    {
-                        if (currentCommandHistorySelection == null)
+                        // move cursor left
+                        if (cursorPos > 0)
                         {
-                            currentCommandHistorySelection = commandHistory.First;
+                            cursorPos--;
+                            cursorElapsedTime = 0f;
+                            cursorVisible = true;
                         }
-                        else if (currentCommandHistorySelection.Next != null)
-                        {
-                            currentCommandHistorySelection = currentCommandHistorySelection.Next;
-                        }
-                        currentCommand.Clear();
-                        currentCommand.Append(currentCommandHistorySelection.Value);
-                        cursorElapsedTime = 0f;
-                        cursorPos = currentCommand.Length;
-                        cursorVisible = true;
-                        autocompleteNeedsToRun = true;
                     }
-                }
-                break;
-            case KeyCode.DownArrow:
-                {
-                    // select next command
-                    if (currentCommandHistorySelection != null)
+                    break;
+                case KeyCode.RightArrow:
                     {
-                        currentCommandHistorySelection = currentCommandHistorySelection.Previous;
-                        currentCommand.Clear();
+                        // move cursor right
+                        if (cursorPos < currentCommand.Length)
+                        {
+                            cursorPos++;
+                            cursorElapsedTime = 0f;
+                            cursorVisible = true;
+                        }
+                    }
+                    break;
+                case KeyCode.UpArrow:
+                    {
+                        // select previous command
+                        if (commandHistory.Count > 0)
+                        {
+                            if (currentCommandHistorySelection == null)
+                            {
+                                currentCommandHistorySelection = commandHistory.First;
+                            }
+                            else if (currentCommandHistorySelection.Next != null)
+                            {
+                                currentCommandHistorySelection = currentCommandHistorySelection.Next;
+                            }
+                            currentCommand.Clear();
+                            currentCommand.Append(currentCommandHistorySelection.Value);
+                            cursorElapsedTime = 0f;
+                            cursorPos = currentCommand.Length;
+                            cursorVisible = true;
+                            autocompleteNeedsToRun = true;
+                        }
+                    }
+                    break;
+                case KeyCode.DownArrow:
+                    {
+                        // select next command
                         if (currentCommandHistorySelection != null)
                         {
-                            currentCommand.Append(currentCommandHistorySelection.Value);
+                            currentCommandHistorySelection = currentCommandHistorySelection.Previous;
+                            currentCommand.Clear();
+                            if (currentCommandHistorySelection != null)
+                            {
+                                currentCommand.Append(currentCommandHistorySelection.Value);
+                            }
+                            cursorElapsedTime = 0f;
+                            cursorPos = currentCommand.Length;
+                            cursorVisible = true;
+                            autocompleteNeedsToRun = true;
                         }
-                        cursorElapsedTime = 0f;
-                        cursorPos = currentCommand.Length;
-                        cursorVisible = true;
-                        autocompleteNeedsToRun = true;
                     }
-                }
-                break;
-            default:
-                {
-                    if (e.character != '\0' && e.character != '`' && !char.IsControl(e.character))
+                    break;
+                default:
                     {
-                        e.Use();
-                        currentCommand.Insert(cursorPos, e.character);
-                        cursorPos++;
-                        cursorElapsedTime = 0f;
-                        cursorVisible = true;
-                        autocompleteNeedsToRun = true;
+                        if (e.character != '\0' && e.character != '`' && !char.IsControl(e.character))
+                        {
+                            e.Use();
+                            currentCommand.Insert(cursorPos, e.character);
+                            cursorPos++;
+                            cursorElapsedTime = 0f;
+                            cursorVisible = true;
+                            autocompleteNeedsToRun = true;
+                        }
+                    }
+                    break;
+            }
+        }
+
+        private void SubmitCommand(string commandString)
+        {
+            string[] commandToks = commandString.Split(' ');
+            if (commandToks.Length > 0)
+            {
+                string commandName = commandToks[0].ToLower();
+                if (availableCommandsLookup.TryGetValue(commandName, out ConsoleCommand command))
+                {
+                    CommandReturnCode returnCode = command.Execute(commandToks[1..]);
+                    switch (returnCode)
+                    {
+                        case CommandReturnCode.Ok:
+                        case CommandReturnCode.Failed:
+                            {
+                                // do nothing, individual commands print feedback
+                            }
+                            break;
+                        case CommandReturnCode.NotEnoughArgs:
+                        case CommandReturnCode.TooManyArgs:
+                        case CommandReturnCode.InvalidArgType:
+                            {
+                                // display usage string to instruct user on how to better use command next time
+                                DisplayFeedback(String.Format("Usage: {0}", command.GetUsage()));
+                            }
+                            break;
+                        case CommandReturnCode.CantEvaluateDefaultArgs:
+                            {
+                                // this should really not be possible if commands are written with non-ambiguous parameters
+                                DisplayFeedback(String.Format("Oops! Try specifying more arguments", command.name, command.arguments.Length));
+                            }
+                            break;
                     }
                 }
-                break;
-        }
-    }
-
-    private void SubmitCommand(string commandString)
-    {
-        string[] commandToks = commandString.Split(' ');
-        if (commandToks.Length > 0)
-        {
-            string commandName = commandToks[0].ToLower();
-            if (availableCommandsLookup.TryGetValue(commandName, out ConsoleCommand command))
-            {
-                CommandReturnCode returnCode = command.Execute(commandToks[1..]);
-                switch (returnCode)
+                else
                 {
-                    case CommandReturnCode.Ok:
-                    case CommandReturnCode.Failed:
-                        {
-                            // do nothing, individual commands print feedback
-                        }
-                        break;
-                    case CommandReturnCode.NotEnoughArgs:
-                    case CommandReturnCode.TooManyArgs:
-                    case CommandReturnCode.InvalidArgType:
-                        {
-                            // display usage string to instruct user on how to better use command next time
-                            DisplayFeedback(String.Format("Usage: {0}", command.GetUsage()));
-                        }
-                        break;
-                    case CommandReturnCode.CantEvaluateDefaultArgs:
-                        {
-                            // this should really not be possible if commands are written with non-ambiguous parameters
-                            DisplayFeedback(String.Format("Oops! Try specifying more arguments", command.name, command.arguments.Length));
-                        }
-                        break;
+                    DisplayFeedback(String.Format("Unrecognized command \"{0}\"", commandName));
                 }
             }
-            else
+        }
+
+        private void DisplayFeedback(string message)
+        {
+            TextMeshProUGUI feedbackText = Instantiate(feedbackLinePrefab, feedbackLineParent).GetComponent<TextMeshProUGUI>();
+            feedbackText.text = message;
+            feedbackInstances.Add(feedbackText);
+            LayoutRebuilder.ForceRebuildLayoutImmediate(feedbackLineParent);
+            StartCoroutine(FadeFeedbackLine(feedbackText));
+        }
+
+        private IEnumerator FadeFeedbackLine(TextMeshProUGUI feedbackLine)
+        {
+            yield return new WaitForSecondsRealtime(feedbackDisplayTime);
+            float elapsedTime = 0f;
+            while (elapsedTime < feedbackFadeTime)
             {
-                DisplayFeedback(String.Format("Unrecognized command \"{0}\"", commandName));
+                feedbackLine.alpha = 1.0f - (elapsedTime / feedbackFadeTime);
+                elapsedTime += Time.unscaledDeltaTime;
+                yield return null;
             }
+            feedbackLine.alpha = 0f;
+            feedbackInstances.Remove(feedbackLine);
+            Destroy(feedbackLine.gameObject);
         }
-    }
 
-    private void DisplayFeedback(string message)
-    {
-        TextMeshProUGUI feedbackText = Instantiate(feedbackLinePrefab, feedbackLineParent).GetComponent<TextMeshProUGUI>();
-        feedbackText.text = message;
-        feedbackInstances.Add(feedbackText);
-        LayoutRebuilder.ForceRebuildLayoutImmediate(feedbackLineParent);
-        StartCoroutine(FadeFeedbackLine(feedbackText));
-    }
-
-    private IEnumerator FadeFeedbackLine(TextMeshProUGUI feedbackLine)
-    {
-        yield return new WaitForSecondsRealtime(feedbackDisplayTime);
-        float elapsedTime = 0f;
-        while (elapsedTime < feedbackFadeTime)
+        private bool HandleHelpCommand(string[] args)
         {
-            feedbackLine.alpha = 1.0f - (elapsedTime / feedbackFadeTime);
-            elapsedTime += Time.unscaledDeltaTime;
-            yield return null;
-        }
-        feedbackLine.alpha = 0f;
-        feedbackInstances.Remove(feedbackLine);
-        Destroy(feedbackLine.gameObject);
-    }
-
-    private bool HandleHelpCommand(string[] args)
-    {
-        if (args[0] == "")
-        {
-            // general help about the command line
-            DisplayFeedback("This command line can be used to execute commands to assist with debugging.\nIt also may be fun to play around with!\nTry running the \"list\" command to see all available commands or type \"help [command]\" to get help about a specific command");
-        }
-        else
-        {
-            string commandName = args[0];
-            if (availableCommandsLookup.TryGetValue(commandName, out ConsoleCommand command))
+            if (args[0] == "")
             {
-                DisplayFeedback(command.helpText);
-                DisplayFeedback(String.Format("Usage: {0}", command.GetUsage()));
+                // general help about the command line
+                DisplayFeedback("This command line can be used to execute commands to assist with debugging.\nIt also may be fun to play around with!\nTry running the \"list\" command to see all available commands or type \"help [command]\" to get help about a specific command");
             }
             else
             {
-                DisplayFeedback(String.Format("Unrecognized command \"{0}\"", commandName));
-            }
-        }
-        return true;
-    }
-
-    private bool HandleListCommand(string[] args)
-    {
-        DisplayFeedback("Available commands:");
-        foreach (ConsoleCommand command in availableCommands)
-        {
-            DisplayFeedback(String.Format("- {0}", command.name));
-        }
-        return true;
-    }
-
-    private bool HandleListRacersCommand(string[] args)
-    {
-        DisplayFeedback("Current racers:");
-        // list players first
-        foreach (Racer racer in RaceManager.GetListOfRacers())
-        {
-            if (racer is PlayerController)
-            {
-                DisplayFeedback(String.Format("- {0,2}: {1}", racer.racerID, racer.name));
-            }
-        }
-        // list NPCs next
-        foreach (Racer racer in RaceManager.GetListOfRacers())
-        {
-            if (racer is NPC)
-            {
-                DisplayFeedback(String.Format("- {0,2}: {1}", racer.racerID, racer.name));
-            }
-        }
-        return true;
-    }
-
-    private bool HandleNoclipCommand(string[] args)
-    {
-        int playerIndex = Int32.Parse(args[0]) - 1;
-        PlayerController player = RaceManager.GetPlayerByIndex(playerIndex);
-        if (player == null)
-        {
-            DisplayFeedback(String.Format("Invalid player ID {0}", playerIndex + 1));
-            return false;
-        }
-
-        if (player.movementMode == Movement.Mode.Noclip)
-        {
-            player.SetMovementMode(player.prevMovementMode);
-            DisplayFeedback(String.Format("Disabled noclip for player {0}", playerIndex + 1));
-        }
-        else
-        {
-            player.SetMovementMode(Movement.Mode.Noclip);
-            DisplayFeedback(String.Format("Enabled noclip for player {0}", playerIndex + 1));
-        }
-        return true;
-    }
-
-    
-    private bool HandleGodCommand(string[] args)
-    {
-        int playerIndex = Int32.Parse(args[0]) - 1;
-        PlayerController player = RaceManager.GetPlayerByIndex(playerIndex);
-        if (player == null)
-        {
-            DisplayFeedback(String.Format("Invalid player ID {0}", playerIndex + 1));
-            return false;
-        }
-        player.invincible = !player.invincible;
-        if (player.invincible)
-        {
-            DisplayFeedback(String.Format("Enabled god mode for player {0}", playerIndex + 1));
-        }
-        else
-        {
-            DisplayFeedback(String.Format("Disabled god mode for player {0}", playerIndex + 1));
-        }
-        return true;
-    }
-
-    private bool HandleKillCommand(string[] args)
-    {
-        int racerIndex = Int32.Parse(args[0]) - 1;
-        Racer target = RaceManager.GetRacerByIndex(racerIndex);
-        if (target == null)
-        {
-            DisplayFeedback(String.Format("Invalid racer ID {0}", racerIndex + 1));
-            return false;
-        }
-        target.Die(false);
-        DisplayFeedback(String.Format("Killed racer ID {0}", racerIndex + 1));
-        return true;
-    }
-
-    private bool HandleSetspeedCommand(string[] args)
-    {
-        int racerIndex = Int32.Parse(args[0]) - 1;
-        float speedMultiplier = Single.Parse(args[1]);
-        Racer target = RaceManager.GetRacerByIndex(racerIndex);
-        if (target == null)
-        {
-            DisplayFeedback(String.Format("Invalid racer ID {0}", racerIndex + 1));
-            return false;
-        }
-        target.SetPermanentSpeedScale(speedMultiplier);
-        DisplayFeedback(String.Format("Set racer {0}'s speed to {1}x", racerIndex + 1, speedMultiplier));
-        return true;
-    }
-    private bool HandleSetSizeCommand(string[] args)
-    {
-        int racerIndex = Int32.Parse(args[0]) - 1;
-        float sizeMultiplier = Single.Parse(args[1]);
-        Racer target = RaceManager.GetRacerByIndex(racerIndex);
-        if (target == null)
-        {
-            DisplayFeedback(String.Format("Invalid racer ID {0}", racerIndex + 1));
-            return false;
-        }
-        if (sizeMultiplier <= 0)
-        {
-            DisplayFeedback(String.Format("Invalid size {0}. Size must be greater than 0.", sizeMultiplier));
-            return false;
-        }
-        target.transform.localScale = new Vector3(sizeMultiplier, sizeMultiplier, sizeMultiplier);
-        DisplayFeedback(String.Format("Set racer {0}'s size to {1}x", racerIndex + 1, sizeMultiplier));
-        return true;
-    }
-    private bool HandleEquipItemCommand(string[] args)
-    {
-        int racerIndex = Int32.Parse(args[0]) - 1;
-        string itemName = args[1].ToLower();
-        Racer target = RaceManager.GetRacerByIndex(racerIndex);
-        if (target == null)
-        {
-            DisplayFeedback(String.Format("Invalid racer ID {0}", racerIndex + 1));
-            return false;
-        }
-                
-        if (!EquipItemHelper(target, itemName, out _))
-        {
-            return false;
-        }
-        DisplayFeedback(String.Format("Equipped racer {0} with {1}", racerIndex + 1, itemName));
-        return true;
-    }
-
-    private bool HandleUseItemCommand(string[] args)
-    {
-        int racerIndex = Int32.Parse(args[0]) - 1;
-        string itemName = args[1].ToLower();
-        Racer target = RaceManager.GetRacerByIndex(racerIndex);
-        if (target == null)
-        {
-            DisplayFeedback(String.Format("Invalid racer ID {0}", racerIndex + 1));
-            return false;
-        }
-
-        if (!EquipItemHelper(target, itemName, out Item equippedItem))
-        {
-            return false;
-        }   
-
-        equippedItem.Use(target);
-
-        DisplayFeedback(String.Format("Used {0} on racer {1}", itemName, racerIndex + 1));
-        return true;
-    }
-
-    private bool EquipItemHelper(Racer racer, string itemName, out Item equippedItem)
-    {        
-
-        Item item = null;
-        foreach (ItemRegistry registry in allItems.GetAllItems())
-        {
-            if (registry.name.ToLower() == itemName ||
-                registry.displayName.Replace(" ", "").ToLower() == itemName)
-            {
-                item = registry.itemPrefab;
-                break;
-            }
-        }
-        if (item == null)
-        {
-            DisplayFeedback(String.Format("Invalid item {0}", itemName));
-            equippedItem = null;
-            return false;
-        }
-
-        racer.EquipItem(item);
-
-        equippedItem = item;
-        return true;
-    }
-
-    private bool HandleSetMovement(string[] args)
-    {
-        int racerIndex = Int32.Parse(args[0]) - 1;
-        string submittedModeName = args[1].ToLower();
-        Racer target = RaceManager.GetRacerByIndex(racerIndex);
-        if (target == null)
-        {
-            DisplayFeedback(String.Format("Invalid racer ID {0}", racerIndex + 1));
-            return false;
-        }
-        Movement.Mode resolvedMovementMode = Movement.Mode.None;
-        foreach (Movement.Mode mode in Enum.GetValues(typeof(Movement.Mode)))
-        {
-            if (mode < Movement.Mode.Noclip)
-            {
-                string modeName = mode.ToString().ToLower();
-                if (submittedModeName == modeName)
+                string commandName = args[0];
+                if (availableCommandsLookup.TryGetValue(commandName, out ConsoleCommand command))
                 {
-                    resolvedMovementMode = mode;
+                    DisplayFeedback(command.helpText);
+                    DisplayFeedback(String.Format("Usage: {0}", command.GetUsage()));
+                }
+                else
+                {
+                    DisplayFeedback(String.Format("Unrecognized command \"{0}\"", commandName));
+                }
+            }
+            return true;
+        }
+
+        private bool HandleListCommand(string[] args)
+        {
+            DisplayFeedback("Available commands:");
+            foreach (ConsoleCommand command in availableCommands)
+            {
+                DisplayFeedback(String.Format("- {0}", command.name));
+            }
+            return true;
+        }
+
+        private bool HandleListRacersCommand(string[] args)
+        {
+            DisplayFeedback("Current racers:");
+            // list players first
+            foreach (Racer racer in RaceManager.GetListOfRacers())
+            {
+                if (racer is PlayerController)
+                {
+                    DisplayFeedback(String.Format("- {0,2}: {1}", racer.racerID, racer.name));
+                }
+            }
+            // list NPCs next
+            foreach (Racer racer in RaceManager.GetListOfRacers())
+            {
+                if (racer is NPC)
+                {
+                    DisplayFeedback(String.Format("- {0,2}: {1}", racer.racerID, racer.name));
+                }
+            }
+            return true;
+        }
+
+        private bool HandleNoclipCommand(string[] args)
+        {
+            int playerIndex = Int32.Parse(args[0]) - 1;
+            PlayerController player = RaceManager.GetPlayerByIndex(playerIndex);
+            if (player == null)
+            {
+                DisplayFeedback(String.Format("Invalid player ID {0}", playerIndex + 1));
+                return false;
+            }
+
+            if (player.movementMode == MovementMode.Noclip)
+            {
+                player.SetMovementMode(player.prevMovementMode);
+                DisplayFeedback(String.Format("Disabled noclip for player {0}", playerIndex + 1));
+            }
+            else
+            {
+                player.SetMovementMode(MovementMode.Noclip);
+                DisplayFeedback(String.Format("Enabled noclip for player {0}", playerIndex + 1));
+            }
+            return true;
+        }
+
+
+        private bool HandleGodCommand(string[] args)
+        {
+            int playerIndex = Int32.Parse(args[0]) - 1;
+            PlayerController player = RaceManager.GetPlayerByIndex(playerIndex);
+            if (player == null)
+            {
+                DisplayFeedback(String.Format("Invalid player ID {0}", playerIndex + 1));
+                return false;
+            }
+            player.invincible = !player.invincible;
+            if (player.invincible)
+            {
+                DisplayFeedback(String.Format("Enabled god mode for player {0}", playerIndex + 1));
+            }
+            else
+            {
+                DisplayFeedback(String.Format("Disabled god mode for player {0}", playerIndex + 1));
+            }
+            return true;
+        }
+
+        private bool HandleKillCommand(string[] args)
+        {
+            int racerIndex = Int32.Parse(args[0]) - 1;
+            Racer target = RaceManager.GetRacerByIndex(racerIndex);
+            if (target == null)
+            {
+                DisplayFeedback(String.Format("Invalid racer ID {0}", racerIndex + 1));
+                return false;
+            }
+            target.Die(false);
+            DisplayFeedback(String.Format("Killed racer ID {0}", racerIndex + 1));
+            return true;
+        }
+
+        private bool HandleSetspeedCommand(string[] args)
+        {
+            int racerIndex = Int32.Parse(args[0]) - 1;
+            float speedMultiplier = Single.Parse(args[1]);
+            Racer target = RaceManager.GetRacerByIndex(racerIndex);
+            if (target == null)
+            {
+                DisplayFeedback(String.Format("Invalid racer ID {0}", racerIndex + 1));
+                return false;
+            }
+            target.SetPermanentSpeedScale(speedMultiplier);
+            DisplayFeedback(String.Format("Set racer {0}'s speed to {1}x", racerIndex + 1, speedMultiplier));
+            return true;
+        }
+        private bool HandleSetSizeCommand(string[] args)
+        {
+            int racerIndex = Int32.Parse(args[0]) - 1;
+            float sizeMultiplier = Single.Parse(args[1]);
+            Racer target = RaceManager.GetRacerByIndex(racerIndex);
+            if (target == null)
+            {
+                DisplayFeedback(String.Format("Invalid racer ID {0}", racerIndex + 1));
+                return false;
+            }
+            if (sizeMultiplier <= 0)
+            {
+                DisplayFeedback(String.Format("Invalid size {0}. Size must be greater than 0.", sizeMultiplier));
+                return false;
+            }
+            target.transform.localScale = new Vector3(sizeMultiplier, sizeMultiplier, sizeMultiplier);
+            DisplayFeedback(String.Format("Set racer {0}'s size to {1}x", racerIndex + 1, sizeMultiplier));
+            return true;
+        }
+        private bool HandleEquipItemCommand(string[] args)
+        {
+            int racerIndex = Int32.Parse(args[0]) - 1;
+            string itemName = args[1].ToLower();
+            Racer target = RaceManager.GetRacerByIndex(racerIndex);
+            if (target == null)
+            {
+                DisplayFeedback(String.Format("Invalid racer ID {0}", racerIndex + 1));
+                return false;
+            }
+
+            if (!EquipItemHelper(target, itemName, out _))
+            {
+                return false;
+            }
+            DisplayFeedback(String.Format("Equipped racer {0} with {1}", racerIndex + 1, itemName));
+            return true;
+        }
+
+        private bool HandleUseItemCommand(string[] args)
+        {
+            int racerIndex = Int32.Parse(args[0]) - 1;
+            string itemName = args[1].ToLower();
+            Racer target = RaceManager.GetRacerByIndex(racerIndex);
+            if (target == null)
+            {
+                DisplayFeedback(String.Format("Invalid racer ID {0}", racerIndex + 1));
+                return false;
+            }
+
+            if (!EquipItemHelper(target, itemName, out Item equippedItem))
+            {
+                return false;
+            }
+
+            equippedItem.Use(target);
+
+            DisplayFeedback(String.Format("Used {0} on racer {1}", itemName, racerIndex + 1));
+            return true;
+        }
+
+        private bool EquipItemHelper(Racer racer, string itemName, out Item equippedItem)
+        {
+
+            Item item = null;
+            foreach (ItemRegistry registry in allItems.GetAllItems())
+            {
+                if (registry.name.ToLower() == itemName ||
+                    registry.displayName.Replace(" ", "").ToLower() == itemName)
+                {
+                    item = registry.itemPrefab;
                     break;
                 }
             }
+            if (item == null)
+            {
+                DisplayFeedback(String.Format("Invalid item {0}", itemName));
+                equippedItem = null;
+                return false;
+            }
+
+            racer.EquipItem(item);
+
+            equippedItem = item;
+            return true;
         }
-        if (resolvedMovementMode == Movement.Mode.None)
+
+        private bool HandleSetMovement(string[] args)
         {
-            DisplayFeedback(String.Format("Unrecognized movement mode {0}", submittedModeName));
-            return false;
+            int racerIndex = Int32.Parse(args[0]) - 1;
+            string submittedModeName = args[1].ToLower();
+            Racer target = RaceManager.GetRacerByIndex(racerIndex);
+            if (target == null)
+            {
+                DisplayFeedback(String.Format("Invalid racer ID {0}", racerIndex + 1));
+                return false;
+            }
+            MovementMode resolvedMovementMode = MovementMode.None;
+            foreach (MovementMode mode in Enum.GetValues(typeof(MovementMode)))
+            {
+                if (mode < MovementMode.Noclip)
+                {
+                    string modeName = mode.ToString().ToLower();
+                    if (submittedModeName == modeName)
+                    {
+                        resolvedMovementMode = mode;
+                        break;
+                    }
+                }
+            }
+            if (resolvedMovementMode == MovementMode.None)
+            {
+                DisplayFeedback(String.Format("Unrecognized movement mode {0}", submittedModeName));
+                return false;
+            }
+            target.SetMovementMode(resolvedMovementMode);
+            DisplayFeedback(String.Format("Set racer {0}'s movement mode to {1}", racerIndex + 1, resolvedMovementMode.ToString()));
+            return true;
         }
-        target.SetMovementMode(resolvedMovementMode);
-        DisplayFeedback(String.Format("Set racer {0}'s movement mode to {1}", racerIndex + 1, resolvedMovementMode.ToString()));
-        return true;
-    }
 
-    private bool HandleAddPlayer(string[] args)
-    {
-        // no args
-        if (!RaceManager.AddDummyPlayer())
+        private bool HandleAddPlayer(string[] args)
         {
-            DisplayFeedback("Failed to add player");
+            // no args
+            if (!RaceManager.AddDummyPlayer())
+            {
+                DisplayFeedback("Failed to add player");
+            }
+            else
+            {
+                DisplayFeedback("Added dummy player");
+            }
+            return true;
         }
-        else
+
+        private bool HandleSetGravity(string[] args)
         {
-            DisplayFeedback("Added dummy player");
+            float gravityScale = Single.Parse(args[0]);
+            Physics.gravity = startingGravity * gravityScale;
+            DisplayFeedback(String.Format("Set gravity to {0} m/s<sup>2</sup>", Physics.gravity.y));
+            return true;
         }
-        return true;
-    }
 
-    private bool HandleSetGravity(string[] args)
-    {
-        float gravityScale = Single.Parse(args[0]);
-        Physics.gravity = startingGravity * gravityScale;
-        DisplayFeedback(String.Format("Set gravity to {0} m/s<sup>2</sup>", Physics.gravity.y));
-        return true;
-    }
+        private bool HandleReload(string[] args)
+        {
+            // no args
+            Time.timeScale = 1f;
+            Physics.gravity = startingGravity;
+            int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+            SceneManager.LoadScene(currentSceneIndex);
+            return true;
+        }
 
-    private bool HandleReload(string[] args)
-    {
-        // no args
-        Time.timeScale = 1f;
-        Physics.gravity = startingGravity;
-        int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
-        SceneManager.LoadScene(currentSceneIndex);
-        return true;
     }
-
 }

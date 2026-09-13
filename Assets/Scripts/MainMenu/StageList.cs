@@ -1,8 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "NewStageList", menuName = "ScriptableObjects/StageList")]
-public class StageList : ScriptableObject
+namespace BabyBanjo.Polyathlon.Race
 {
-    public List<StageRegistry> stages;
+    [CreateAssetMenu(fileName = "NewStageList", menuName = "ScriptableObjects/StageList")]
+    public class StageList : ScriptableObject
+    {
+        public List<StageRegistry> stages;
+    }
 }

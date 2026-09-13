@@ -1,24 +1,26 @@
 using System;
 using System.Collections.Generic;
 
-public class ListUtility
+namespace BabyBanjo.Core.Utility
 {
-    public static List<T> FisherYatesShuffle<T> (List<T> unshuffled)
+    public class ListUtility
     {
-		Random r = new Random();
-        List<T> shuffled = new List<T>(unshuffled);
-        //Step 1: For each unshuffled item in the collection
-        for (int n = shuffled.Count - 1; n > 0; --n)
+        public static List<T> FisherYatesShuffle<T>(List<T> unshuffled)
         {
-            //Step 2: Randomly pick an item which has not been shuffled
-            int k = r.Next(n + 1);
+            Random r = new Random();
+            List<T> shuffled = new List<T>(unshuffled);
+            //Step 1: For each unshuffled item in the collection
+            for (int n = shuffled.Count - 1; n > 0; --n)
+            {
+                //Step 2: Randomly pick an item which has not been shuffled
+                int k = r.Next(n + 1);
 
-            //Step 3: Swap the selected item with the last "unstruck" letter in the collection
-            T temp = shuffled[n];
-            shuffled[n] = shuffled[k];
-            shuffled[k] = temp;
+                //Step 3: Swap the selected item with the last "unstruck" letter in the collection
+                T temp = shuffled[n];
+                shuffled[n] = shuffled[k];
+                shuffled[k] = temp;
+            }
+            return shuffled;
         }
-        return shuffled;
     }
-
 }

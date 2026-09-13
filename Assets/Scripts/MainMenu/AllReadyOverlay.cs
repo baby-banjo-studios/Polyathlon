@@ -1,34 +1,38 @@
+using BabyBanjo.Core.Input;
 using TMPro;
 using UnityEngine;
 
-public class AllReadyOverlay : MonoBehaviour
+namespace BabyBanjo.Polyathlon.UI
 {
-    [SerializeField]
-    private TextMeshProUGUI text;
-    [SerializeField]
-    private string topText;
-
-    public void SetActive(bool enabled)
+    public class AllReadyOverlay : MonoBehaviour
     {
-        gameObject.SetActive(enabled);
-    }
+        [SerializeField]
+        private TextMeshProUGUI text;
+        [SerializeField]
+        private string topText;
 
-    public void SetControlScheme(ControlScheme scheme)
-    {
-        string buttonToPress = "[button]";
-        if (scheme == ControlScheme.Keyboard)
+        public void SetActive(bool enabled)
         {
-            buttonToPress = "Enter";
+            gameObject.SetActive(enabled);
         }
-        else if (scheme == ControlScheme.Gamepad)
+
+        public void SetControlScheme(ControlScheme scheme)
         {
-            buttonToPress = "Start";
+            string buttonToPress = "[button]";
+            if (scheme == ControlScheme.Keyboard)
+            {
+                buttonToPress = "Enter";
+            }
+            else if (scheme == ControlScheme.Gamepad)
+            {
+                buttonToPress = "Start";
+            }
+            string prependText = topText;
+            if (topText != "")
+            {
+                prependText += '\n';
+            }
+            text.text = string.Format("{0}Press {1} to continue", prependText, buttonToPress);
         }
-        string prependText = topText;
-        if (topText != "")
-        {
-            prependText += '\n';
-        }
-        text.text = string.Format("{0}Press {1} to continue", prependText, buttonToPress);
     }
 }

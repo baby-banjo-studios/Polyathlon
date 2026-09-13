@@ -1,84 +1,91 @@
+using BabyBanjo.Core.UI;
+using BabyBanjo.Core.Utility;
+using BabyBanjo.Polyathlon.AI;
+using BabyBanjo.Polyathlon.Items;
+using BabyBanjo.Polyathlon.Race;
 using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class RaceSettingsUI : BaseMenuUI
+namespace BabyBanjo.Polyathlon.UI
 {
-    [SerializeField]
-    private Spinner raceNumSpinner, raceSelectSpinner, itemTypeSpinner, cpuDiffSpinner, cpuNumSpinner;
-    [SerializeField]
-    private AllReadyOverlay allReadyOverlay;
-    [SerializeField]
-    private StageSelectUI stageSelectUI;
-    [SerializeField]
-    private LootTable balancedItems, aggressiveItems, strategicItems, randomItems;
-    public int maxTotalRacers = 12;
-
-    protected override void Awake()
+    public class RaceSettingsUI : BaseMenuUI
     {
-        base.Awake();
+        [SerializeField]
+        private Spinner raceNumSpinner, raceSelectSpinner, itemTypeSpinner, cpuDiffSpinner, cpuNumSpinner;
+        [SerializeField]
+        private AllReadyOverlay allReadyOverlay;
+        [SerializeField]
+        private StageSelectUI stageSelectUI;
+        [SerializeField]
+        private LootTable balancedItems, aggressiveItems, strategicItems, randomItems;
+        public int maxTotalRacers = 12;
 
-        raceSelectSpinner.FillWithEnum<RaceSelection>();
-        itemTypeSpinner.FillWithEnum<ItemDistribution>();
-        cpuDiffSpinner.FillWithEnum<CPUDifficulty>();
-        cpuDiffSpinner.SkipToValue(CPUDifficulty.Normal.ToString());
-    }
-
-    public override void Reset()
-    {
-        base.Reset();
-        
-        int maxCPURacers = maxTotalRacers - raceSettings.PlayerChoices.Count;
-        cpuNumSpinner.ClearValues();
-        for (int i = 1; i <= maxCPURacers; i++)
+        protected override void Awake()
         {
-            cpuNumSpinner.AddValue(i.ToString());
+            base.Awake();
+
+            raceSelectSpinner.FillWithEnum<RaceSelection>();
+            itemTypeSpinner.FillWithEnum<ItemDistribution>();
+            cpuDiffSpinner.FillWithEnum<CPUDifficulty>();
+            cpuDiffSpinner.SkipToValue(CPUDifficulty.Normal.ToString());
         }
-        cpuNumSpinner.SkipToValue((maxCPURacers).ToString());
-        
-        allReadyOverlay.SetActive(false);
-    }
 
-    public override void Navigate(MainMenuPlayer player, Vector2 input)
-    {
-        if (player.IsPrimary())
+        public override void Reset()
         {
-            base.Navigate(player, input);
+            base.Reset();
 
-            if (input.x != 0 && player.IsPrimary())
+            int maxCPURacers = maxTotalRacers - raceSettings.PlayerChoices.Count;
+            cpuNumSpinner.ClearValues();
+            for (int i = 1; i <= maxCPURacers; i++)
             {
-                if (EventSystem.current.currentSelectedGameObject == raceNumSpinner.gameObject)
-                {
-                    raceNumSpinner.Navigate(input.x > 0);
-                }
-                else if (EventSystem.current.currentSelectedGameObject == raceSelectSpinner.gameObject)
-                {
-                    raceSelectSpinner.Navigate(input.x > 0);
-                }
-                else if (EventSystem.current.currentSelectedGameObject == itemTypeSpinner.gameObject)
-                {
-                    itemTypeSpinner.Navigate(input.x > 0);
-                }
-                else if (EventSystem.current.currentSelectedGameObject == cpuDiffSpinner.gameObject)
-                {
-                    cpuDiffSpinner.Navigate(input.x > 0);
-                }
-                else if (EventSystem.current.currentSelectedGameObject == cpuNumSpinner.gameObject)
-                {
-                    cpuNumSpinner.Navigate(input.x > 0);
-                }
+                cpuNumSpinner.AddValue(i.ToString());
             }
-            }
-    }
+            cpuNumSpinner.SkipToValue((maxCPURacers).ToString());
 
-    public void ApplySettings()
-    {
-        if (int.TryParse(raceNumSpinner.Value, out int numRaces) &&
-            //Enum.TryParse(raceSelectSpinner.Value, out RaceSelection raceSelection) &&
-            EnumUtility.TryGetValueFromDescription(raceSelectSpinner.Value, out RaceSelection raceSelection) &&
-            Enum.TryParse(cpuDiffSpinner.Value, out CPUDifficulty cpuDifficulty) &&
-            Enum.TryParse(itemTypeSpinner.Value, out ItemDistribution itemDistribution) &&
-            int.TryParse(cpuNumSpinner.Value, out int numCPUs))
+            allReadyOverlay.SetActive(false);
+        }
+
+        public override void Navigate(MainMenuPlayer player, Vector2 input)
+        {
+            if (player.IsPrimary())
+            {
+                base.Navigate(player, input);
+
+                if (input.x != 0 && player.IsPrimary())
+                {
+                    if (EventSystem.current.currentSelectedGameObject == raceNumSpinner.gameObject)
+                    {
+                        raceNumSpinner.Navigate(input.x > 0);
+                    }
+                    else if (EventSystem.current.currentSelectedGameObject == raceSelectSpinner.gameObject)
+                    {
+                        raceSelectSpinner.Navigate(input.x > 0);
+                    }
+                    else if (EventSystem.current.currentSelectedGameObject == itemTypeSpinner.gameObject)
+                    {
+                        itemTypeSpinner.Navigate(input.x > 0);
+                    }
+                    else if (EventSystem.current.currentSelectedGameObject == cpuDiffSpinner.gameObject)
+                    {
+                        cpuDiffSpinner.Navigate(input.x > 0);
+                    }
+                    else if (EventSystem.current.currentSelectedGameObject == cpuNumSpinner.gameObject)
+                    {
+                        cpuNumSpinner.Navigate(input.x > 0);
+                    }
+                }
+            }
+        }
+
+        public void ApplySettings()
+        {
+            if (int.TryParse(raceNumSpinner.Value, out int numRaces) &&
+                //Enum.TryParse(raceSelectSpinner.Value, out RaceSelection raceSelection) &&
+                EnumUtility.TryGetValueFromDescription(raceSelectSpinner.Value, out RaceSelection raceSelection) &&
+                Enum.TryParse(cpuDiffSpinner.Value, out CPUDifficulty cpuDifficulty) &&
+                Enum.TryParse(itemTypeSpinner.Value, out ItemDistribution itemDistribution) &&
+                int.TryParse(cpuNumSpinner.Value, out int numCPUs))
             {
                 LootTable lootTable;
                 switch (itemDistribution)
@@ -111,7 +118,7 @@ public class RaceSettingsUI : BaseMenuUI
                 }
 
                 raceSettings.SetRaceParams(numRaces, raceSelection, lootTable, cpuDifficulty, numCPUs);
-                
+
                 if (raceSelection == RaceSelection.Random)
                 {
                     raceSettings.PreloadStages(stageSelectUI.GetNStages(numRaces, true));
@@ -130,32 +137,33 @@ public class RaceSettingsUI : BaseMenuUI
                 }
             }
 
-    }
+        }
 
-    public override void Cancel(MainMenuPlayer player)
-    {
-        if (player.IsPrimary())
+        public override void Cancel(MainMenuPlayer player)
         {
-            if (allReadyOverlay.isActiveAndEnabled)
+            if (player.IsPrimary())
             {
-                allReadyOverlay.SetActive(false);
-            }
-            else
-            {
-                mainMenuUI.TransitionToPreviousMode();
+                if (allReadyOverlay.isActiveAndEnabled)
+                {
+                    allReadyOverlay.SetActive(false);
+                }
+                else
+                {
+                    mainMenuUI.TransitionToPreviousMode();
+                }
             }
         }
-    }
 
-    public override void Confirm(MainMenuPlayer player)
-    {
-        if (player.IsPrimary())
+        public override void Confirm(MainMenuPlayer player)
         {
-            base.Submit(player);
-
-            if (allReadyOverlay.isActiveAndEnabled)
+            if (player.IsPrimary())
             {
-                raceSettings.StartRace();
+                base.Submit(player);
+
+                if (allReadyOverlay.isActiveAndEnabled)
+                {
+                    raceSettings.StartRace();
+                }
             }
         }
     }

@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[System.Serializable]
-public class Character
+namespace BabyBanjo.Polyathlon.Entities
 {
-    public string name;
-    public GameObject playerObj;
-    public GameObject npcObj;
-    public GameObject previewObj;
+    [System.Serializable]
+    public class Character
+    {
+        public string name;
+        public GameObject playerObj;
+        public GameObject npcObj;
+        public GameObject previewObj;
+    }
 }

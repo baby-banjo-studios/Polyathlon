@@ -106,7 +106,7 @@ public class PlayerController : Racer
     }
 
     /*  updates player's movement mode and maxSpeed/locomotion accordingly */
-    public override void SetMovementMode(Movement.Mode mode, bool initial = false)
+    public override void SetMovementMode(MovementMode mode, bool initial = false)
     {
         Vector2 movePreserve = move;
         base.SetMovementMode(mode, initial);
@@ -116,16 +116,16 @@ public class PlayerController : Racer
         inputActions.Biking.Disable();
         switch (mode)
         {
-            case Movement.Mode.Running:
+            case MovementMode.Running:
                 inputActions.Running.Enable();
                 break;
-            case Movement.Mode.Jetpacking:
+            case MovementMode.Jetpacking:
                 inputActions.Jetpacking.Enable();
                 break;
-            case Movement.Mode.Swimming:
+            case MovementMode.Swimming:
                 inputActions.Swimming.Enable();
                 break;
-            case Movement.Mode.Biking:
+            case MovementMode.Biking:
                 inputActions.Biking.Enable();
                 break;
         }

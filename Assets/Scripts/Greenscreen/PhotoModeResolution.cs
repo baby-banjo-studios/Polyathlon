@@ -1,6 +1,9 @@
-public enum PhotoModeResolution
+namespace BabyBanjo.Polyathlon.PhotoMode
 {
-    Native,
-    Ten_Eighty_P,
-    Four_K,
+    public enum PhotoModeResolution
+    {
+        Native,
+        Ten_Eighty_P,
+        Four_K,
+    }
 }

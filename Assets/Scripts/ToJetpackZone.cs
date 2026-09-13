@@ -1,8 +1,11 @@
-﻿using System.Collections;
+﻿using BabyBanjo.Polyathlon.Entities;
+using BabyBanjo.Polyathlon.Movement;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
+namespace BabyBanjo.Polyathlon.AI
+{
 // For selective use with a trigger.
 // Enables forcing an NPC to go straight to the nearest jetpack
 // Not currently in use, but may be useful in the future.
@@ -31,9 +34,10 @@ public class ToJetpackZone : MonoBehaviour
     private IEnumerator EnsureOnNavmesh(NPC npc)
     {
         yield return new WaitForSeconds(2);
-        if (npc.GetCurrentMovementMode() != Movement.Mode.Jetpacking)
+        if (npc.GetCurrentMovementMode() != MovementMode.Jetpacking)
         {
             npc.GoToNearestJetpack();
         }
     }
+}
 }

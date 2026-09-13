@@ -1,9 +1,12 @@
 using UnityEngine;
 
-public class AutoDisable : MonoBehaviour
+namespace BabyBanjo.Core.Utility
 {
-    private void Start()
+    public class AutoDisable : MonoBehaviour
     {
-        gameObject.SetActive(false);
-    }    
+        private void Start()
+        {
+            gameObject.SetActive(false);
+        }
+    }
 }

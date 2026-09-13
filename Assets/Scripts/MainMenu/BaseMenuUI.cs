@@ -1,79 +1,84 @@
+using BabyBanjo.Core.Input;
+using BabyBanjo.Polyathlon.Race;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class BaseMenuUI : MonoBehaviour
+namespace BabyBanjo.Polyathlon.UI
 {
-    protected MasterMenuUI mainMenuUI;
-    [SerializeField]
-    protected Selectable firstSelectable;
-    protected RaceSettings raceSettings;
-    protected bool usingKeyboardMouse;
-    
-    private bool receivedFirstNavEvent;
-
-    protected virtual void Awake()
+    public class BaseMenuUI : MonoBehaviour
     {
-        mainMenuUI = GetComponentInParent<MasterMenuUI>();
-        raceSettings = FindFirstObjectByType<RaceSettings>();
-    }
-    protected virtual void Start()
-    {
-        
-    }
+        protected MasterMenuUI mainMenuUI;
+        [SerializeField]
+        protected Selectable firstSelectable;
+        protected RaceSettings raceSettings;
+        protected bool usingKeyboardMouse;
 
-    public virtual void AnyKeyPressed()
-    {
+        private bool receivedFirstNavEvent;
 
-    }
-
-    protected virtual void OnEnable()
-    {
-        receivedFirstNavEvent = false;
-        if (mainMenuUI.PrimaryControlScheme == ControlScheme.Gamepad && firstSelectable != null)
+        protected virtual void Awake()
         {
-            firstSelectable.Select();
+            mainMenuUI = GetComponentInParent<MasterMenuUI>();
+            raceSettings = FindFirstObjectByType<RaceSettings>();
         }
-        else
+        protected virtual void Start()
         {
-            //EventSystem.current.SetSelectedGameObject(null);
-            //Debug.Log("NO nav events");
+
         }
-    }
 
-    protected virtual void OnDisable()
-    {
-
-    }
-
-    public virtual void Reset()
-    {
-    }
-
-    public virtual void Navigate(MainMenuPlayer player, Vector2 input)
-    {
-        // explanation: navigation event will be sent 2x and we only want to enable selections on the 2nd one
-        if (EventSystem.current.currentSelectedGameObject == null)
+        public virtual void AnyKeyPressed()
         {
-            firstSelectable.Select();
+
         }
-    }
 
-    
+        protected virtual void OnEnable()
+        {
+            receivedFirstNavEvent = false;
+            if (mainMenuUI.PrimaryControlScheme == ControlScheme.Gamepad && firstSelectable != null)
+            {
+                firstSelectable.Select();
+            }
+            else
+            {
+                //EventSystem.current.SetSelectedGameObject(null);
+                //Debug.Log("NO nav events");
+            }
+        }
 
-    public virtual void Submit(MainMenuPlayer player)
-    {
+        protected virtual void OnDisable()
+        {
 
-    }
+        }
 
-    public virtual void Cancel(MainMenuPlayer player)
-    {
-        mainMenuUI.TransitionToPreviousMode();
-    }
+        public virtual void Reset()
+        {
+        }
 
-    public virtual void Confirm(MainMenuPlayer player)
-    {
+        public virtual void Navigate(MainMenuPlayer player, Vector2 input)
+        {
+            // explanation: navigation event will be sent 2x and we only want to enable selections on the 2nd one
+            if (EventSystem.current.currentSelectedGameObject == null)
+            {
+                firstSelectable.Select();
+            }
+        }
 
+
+
+        public virtual void Submit(MainMenuPlayer player)
+        {
+
+        }
+
+        public virtual void Cancel(MainMenuPlayer player)
+        {
+            mainMenuUI.TransitionToPreviousMode();
+        }
+
+        public virtual void Confirm(MainMenuPlayer player)
+        {
+
+        }
     }
 }

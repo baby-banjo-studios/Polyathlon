@@ -1,5 +1,8 @@
-public enum ControlScheme
+namespace BabyBanjo.Core.Input
 {
-    Keyboard,
-    Gamepad
+    public enum ControlScheme
+    {
+        Keyboard,
+        Gamepad
+    }
 }

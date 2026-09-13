@@ -1,92 +1,99 @@
+using BabyBanjo.Core.Rendering;
+using BabyBanjo.Core.Greenscreen;
+using BabyBanjo.Polyathlon.Race;
+using BabyBanjo.Polyathlon.Rendering;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PhotoModeController : MonoBehaviour
+namespace BabyBanjo.Polyathlon.PhotoMode
 {
-    private Rigidbody rb;
-    [SerializeField]
-    private CameraController cameraController;
-    [SerializeField]
-    private SnapshotCamera snapshotCamera;
-    [SerializeField]
-    private PhotoModeUI ui;
-
-    [SerializeField]
-    private float speed = 5f;
-
-    public Vector2 MoveXZ { get; set; }
-    public float MoveUp { get; set; }
-    public float MoveDown { get; set; }
-    public Vector2 Look { get; set; }
-
-    private void Awake()
+    public class PhotoModeController : MonoBehaviour
     {
-        rb = GetComponent<Rigidbody>();
-    }
+        private Rigidbody rb;
+        [SerializeField]
+        private CameraController cameraController;
+        [SerializeField]
+        private SnapshotCamera snapshotCamera;
+        [SerializeField]
+        private PhotoModeUI ui;
 
-    private void Start()
-    {
-        cameraController.gameObject.SetActive(false);
-        ui.gameObject.SetActive(false);
-    }
+        [SerializeField]
+        private float speed = 5f;
 
-    private void Update()
-    {
-        AddMovement(MoveXZ.x, MoveXZ.y, MoveUp - MoveDown);
-        cameraController.Rotate(Look.x, Look.y);
-    }
+        public Vector2 MoveXZ { get; set; }
+        public float MoveUp { get; set; }
+        public float MoveDown { get; set; }
+        public Vector2 Look { get; set; }
 
-    public void SetActive(bool enable)
-    {
-        cameraController.gameObject.SetActive(enable);
-        ui.gameObject.SetActive(enable);
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-        RaceManager.ShowDummyUI(!enable);
-    }
+        private void Awake()
+        {
+            rb = GetComponent<Rigidbody>();
+        }
 
-    public void AddMovement(float forward, float right, float up)
-    {
-        Vector3 translation = Vector3.zero;
-        translation += right * cameraController.transform.forward;
-        translation += forward * cameraController.transform.right;
-        translation += up * cameraController.transform.up;
+        private void Start()
+        {
+            cameraController.gameObject.SetActive(false);
+            ui.gameObject.SetActive(false);
+        }
 
-        transform.Translate(translation * speed * Time.unscaledDeltaTime, Space.World);
-    }
+        private void Update()
+        {
+            AddMovement(MoveXZ.x, MoveXZ.y, MoveUp - MoveDown);
+            cameraController.Rotate(Look.x, Look.y);
+        }
 
-    public void SetControlScheme(PlayerInput playerInput)
-    {
-        ui.UpdateControlsText(playerInput);
-    }
+        public void SetActive(bool enable)
+        {
+            cameraController.gameObject.SetActive(enable);
+            ui.gameObject.SetActive(enable);
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+            RaceManager.ShowDummyUI(!enable);
+        }
 
-    public void SetStartingPosition(CameraController originController)
-    {
-        transform.position = originController.ActualCameraPosition;
-        cameraController.SetRotation(originController.transform.rotation);
-    }
+        public void AddMovement(float forward, float right, float up)
+        {
+            Vector3 translation = Vector3.zero;
+            translation += right * cameraController.transform.forward;
+            translation += forward * cameraController.transform.right;
+            translation += up * cameraController.transform.up;
 
-    public void TakeSnapshot()
-    {
-        Vector2Int widthHeight = ui.GetPhotoDimensions();
-        snapshotCamera.SetResolution(widthHeight.x, widthHeight.y);
-        snapshotCamera.TakeSnapshot(true);
-        ui.TakeSnapshot();
-    }
+            transform.Translate(translation * speed * Time.unscaledDeltaTime, Space.World);
+        }
 
-    public void CycleResolution()
-    {
-        ui.CycleResolution();
-    }
+        public void SetControlScheme(PlayerInput playerInput)
+        {
+            ui.UpdateControlsText(playerInput);
+        }
 
-    public void CycleAspectRatio()
-    {
-        ui.CycleAspectRatio();
-    }
+        public void SetStartingPosition(CameraController originController)
+        {
+            transform.position = originController.ActualCameraPosition;
+            cameraController.SetRotation(originController.transform.rotation);
+        }
 
-    public void HideUI()
-    {
-        ui.ToggleHideUI();
+        public void TakeSnapshot()
+        {
+            Vector2Int widthHeight = ui.GetPhotoDimensions();
+            snapshotCamera.SetResolution(widthHeight.x, widthHeight.y);
+            snapshotCamera.TakeSnapshot(true);
+            ui.TakeSnapshot();
+        }
+
+        public void CycleResolution()
+        {
+            ui.CycleResolution();
+        }
+
+        public void CycleAspectRatio()
+        {
+            ui.CycleAspectRatio();
+        }
+
+        public void HideUI()
+        {
+            ui.ToggleHideUI();
+        }
     }
 }

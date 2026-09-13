@@ -1,6 +1,9 @@
-public enum ImageOrientation
+namespace BabyBanjo.Core.Rendering
 {
-    Square,
-    Landscape,
-    Portrait
+    public enum ImageOrientation
+    {
+        Square,
+        Landscape,
+        Portrait
+    }
 }

@@ -1,14 +1,16 @@
-
-public enum MenuMode
+namespace BabyBanjo.Polyathlon.UI
 {
-    Title,
-    CharacterSelect,
-    RaceSettings,
-    StageSelect,
-    TrainingSelect,
-    Settings,
-    Polypedia,
-    Gallery,
-    Credits,
-    Invalid,
+    public enum MenuMode
+    {
+        Title,
+        CharacterSelect,
+        RaceSettings,
+        StageSelect,
+        TrainingSelect,
+        Settings,
+        Polypedia,
+        Gallery,
+        Credits,
+        Invalid,
+    }
 }

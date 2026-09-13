@@ -1,10 +1,15 @@
+using BabyBanjo.Polyathlon.Entities;
+using BabyBanjo.Polyathlon.Movement;
 using UnityEngine;
 
-public class WheelerItem : Item
+namespace BabyBanjo.Polyathlon.Items
 {
-    public override void Pickup(Racer racer)
+    public class WheelerItem : Item
     {
-        racer.SetMovementMode(Movement.Mode.Wheeling);
-        base.Pickup(racer);
+        public override void Pickup(Racer racer)
+        {
+            racer.SetMovementMode(MovementMode.Wheeling);
+            base.Pickup(racer);
+        }
     }
 }

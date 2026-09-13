@@ -1,17 +1,21 @@
-﻿using System.Collections;
+﻿using BabyBanjo.Polyathlon.Entities;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PropellerKO : MonoBehaviour
+namespace BabyBanjo.Polyathlon.World
 {
-    // KO any racer who touches the spinning propellers
-    void OnCollisionEnter(Collision other)
+    public class PropellerKO : MonoBehaviour
     {
-        Debug.Log("collision!!!!");
-        Racer racer = other.gameObject.GetComponent<Racer>();
-        if(racer != null)
+        // KO any racer who touches the spinning propellers
+        void OnCollisionEnter(Collision other)
         {
-            racer.Die(false);
+            Debug.Log("collision!!!!");
+            Racer racer = other.gameObject.GetComponent<Racer>();
+            if (racer != null)
+            {
+                racer.Die(false);
+            }
         }
     }
 }

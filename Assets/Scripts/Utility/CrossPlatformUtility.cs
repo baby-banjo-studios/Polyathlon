@@ -1,24 +1,27 @@
 using System;
 using System.IO;
 using UnityEngine;
-public class CrossPlatformUtility
+
+namespace BabyBanjo.Core.Input
 {
-    public static void OpenFileExplorer(string folderpath)
+    public class CrossPlatformUtility
     {
+        public static void OpenFileExplorer(string folderpath)
+        {
 #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
-        // running on windows
-		string winPath = folderpath.Replace("/", "\\"); // windows explorer doesn't like forward slashes
-        if (Directory.Exists(winPath)) // if path requested is a folder, automatically open insides of that folder
-		{
-            try
+            // running on windows
+            string winPath = folderpath.Replace("/", "\\"); // windows explorer doesn't like forward slashes
+            if (Directory.Exists(winPath)) // if path requested is a folder, automatically open insides of that folder
             {
-                System.Diagnostics.Process.Start("explorer.exe", winPath);
+                try
+                {
+                    System.Diagnostics.Process.Start("explorer.exe", winPath);
+                }
+                catch (Exception e)
+                {
+                    Debug.Log(string.Format("Failed to open windows file explorer - {0}", e.Message));
+                }
             }
-            catch (Exception e)
-            {
-                Debug.Log(string.Format("Failed to open windows file explorer - {0}", e.Message));
-            }
-		}
 #elif UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX
         // running on mac
         string macPath = path.Replace("\\", "/"); // mac finder doesn't like backward slashes		
@@ -59,5 +62,6 @@ public class CrossPlatformUtility
         // running on something else
         Debug.Log(string.Format("Running on non-PC console, cannot open file explorer", e.Message));
 #endif
+        }
     }
 }

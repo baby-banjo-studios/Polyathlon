@@ -1,5 +1,8 @@
-public enum GameMode
+namespace BabyBanjo.Polyathlon.Race
 {
-    Racing,
-    Training
+    public enum GameMode
+    {
+        Racing,
+        Training
+    }
 }

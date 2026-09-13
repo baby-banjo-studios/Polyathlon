@@ -1,27 +1,32 @@
+using BabyBanjo.Polyathlon.Entities;
+using BabyBanjo.Polyathlon.Movement;
 using UnityEngine;
 
-public class StopSignItem : Item
+namespace BabyBanjo.Polyathlon.Items
 {
-    public override void Pickup(Racer racer)
+    public class StopSignItem : Item
     {
-        base.Pickup(racer);
-    }
-
-    public override void Use(Racer racer)
-    {
-        Vector3 groundDropPoint = racer.ItemDropPoint;
-        if (Physics.Raycast(racer.ItemDropPoint, Vector3.down, out RaycastHit hit))
+        public override void Pickup(Racer racer)
         {
-            groundDropPoint = hit.point;
+            base.Pickup(racer);
         }
 
-        Quaternion rot = Quaternion.LookRotation(racer.Forward);
-        StopSignObject obj = Instantiate(Child, groundDropPoint, rot).GetComponent<StopSignObject>();
-        racer.EquipItem(null);
+        public override void Use(Racer racer)
+        {
+            Vector3 groundDropPoint = racer.ItemDropPoint;
+            if (Physics.Raycast(racer.ItemDropPoint, Vector3.down, out RaycastHit hit))
+            {
+                groundDropPoint = hit.point;
+            }
 
-        obj.Initialize(racer, racer.movementMode == Movement.Mode.Jetpacking || racer.movementMode == Movement.Mode.Gliding);
+            Quaternion rot = Quaternion.LookRotation(racer.Forward);
+            StopSignObject obj = Instantiate(Child, groundDropPoint, rot).GetComponent<StopSignObject>();
+            racer.EquipItem(null);
 
-        racer.PlayMiscSound(soundWhenUsed);
-        racer.EquipItem(null);
+            obj.Initialize(racer, racer.movementMode == MovementMode.Jetpacking || racer.movementMode == MovementMode.Gliding);
+
+            racer.PlayMiscSound(soundWhenUsed);
+            racer.EquipItem(null);
+        }
     }
 }

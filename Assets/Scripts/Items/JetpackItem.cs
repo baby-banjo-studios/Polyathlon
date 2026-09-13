@@ -1,10 +1,15 @@
-﻿using UnityEngine;
+﻿using BabyBanjo.Polyathlon.Entities;
+using BabyBanjo.Polyathlon.Movement;
+using UnityEngine;
 
-public class JetpackItem : Item
+namespace BabyBanjo.Polyathlon.Items
 {
-    public override void Pickup(Racer racer)
+    public class JetpackItem : Item
     {
-        racer.SetMovementMode(Movement.Mode.Jetpacking);
-        base.Pickup(racer);
+        public override void Pickup(Racer racer)
+        {
+            racer.SetMovementMode(MovementMode.Jetpacking);
+            base.Pickup(racer);
+        }
     }
 }

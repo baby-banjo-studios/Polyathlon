@@ -1,16 +1,20 @@
+using BabyBanjo.Polyathlon.Entities;
 using UnityEngine;
 
-public class BananaItem : Item
+namespace BabyBanjo.Polyathlon.Items
 {
-    public override void Pickup(Racer racer)
+    public class BananaItem : Item
     {
-        base.Pickup(racer);
-    }
+        public override void Pickup(Racer racer)
+        {
+            base.Pickup(racer);
+        }
 
-    public override void Use(Racer racer)
-    {
-        Instantiate(Child, racer.ItemDropPoint, Quaternion.identity);
-        racer.PlayMiscSound(soundWhenUsed);
-        racer.EquipItem(null);
+        public override void Use(Racer racer)
+        {
+            Instantiate(Child, racer.ItemDropPoint, Quaternion.identity);
+            racer.PlayMiscSound(soundWhenUsed);
+            racer.EquipItem(null);
+        }
     }
 }

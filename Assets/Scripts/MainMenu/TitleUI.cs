@@ -1,77 +1,82 @@
+using BabyBanjo.Core.Input;
+using BabyBanjo.Polyathlon.Race;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class TitleUI : BaseMenuUI
+namespace BabyBanjo.Polyathlon.UI
 {
-    [SerializeField]
-    private GameObject initialScreen;
-    [SerializeField]
-    private GameObject mainScreen;
-
-    protected override void Start()
+    public class TitleUI : BaseMenuUI
     {
-        base.Start();
-        initialScreen.SetActive(true);
-        mainScreen.SetActive(false);
-    }
+        [SerializeField]
+        private GameObject initialScreen;
+        [SerializeField]
+        private GameObject mainScreen;
 
-    public override void AnyKeyPressed()
-    {
-        initialScreen.SetActive(false);
-        mainScreen.SetActive(true);
-        //Debug.Log("firstselected");
-        if (mainMenuUI.PrimaryControlScheme == ControlScheme.Gamepad)
+        protected override void Start()
         {
-            firstSelectable.Select();
+            base.Start();
+            initialScreen.SetActive(true);
+            mainScreen.SetActive(false);
         }
-    }
 
-    // protected override void OnEnable()
-    // {
-    //     // explicitly do nothing- we do NOT want first button to be selected by default
-    // }
+        public override void AnyKeyPressed()
+        {
+            initialScreen.SetActive(false);
+            mainScreen.SetActive(true);
+            //Debug.Log("firstselected");
+            if (mainMenuUI.PrimaryControlScheme == ControlScheme.Gamepad)
+            {
+                firstSelectable.Select();
+            }
+        }
 
-    public void OnPlayClicked()
-    {
-        raceSettings.mode = GameMode.Racing;
-        mainMenuUI.TransitionToMode(MenuMode.CharacterSelect);
-    }
-    public void OnTrainingClicked()
-    {
-        raceSettings.mode = GameMode.Training;
-        mainMenuUI.TransitionToMode(MenuMode.CharacterSelect);
-    }
+        // protected override void OnEnable()
+        // {
+        //     // explicitly do nothing- we do NOT want first button to be selected by default
+        // }
 
-    public void OnSettingsClicked()
-    {
-        mainMenuUI.TransitionToMode(MenuMode.Settings);
-    }
+        public void OnPlayClicked()
+        {
+            raceSettings.mode = GameMode.Racing;
+            mainMenuUI.TransitionToMode(MenuMode.CharacterSelect);
+        }
+        public void OnTrainingClicked()
+        {
+            raceSettings.mode = GameMode.Training;
+            mainMenuUI.TransitionToMode(MenuMode.CharacterSelect);
+        }
 
-    public void OnPolypediaClicked()
-    {
-        mainMenuUI.TransitionToMode(MenuMode.Polypedia);
-    }
+        public void OnSettingsClicked()
+        {
+            mainMenuUI.TransitionToMode(MenuMode.Settings);
+        }
 
-    public void OnGalleryClicked()
-    {
-        mainMenuUI.TransitionToMode(MenuMode.Gallery);
-    }
+        public void OnPolypediaClicked()
+        {
+            mainMenuUI.TransitionToMode(MenuMode.Polypedia);
+        }
 
-    public void OnCreditsClicked()
-    {
-        mainMenuUI.TransitionToMode(MenuMode.Credits);
-    }
+        public void OnGalleryClicked()
+        {
+            mainMenuUI.TransitionToMode(MenuMode.Gallery);
+        }
 
-    public void OnQuitClicked()
-    {
+        public void OnCreditsClicked()
+        {
+            mainMenuUI.TransitionToMode(MenuMode.Credits);
+        }
+
+        public void OnQuitClicked()
+        {
 #if UNITY_EDITOR
-        if(EditorApplication.isPlaying)
-        {
-            EditorApplication.isPlaying = false;
-        }
+            if (EditorApplication.isPlaying)
+            {
+                EditorApplication.isPlaying = false;
+            }
 #else
         Application.Quit();
 #endif
+        }
     }
 }

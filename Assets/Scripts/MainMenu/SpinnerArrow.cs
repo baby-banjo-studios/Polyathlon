@@ -1,26 +1,29 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class SpinnerArrow : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+namespace BabyBanjo.Core.UI
 {
-    private Spinner parent;
-
-    public bool Selected { get; private set; }
-
-    private void Awake()
+    public class SpinnerArrow : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
-        parent = GetComponentInParent<Spinner>();
-    }
+        private Spinner parent;
 
-    public void OnPointerEnter(PointerEventData eventData)
-    {
-        Selected = true;
-        parent.SpinnerArrowSelected();
-    }
+        public bool Selected { get; private set; }
 
-    public void OnPointerExit(PointerEventData eventData)
-    {
-        Selected = false;
-        parent.SpinnerArrowDeselected();
+        private void Awake()
+        {
+            parent = GetComponentInParent<Spinner>();
+        }
+
+        public void OnPointerEnter(PointerEventData eventData)
+        {
+            Selected = true;
+            parent.SpinnerArrowSelected();
+        }
+
+        public void OnPointerExit(PointerEventData eventData)
+        {
+            Selected = false;
+            parent.SpinnerArrowDeselected();
+        }
     }
 }

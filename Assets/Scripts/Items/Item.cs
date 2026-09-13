@@ -1,75 +1,80 @@
-﻿using UnityEngine;
+﻿using BabyBanjo.Polyathlon.Entities;
+using BabyBanjo.Polyathlon.Race;
+using UnityEngine;
 using System.Collections;
 
-public class Item : MonoBehaviour
+namespace BabyBanjo.Polyathlon.Items
 {
-    public float itemRespawnTime = 3;
-    public bool consumable = false;
-
-    public Sprite icon;
-    public AudioClip soundWhenUsed;
-
-    [SerializeField]
-    private GameObject child;
-    private Collider itemCollider;
-    private ItemWaypoint itemWaypoint;
-
-    private bool available = true;
-
-    public GameObject Child { get => child; }
-
-    protected virtual void Start()
+    public class Item : MonoBehaviour
     {
-        child = transform.GetChild(0).gameObject;
-        itemCollider = GetComponent<Collider>();
-    }
+        public float itemRespawnTime = 3;
+        public bool consumable = false;
 
-    // Called by an ItemWaypoint that is the parent of this gameObject
-    public void AssignItemWaypoint(ItemWaypoint itemParent)
-    {
-        itemWaypoint = itemParent;
-    }
+        public Sprite icon;
+        public AudioClip soundWhenUsed;
 
-    // Called when a racer picks up this item
-    public virtual void Pickup(Racer racer)
-    {
-        if (consumable)
+        [SerializeField]
+        private GameObject child;
+        private Collider itemCollider;
+        private ItemWaypoint itemWaypoint;
+
+        private bool available = true;
+
+        public GameObject Child { get => child; }
+
+        protected virtual void Start()
         {
-            racer.EquipItem(this);
+            child = transform.GetChild(0).gameObject;
+            itemCollider = GetComponent<Collider>();
         }
-        else
+
+        // Called by an ItemWaypoint that is the parent of this gameObject
+        public void AssignItemWaypoint(ItemWaypoint itemParent)
         {
-            StartCoroutine(RespawnItem());
-            // If the NPC has picked up this item...
-            if (racer is NPC && itemWaypoint != null)
+            itemWaypoint = itemParent;
+        }
+
+        // Called when a racer picks up this item
+        public virtual void Pickup(Racer racer)
+        {
+            if (consumable)
             {
-                itemWaypoint.NPCTookItem((NPC)racer, this);
+                racer.EquipItem(this);
+            }
+            else
+            {
+                StartCoroutine(RespawnItem());
+                // If the NPC has picked up this item...
+                if (racer is NPC && itemWaypoint != null)
+                {
+                    itemWaypoint.NPCTookItem((NPC)racer, this);
+                }
             }
         }
-    }
 
-    /* when the item is picked up, it should seem to disappear,
-       then reappear after itemRespawnTime seconds */
-    protected IEnumerator RespawnItem()
-    {
-        yield return null;
-        yield return null;
-        available = false;
-        child.SetActive(false);
-        itemCollider.enabled = false;
-        yield return new WaitForSeconds(itemRespawnTime);
-        child.SetActive(true);
-        itemCollider.enabled = true;
-        available = true;
-    }
+        /* when the item is picked up, it should seem to disappear,
+        then reappear after itemRespawnTime seconds */
+        protected IEnumerator RespawnItem()
+        {
+            yield return null;
+            yield return null;
+            available = false;
+            child.SetActive(false);
+            itemCollider.enabled = false;
+            yield return new WaitForSeconds(itemRespawnTime);
+            child.SetActive(true);
+            itemCollider.enabled = true;
+            available = true;
+        }
 
-    public bool IsAvailable()
-    {
-        return available;
-    }
+        public bool IsAvailable()
+        {
+            return available;
+        }
 
-    public virtual void Use(Racer racer)
-    {
+        public virtual void Use(Racer racer)
+        {
 
+        }
     }
 }

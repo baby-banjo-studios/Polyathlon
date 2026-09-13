@@ -3,57 +3,60 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 
-public class EnumUtility
+namespace BabyBanjo.Core.Utility
 {
-    public static bool TryGetValueFromDescription<T>(string description, out T result)
+    public class EnumUtility
     {
-        var type = typeof(T);
-        if (!type.IsEnum) throw new InvalidOperationException();
-        foreach (var field in type.GetFields())
+        public static bool TryGetValueFromDescription<T>(string description, out T result)
         {
-            var attribute = Attribute.GetCustomAttribute(field,
-                typeof(DescriptionAttribute)) as DescriptionAttribute;
-            if (attribute != null)
+            var type = typeof(T);
+            if (!type.IsEnum) throw new InvalidOperationException();
+            foreach (var field in type.GetFields())
             {
-                if (attribute.Description == description)
+                var attribute = Attribute.GetCustomAttribute(field,
+                    typeof(DescriptionAttribute)) as DescriptionAttribute;
+                if (attribute != null)
                 {
-                    result = (T)field.GetValue(null);
-                    return true;
+                    if (attribute.Description == description)
+                    {
+                        result = (T)field.GetValue(null);
+                        return true;
+                    }
+                }
+                else
+                {
+                    if (field.Name == description)
+                    {
+                        result = (T)field.GetValue(null);
+                        return true;
+                    }
                 }
             }
-            else
-            {
-                if (field.Name == description)
-                {
-                    result = (T)field.GetValue(null);
-                    return true;
-                }
-            }
+            result = default;
+            return false;
         }
-        result = default;
-        return false;
-    }
 
-    public static bool TryGetDescriptionFromValue<T>(T value, out string result)
-    {
-        FieldInfo fi = value.GetType().GetField(value.ToString());
-        DescriptionAttribute[] attributes = fi.GetCustomAttributes(typeof(DescriptionAttribute), false) as DescriptionAttribute[];
-
-        if (attributes != null && attributes.Any())
+        public static bool TryGetDescriptionFromValue<T>(T value, out string result)
         {
-            result = attributes.First().Description;
-            return true;
+            FieldInfo fi = value.GetType().GetField(value.ToString());
+            DescriptionAttribute[] attributes = fi.GetCustomAttributes(typeof(DescriptionAttribute), false) as DescriptionAttribute[];
+
+            if (attributes != null && attributes.Any())
+            {
+                result = attributes.First().Description;
+                return true;
+            }
+
+            result = default;
+            return false;
         }
 
-        result = default;
-        return false;
-    }
-
-    public static T NextValue<T>(T value) where T : Enum
-    {
-        T[] vals = (T[])Enum.GetValues(typeof(T));
-        int idx = Array.IndexOf(vals, value) + 1;
-        idx %= vals.Length;
-        return vals[idx];
+        public static T NextValue<T>(T value) where T : Enum
+        {
+            T[] vals = (T[])Enum.GetValues(typeof(T));
+            int idx = Array.IndexOf(vals, value) + 1;
+            idx %= vals.Length;
+            return vals[idx];
+        }
     }
 }

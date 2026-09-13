@@ -1,21 +1,25 @@
+using BabyBanjo.Polyathlon.Entities;
 using UnityEngine;
 
-[RequireComponent(typeof(BoxCollider))]
-public class MusicSwitch : MonoBehaviour
+namespace BabyBanjo.Polyathlon.Audio
 {
-    public int musicIndex = 0;
-    private AudioManager audioManager;
-
-    private void Start()
+    [RequireComponent(typeof(BoxCollider))]
+    public class MusicSwitch : MonoBehaviour
     {
-        audioManager = GetComponentInParent<AudioManager>();    
-    }
+        public int musicIndex = 0;
+        private AudioManager audioManager;
 
-    private void OnTriggerEnter(Collider other) 
-    {
-        if (other.transform.GetComponent<PlayerController>() != null && audioManager.MusicPlaying != musicIndex)
+        private void Start()
         {
-            StartCoroutine(audioManager.SwitchSong(musicIndex, other.transform.GetComponent<PlayerController>()));
+            audioManager = GetComponentInParent<AudioManager>();
+        }
+
+        private void OnTriggerEnter(Collider other)
+        {
+            if (other.transform.GetComponent<PlayerController>() != null && audioManager.MusicPlaying != musicIndex)
+            {
+                StartCoroutine(audioManager.SwitchSong(musicIndex, other.transform.GetComponent<PlayerController>()));
+            }
         }
     }
 }

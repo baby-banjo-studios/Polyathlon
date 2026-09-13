@@ -1,23 +1,27 @@
+using BabyBanjo.Polyathlon.Entities;
 using UnityEngine;
 
-public class BackSentryItem : Item
+namespace BabyBanjo.Polyathlon.Items
 {
-    private bool used = false;
-    public override void Pickup(Racer racer)
+    public class BackSentryItem : Item
     {
-        base.Pickup(racer);
-    }
-
-    public override void Use(Racer racer)
-    {
-        //if (!used)
+        private bool used = false;
+        public override void Pickup(Racer racer)
         {
-            //used = true;
-            BackSentryObject sentryObj = racer.BackpackMount.backSentry;
-            //sentryObj.target = RaceManager.GetClosestRacerAheadOfThisOne(racer);
-            sentryObj.Initialize(racer);
+            base.Pickup(racer);
+        }
 
-            racer.EquipItem(null);
+        public override void Use(Racer racer)
+        {
+            //if (!used)
+            {
+                //used = true;
+                BackSentryObject sentryObj = racer.BackpackMount.backSentry;
+                //sentryObj.target = RaceManager.GetClosestRacerAheadOfThisOne(racer);
+                sentryObj.Initialize(racer);
+
+                racer.EquipItem(null);
+            }
         }
     }
 }

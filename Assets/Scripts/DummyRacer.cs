@@ -1,19 +1,22 @@
 using UnityEngine;
 
-public class DummyRacer : Racer
+namespace BabyBanjo.Polyathlon.Entities
 {
-    protected override void Start()
+    public class DummyRacer : Racer
     {
-        dead = true;
-    }
+        protected override void Start()
+        {
+            dead = true;
+        }
 
-    protected override void FixedUpdate()
-    {
+        protected override void FixedUpdate()
+        {
 
-    }
+        }
 
-    public override void Die(bool emphasizeTorso, Vector3 newMomentum = default(Vector3))
-    {
-        
+        public override void Die(bool emphasizeTorso, Vector3 newMomentum = default(Vector3))
+        {
+
+        }
     }
 }

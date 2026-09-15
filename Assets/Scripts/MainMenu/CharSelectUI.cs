@@ -367,10 +367,13 @@ public class CharSelectUI : BaseMenuUI
     protected void OnGridEntrySelected(GridEntry gridEntry, BaseEventData eventData)
     {
         MainMenuPlayer player = eventData.currentInputModule.GetComponent<MainMenuPlayer>();
-        CharSelectPreview preview = GetPreviewForPlayer(player);
-        if (preview != null)
+        if (player.ControlScheme == ControlScheme.Keyboard)
         {
-            preview.SelectCharacter((CharacterRegistry)gridEntry.Registry);
+            CharSelectPreview preview = GetPreviewForPlayer(player);
+            if (preview != null)
+            {
+                preview.SelectCharacter((CharacterRegistry)gridEntry.Registry);
+            }
         }
     }
 

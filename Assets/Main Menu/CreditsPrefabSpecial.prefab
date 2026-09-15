@@ -38,6 +38,16 @@ PrefabInstance:
       propertyPath: m_text
       value: John Ball
       objectReference: {fileID: 0}
+    - target: {fileID: 1578336617320843759, guid: 97f16ae3c077bff4e8afd2a967bb73bd,
+        type: 3}
+      propertyPath: m_fontSize
+      value: 52
+      objectReference: {fileID: 0}
+    - target: {fileID: 1578336617320843759, guid: 97f16ae3c077bff4e8afd2a967bb73bd,
+        type: 3}
+      propertyPath: m_fontSizeBase
+      value: 52
+      objectReference: {fileID: 0}
     - target: {fileID: 3606773966740706405, guid: 97f16ae3c077bff4e8afd2a967bb73bd,
         type: 3}
       propertyPath: m_AnchoredPosition.x

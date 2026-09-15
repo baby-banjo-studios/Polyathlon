@@ -485,6 +485,8 @@ public class PlayerController : Racer
     {
         base.Start();
         
+        ui.UpdateControlsText(playerInput);
+
        // inputActions.Disable();
         canMove = false;
         foreach(Movement m in movementOptions)

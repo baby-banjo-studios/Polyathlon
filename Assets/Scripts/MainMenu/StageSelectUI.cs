@@ -38,6 +38,7 @@ public class StageSelectUI : BaseMenuUI
 
     protected override void OnEnable()
     {
+        base.OnEnable();
         if (mainMenuUI.PrimaryControlScheme == ControlScheme.Keyboard)
         {
             foreach (GridEntry entry in entries)

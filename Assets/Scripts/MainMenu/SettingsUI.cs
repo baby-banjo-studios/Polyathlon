@@ -15,6 +15,9 @@ public class SettingsUI : BaseMenuUI
     [SerializeField]
     private AudioMixer mixer;
 
+    private bool embeddedInPauseMenu = false;
+    private ControlScheme playerControlScheme;
+
     /// <summary>
     /// Awake is called when the script instance is being loaded.
     /// </summary>
@@ -46,6 +49,21 @@ public class SettingsUI : BaseMenuUI
             QualitySettings.SetQualityLevel((int)quality);
             qualitySpinner.SkipToValue(description);
         }
+    }
+
+    protected override void OnEnable()
+    {
+        base.OnEnable();
+        if (embeddedInPauseMenu && playerControlScheme == ControlScheme.Gamepad)
+        {
+            firstSelectable.Select();
+        }
+    }
+
+    public void InitializeEmbedded(ControlScheme scheme)
+    {
+        embeddedInPauseMenu = true;
+        playerControlScheme = scheme;
     }
 
     // need these to be loaded immediately

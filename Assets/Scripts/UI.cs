@@ -14,7 +14,7 @@ public class UI : MonoBehaviour
     [SerializeField]
     private GameObject pauseMenu;
     [SerializeField]
-    private GameObject settingsMenu;
+    private SettingsUI settingsMenu;
 
     [SerializeField]
     private GameObject debugConsole;
@@ -58,7 +58,7 @@ public class UI : MonoBehaviour
         isPrimaryTaken = true;
 
         pauseMenu.SetActive(false);
-        settingsMenu.SetActive(false);
+        settingsMenu.gameObject.SetActive(false);
 
         SetSpeedUnit((SpeedUnits)PlayerPrefs.GetInt(PlayerPrefsKeys.SPEED_UNITS, 0));
 
@@ -82,6 +82,8 @@ public class UI : MonoBehaviour
         }
         
         SetDebugConsole(false);
+
+        settingsMenu.InitializeEmbedded(((PlayerController)racer).ControlScheme);
     }
 
     // Update is called once per frame
@@ -263,7 +265,7 @@ public class UI : MonoBehaviour
     public void SetPauseMenu(bool active)
     {
         pauseMenu.SetActive(active);
-        settingsMenu.SetActive(false);
+        settingsMenu.gameObject.SetActive(false);
         if (active)
         {
             // receivedFirstNavEvent = false;
@@ -308,13 +310,17 @@ public class UI : MonoBehaviour
     public void OnSettingsEnter()
     {
         pauseMenu.SetActive(false);
-        settingsMenu.SetActive(true);
+        settingsMenu.gameObject.SetActive(true);
     }
 
     public void OnSettingsExit()
     {
         pauseMenu.SetActive(true);
-        settingsMenu.SetActive(false);
+        settingsMenu.gameObject.SetActive(false);
+        if (((PlayerController)racer).ControlScheme == ControlScheme.Gamepad)
+        {
+            firstSelectable.Select();
+        }
     }
 
     public void OnReturnToMenu()

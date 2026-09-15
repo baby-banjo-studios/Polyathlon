@@ -1,10 +1,14 @@
 using UnityEngine;
+using System.Collections;
 
 public class BreakableGlass : MonoBehaviour
 {
     public GameObject unbrokenGlass;
     public Transform brokenGlassParent;
+    [Tooltip("Assign this if you want to make the broken glass a child of something else after it breaks. Useful for sliding doors.")]
+    public Transform newBrokenGlassParent;
     public float power = 1f;
+    public float cleanUpPercentage = 0f;
     public bool useExplosivePower = false;
     private bool broken = false;
 
@@ -38,6 +42,42 @@ public class BreakableGlass : MonoBehaviour
                 shard.GetComponent<Rigidbody>().AddExplosionForce(power, breakPoint, 1f);
             }
         }
+        
+        // need to create new transform array here because the contents of brokenGlassParent
+        // would otherwise change while we loop through it, causing missed shards.
+        Transform[] shards = new Transform[brokenGlassParent.childCount];
+        for (int i = 0; i < shards.Length; i++)
+        {
+            shards[i] = brokenGlassParent.GetChild(i);
+        }
+    
+        foreach (Transform shard in shards)
+        {
+            shard.parent = newBrokenGlassParent;
+        }
+        
+        if (cleanUpPercentage > 0)
+        {
+            // Clean up a random selection of the shards, the amount determined by the percentage
+            int numberToCleanUp = Mathf.CeilToInt(shards.Length * cleanUpPercentage);
+
+            int[] indices = new int[shards.Length];
+            for (int i = 0; i < indices.Length; i++)
+                indices[i] = i;
+
+            // Fisher-Yates shuffle
+            for (int i = indices.Length - 1; i > 0; i--)
+            {
+                int j = Random.Range(0, i + 1);
+                (indices[i], indices[j]) = (indices[j], indices[i]);
+            }
+
+            for (int i = 0; i < numberToCleanUp; i++)
+            {
+                StartCoroutine(CleanUpShards(shards[indices[i]]));
+            }
+        
+        }
     }
 
     void OnCollisionEnter(Collision collision)
@@ -61,6 +101,12 @@ public class BreakableGlass : MonoBehaviour
             Break(contactPoint);
             audioSource.Play();
         }
+    }
+
+    private IEnumerator CleanUpShards(Transform shard)
+    {
+        yield return new WaitForSeconds(Random.Range(1, 10));
+        Destroy(shard.gameObject);
     }
 
 }

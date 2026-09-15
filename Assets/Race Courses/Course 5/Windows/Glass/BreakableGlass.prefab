@@ -190,7 +190,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   unbrokenGlass: {fileID: 3412623814558774714}
   brokenGlassParent: {fileID: 8920660613299348489}
+  newBrokenGlassParent: {fileID: 0}
   power: 0.01
+  cleanUpPercentage: 0
   useExplosivePower: 0
 --- !u!65 &6592432213385201873
 BoxCollider:
@@ -222,7 +224,8 @@ AudioSource:
   m_GameObject: {fileID: 1271142054445033787}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 1955823057381937147, guid: 974d1bdff93c59f4bb960ba7f08a44af,
+    type: 2}
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: dfefd4e1bb7724c448efaac092d4de6c, type: 3}
   m_PlayOnAwake: 0

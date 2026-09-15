@@ -98,7 +98,7 @@ public class GridEntry : Selectable, IPointerEnterHandler
     {
         if (mouseSelector != null)
         {
-            base.OnPointerEnter(eventData);
+            //base.OnPointerEnter(eventData);
             mouseSelector.InterruptMove();
 
             if (mouseSelector.selectedEntry != null && mouseSelector.selectedEntry != this && !mouseSelector.Locked)
@@ -112,7 +112,7 @@ public class GridEntry : Selectable, IPointerEnterHandler
 
     public override void OnSelect(BaseEventData eventData)
     {
-        base.OnSelect(eventData);
+        //base.OnSelect(eventData);
         if (selectedCallback != null)
         {
             selectedCallback(this, eventData);

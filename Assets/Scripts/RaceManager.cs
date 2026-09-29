@@ -27,6 +27,7 @@ public class RaceManager : MonoBehaviour
     private List<(Racer, float)> finalPositions;
     private float elapsedTime;
     private GameState gameState;
+    private static float unpausedTimeScale = 1f;
     private PlayerController playerWhoPausedTheGame = null;
     private PlayerController playerWhoOpenedDebugConsole = null;
     private PhotoModeController photoModeController;
@@ -370,7 +371,7 @@ public class RaceManager : MonoBehaviour
         {
             case GameState.Normal:
                 {
-                    Time.timeScale = 1f;
+                    Time.timeScale = unpausedTimeScale;
                 }
                 break;
             case GameState.Paused:
@@ -394,6 +395,19 @@ public class RaceManager : MonoBehaviour
             pc.OnGameStateChanged(prevState, newState == GameState.Paused && pc == instance.playerWhoPausedTheGame ||
                                              newState == GameState.PhotoMode && pc == instance.playerWhoPausedTheGame ||
                                              newState == GameState.DebugConsole && pc == instance.playerWhoOpenedDebugConsole);
+        }
+    }
+
+    public static void SetTimeScale(float timeScale)
+    {
+        unpausedTimeScale = timeScale;
+        switch (instance.gameState)
+        {
+            case GameState.Normal:
+                {
+                    Time.timeScale = unpausedTimeScale;
+                }
+                break;
         }
     }
 

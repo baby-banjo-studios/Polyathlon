@@ -70,6 +70,7 @@ public class DebugConsole : MonoBehaviour
                                                                                             new CommandArgument<string>("movementMode")},                           HandleSetMovement),
             new ConsoleCommand("addplayer",     "adds a dummy player with its own screen",  new CommandArgument[] { },                                              HandleAddPlayer),
             new ConsoleCommand("setgravity",    "scales gravity by a multiplier",           new CommandArgument[] { new CommandArgument<float>("gravityScale") },   HandleSetGravity),
+            new ConsoleCommand("settimescale",  "scales time by a multiplier",              new CommandArgument[] { new CommandArgument<float>("timeScale") },      HandleSetTimeScale),
             new ConsoleCommand("reload",        "reloads the scene",                        new CommandArgument[] { },                                              HandleReload),
 
         };
@@ -681,6 +682,14 @@ public class DebugConsole : MonoBehaviour
         float gravityScale = Single.Parse(args[0]);
         Physics.gravity = startingGravity * gravityScale;
         DisplayFeedback(String.Format("Set gravity to {0} m/s<sup>2</sup>", Physics.gravity.y));
+        return true;
+    }
+
+    private bool HandleSetTimeScale(string[] args)
+    {
+        float timeScale = Single.Parse(args[0]);
+        RaceManager.SetTimeScale(timeScale);
+        DisplayFeedback(String.Format("Set time scale to {0} s/s", Physics.gravity.y));
         return true;
     }
 

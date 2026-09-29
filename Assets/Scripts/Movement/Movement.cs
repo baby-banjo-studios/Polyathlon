@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public abstract class Movement : MonoBehaviour
@@ -13,6 +14,7 @@ public abstract class Movement : MonoBehaviour
         Swimming,
         Biking,
         Wheeling,
+        Horseback,
         Noclip,
         GetOffTheBoat,
         None,
@@ -26,6 +28,7 @@ public abstract class Movement : MonoBehaviour
     protected const float jetpackSpeed = 20f;
     protected const float swimSpeed = 3f;
     protected const float bikeSpeed = 10f;
+    protected const float horseSpeed = 8.28852183406113537117903930131f;
     protected const float jumpForce = 300f;
     protected const float jetpackForce = 1500f;
 
@@ -85,9 +88,23 @@ public abstract class Movement : MonoBehaviour
     public CameraController CameraController { get => cameraController; set => cameraController = value; }
     public virtual Vector3 Forward { get => characterMesh.forward; }
     public virtual Vector3 ItemDropPoint { get => itemDropPoint.position; }
-    protected virtual void OnEnable()
+
+    /// <summary>
+    /// Awake is called when the script instance is being loaded.
+    /// </summary>
+    protected virtual void Awake()
     {
         rb = GetComponent<Rigidbody>();
+        mainCollider = GetComponent<CapsuleCollider>();
+        racer = GetComponent<Racer>();
+
+        characterMesh = transform.GetChild(0);
+
+        anim = characterMesh.GetComponent<Animator>();
+    }
+
+    protected virtual void OnEnable()
+    {
         rb.isKinematic = false;
         rb.useGravity = true;
         defaultMass = rb.mass;
@@ -96,15 +113,16 @@ public abstract class Movement : MonoBehaviour
         defaultConstraints = rb.constraints;
         defaultCenterOfMass = rb.centerOfMass;
 
-        mainCollider = GetComponent<CapsuleCollider>();
+        characterMesh.transform.parent = transform;
+
         mainCollider.enabled = true;
 
-        racer = GetComponent<Racer>();
-        characterMesh = transform.GetChild(0);
+        characterMesh = transform.GetChild(0);  // TODO change this, horse is gonna mess it up
         defaultCharacterMeshPos = characterMesh.localPosition;
         defaultCharacterMeshRot = characterMesh.localEulerAngles;
-        anim = characterMesh.GetComponent<Animator>();
         playerPosition = transform.position;
+
+        
     }
 
     protected virtual void OnDisable()
@@ -161,6 +179,18 @@ public abstract class Movement : MonoBehaviour
             rb.linearVelocity = rb.linearVelocity.normalized * maxSpeed;
         }
         
+    }
+
+    public virtual void StartSpeedBoost(float magnitude)
+    {
+        BoostSpeedScale = magnitude;
+        anim.speed = BoostSpeedScale * PermanentSpeedScale;
+    }
+    
+    public virtual void EndSpeedBoost()
+    {
+        BoostSpeedScale = 1f;
+        anim.speed = PermanentSpeedScale;
     }
 
     public abstract void ApplyJumpSplosion(Vector3 force);

@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using Unity.VisualScripting;
 
 public class Racer : Entity
 {
@@ -26,6 +27,8 @@ public class Racer : Entity
     public AudioClip waterSound;
     public AudioClip equipSound;
 
+    private bool isFirstFrame = true;
+
     public BackpackMount BackpackMount { get => backpackMount; }
     public Vector3 ItemDropPoint { get => movement.ItemDropPoint; }
 
@@ -47,6 +50,25 @@ public class Racer : Entity
     protected override void Update()
     {
         base.Update();
+        // if (isFirstFrame)
+        // {
+        //     // !!! Contingency if RaceManager fails to set default movement !!!
+        //     // default to running, disable all other movements
+        //     isFirstFrame = false;
+        //     int activeMovements = 0;
+        //     foreach (Movement m in movementOptions)
+        //     {
+        //         if (m.isActiveAndEnabled)
+        //         {
+        //             activeMovements++;
+        //         }
+        //     }
+        //     if (activeMovements != 1)
+        //     {
+        //         SetMovementMode(Movement.Mode.Running, true);
+        //     }
+        // }
+
         if (!dead && RaceManager.IsRaceActive && !RaceManager.IsPaused)
         {
             movement.AddMovement(move.x, moveUp - moveDown, move.y);
@@ -91,11 +113,15 @@ public class Racer : Entity
     public virtual void SetMovementMode(Movement.Mode mode, bool initial = false)
     {
         if (initial || mode != movementMode)
-        {
+        {            
             prevMovementMode = movementMode;
             movementMode = mode;
             if (movement != null)
+            {        
+                // end speed boost if we were in one
+                movement.EndSpeedBoost();
                 movement.enabled = false;
+            }
             switch (mode)
             {
                 // case MovementMode.Walking:
@@ -136,6 +162,11 @@ public class Racer : Entity
                         movement.Land();
                     movement = movementOptions[(int)Movement.Mode.Wheeling];
                     break;
+                case Movement.Mode.Horseback:
+                    if (!(movement is Horseback))
+                        movement.Land();
+                    movement = movementOptions[(int)Movement.Mode.Horseback];
+                    break;
                 case Movement.Mode.Noclip:
                     if (!(movement is Noclip))
                         movement.Land();
@@ -150,7 +181,7 @@ public class Racer : Entity
             movement.PermanentSpeedScale = permanentSpeedScale;
             animEvents.movement = movement;
             anim.speed = movement.PermanentSpeedScale;
-            anim.SetInteger("movement_mode", (int)movementMode % 6);
+            anim.SetInteger("movement_mode", (int)movementMode % (movementOptions.Length - 1));
         }
     }
 
@@ -251,8 +282,7 @@ public class Racer : Entity
 
     protected virtual IEnumerator SpeedBoostCoroutine(float magnitude)
     {
-        movement.BoostSpeedScale = magnitude;
-        anim.speed = movement.BoostSpeedScale * movement.PermanentSpeedScale;
+        movement.StartSpeedBoost(magnitude);
 
         // Continue looping as long as there is time left
         while (remainingBoostTime > 0)
@@ -262,8 +292,7 @@ public class Racer : Entity
         }
 
         // Reset values once the total accumulated time is up
-        movement.BoostSpeedScale = 1f;
-        anim.speed = movement.PermanentSpeedScale;
+        movement.EndSpeedBoost();
         
         remainingBoostTime = 0f;
         boostCoroutine = null;

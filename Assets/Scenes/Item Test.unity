@@ -10557,6 +10557,7 @@ MonoBehaviour:
   itemDropPoint: {fileID: 0}
   horse: {fileID: 1561307551}
   charMountPos: {fileID: 2132617606}
+  rotSpeed: 100
   leftHandIK: {fileID: 0}
   rightHandIK: {fileID: 0}
 --- !u!43 &1981347836

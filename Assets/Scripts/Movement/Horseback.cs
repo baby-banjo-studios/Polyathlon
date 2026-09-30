@@ -17,6 +17,9 @@ public class Horseback : Movement
     public float Direction { get => actualVelocity == Vector3.zero ? 0f : Mathf.Abs(Quaternion.LookRotation(actualVelocity, Vector3.up).eulerAngles.y - characterMesh.transform.rotation.eulerAngles.y); }
 
     private bool preventingJumpLock = false;
+    private float rotationValue = 0f;
+    [SerializeField]
+    private float rotSpeed = 45;
 
     // IK
     [SerializeField]
@@ -70,18 +73,13 @@ public class Horseback : Movement
         if (!launched)
         {
             Vector3 translation = Vector3.zero;
-            // for npcs
-            if (cameraController == null)
+            float rot = 0;
+            
+            if (right > 0)
             {
                 translation += right * transform.forward;
-                translation += forward * transform.right;    
             }
-            // for players
-            else
-            {
-                translation += right * cameraController.transform.forward;
-                translation += forward * cameraController.transform.right;
-            }
+            rot += forward * rotSpeed;
             
             translation.y = 0;
             if (translation.magnitude > 0)
@@ -106,6 +104,11 @@ public class Horseback : Movement
             else
             {
                 smoothSpeed = Mathf.Lerp(smoothSpeed, 0, Time.deltaTime*8);
+            }
+
+            if (rb.linearVelocity.magnitude > 0.001 && forward != 0)
+            {
+                transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, transform.localEulerAngles.y + (rot * Time.deltaTime), 0);
             }
         }
     

@@ -5,6 +5,7 @@ public class Item : MonoBehaviour
 {
     public float itemRespawnTime = 3;
     public bool consumable = false;
+    public bool dontRespawn = false;
 
     public Sprite icon;
     public AudioClip soundWhenUsed;
@@ -14,7 +15,7 @@ public class Item : MonoBehaviour
     private Collider itemCollider;
     private ItemWaypoint itemWaypoint;
 
-    private bool available = true;
+    protected bool available = true;
 
     public GameObject Child { get => child; }
 
@@ -39,7 +40,10 @@ public class Item : MonoBehaviour
         }
         else
         {
-            StartCoroutine(RespawnItem());
+            if (!dontRespawn)
+            {
+                StartCoroutine(RespawnItem());
+            }
             // If the NPC has picked up this item...
             if (racer is NPC && itemWaypoint != null)
             {
@@ -50,10 +54,10 @@ public class Item : MonoBehaviour
 
     /* when the item is picked up, it should seem to disappear,
        then reappear after itemRespawnTime seconds */
-    protected IEnumerator RespawnItem()
+    protected virtual IEnumerator RespawnItem()
     {
-        yield return null;
-        yield return null;
+        // yield return null;
+        // yield return null;
         available = false;
         child.SetActive(false);
         itemCollider.enabled = false;

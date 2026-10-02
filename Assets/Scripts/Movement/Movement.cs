@@ -181,6 +181,11 @@ public abstract class Movement : MonoBehaviour
         
     }
 
+    public virtual void Dismount()
+    {
+        // base level - do nothing
+    }
+
     public virtual void StartSpeedBoost(float magnitude)
     {
         BoostSpeedScale = magnitude;

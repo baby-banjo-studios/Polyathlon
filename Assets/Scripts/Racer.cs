@@ -1,6 +1,5 @@
 using UnityEngine;
 using System.Collections;
-using Unity.VisualScripting;
 
 public class Racer : Entity
 {
@@ -26,6 +25,7 @@ public class Racer : Entity
     public AudioClip bikeSound;
     public AudioClip waterSound;
     public AudioClip equipSound;
+    public AudioClip horseSound;
 
     private bool isFirstFrame = true;
 
@@ -75,6 +75,17 @@ public class Racer : Entity
         }
 
         Debug.DrawRay(transform.position, rb.linearVelocity.normalized * 3f, Color.green);
+    }
+
+    public void WarpTo(Vector3 position, bool cancelVelocity)
+    {
+        //transform.position = position;
+        rb.MovePosition(position);
+        if (cancelVelocity)
+        {
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
     }
 
     public virtual void StartRace()
@@ -166,6 +177,8 @@ public class Racer : Entity
                     if (!(movement is Horseback))
                         movement.Land();
                     movement = movementOptions[(int)Movement.Mode.Horseback];
+                    audioSource.clip = horseSound;
+                    audioSource.Play();
                     break;
                 case Movement.Mode.Noclip:
                     if (!(movement is Noclip))
@@ -362,5 +375,13 @@ public class Racer : Entity
     public Movement.Mode GetCurrentMovementMode()
     {
         return movementMode;
+    }
+
+    public void InitializeHorse(Material bodyMat, Material hairMat, Vector3 horseForward)
+    {
+        if (movementOptions[(int)Movement.Mode.Horseback] is Horseback h)
+        {
+            h.InitializeHorse(bodyMat, hairMat, horseForward);
+        }
     }
 }

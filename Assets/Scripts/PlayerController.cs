@@ -247,6 +247,49 @@ public class PlayerController : Racer
                 movement.Jump(false);
         }
     }
+
+    // Horse
+    public void OnHorsebackMovement(InputAction.CallbackContext ctx)
+    {
+        if (canMove && !RaceManager.IsPaused)
+        {
+            if (ctx.performed)
+                move = ctx.ReadValue<Vector2>();
+            else if (ctx.canceled)
+                move = Vector2.zero;
+        }
+    }
+
+    public void OnHorsebackLook(InputAction.CallbackContext ctx)
+    {
+        if (canLook && !RaceManager.IsPaused)
+        {
+            if (ctx.performed)
+                look = ctx.ReadValue<Vector2>() * (ctx.control.device is Gamepad ? Time.deltaTime * gamepadLookSensititvity : keyboardSchemeSensitivity);
+            else if (ctx.canceled)
+                look = Vector2.zero;
+        }
+    }
+
+    public void OnHorsebackJump(InputAction.CallbackContext ctx)
+    {
+        if (canMove && !RaceManager.IsPaused)
+        {
+            if (ctx.performed)
+                movement.Jump(true);
+            else if (ctx.canceled)
+                movement.Jump(false);
+        }
+    }
+
+    public void OnHorsebackDismount(InputAction.CallbackContext ctx)
+    {
+        if (canMove && !RaceManager.IsPaused)
+        {
+            if (ctx.performed)
+                movement.Dismount();
+        }
+    }
     
     public void OnFinishAnyKeyPressed(InputAction.CallbackContext ctx)
     {

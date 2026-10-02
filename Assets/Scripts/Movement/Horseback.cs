@@ -11,15 +11,24 @@ public class Horseback : Movement
 {
     [SerializeField]
     private GameObject horse;
+    [SerializeField]
+    private GameObject horsePrefab;
+    [SerializeField]
+    private SkinnedMeshRenderer bodyMesh, hairMesh;
     private Animator horseAnim;
     [SerializeField]
     private Transform charMountPos;
+    [SerializeField]
+    private Transform dismountPos;
+
     public float Direction { get => actualVelocity == Vector3.zero ? 0f : Mathf.Abs(Quaternion.LookRotation(actualVelocity, Vector3.up).eulerAngles.y - characterMesh.transform.rotation.eulerAngles.y); }
 
     private bool preventingJumpLock = false;
     private float rotationValue = 0f;
     [SerializeField]
     private float rotSpeed = 45;
+    [SerializeField]
+    private float cooldownTimeAfterDismount = 1f;
 
     // IK
     [SerializeField]
@@ -134,6 +143,7 @@ public class Horseback : Movement
     
         //anim.SetFloat("speed", speed / PhysicalSpeedScale, dampTime, Time.deltaTime);
         anim.SetBool("grounded", grounded);
+        horseAnim.SetBool("grounded", grounded);
         float animSpeed = speed / PhysicalSpeedScale;
         horseAnim.SetFloat("speed", animSpeed, dampTime, Time.deltaTime);
         //Debug.Log("velocity" + velocity);
@@ -183,7 +193,7 @@ public class Horseback : Movement
                 rb.AddForce(Vector3.up * jumpForce);
                 grounded = false;
                 falling = false;
-                anim.SetTrigger("jump");
+                horseAnim.SetTrigger("jump");
             }
         }
     }
@@ -194,6 +204,20 @@ public class Horseback : Movement
         base.Land();
 
         Debug.Log(gameObject.name + " has landed!!!");
+    }
+
+    public override void Dismount()
+    {
+        GameObject spawnedHorse = Instantiate(horsePrefab, horse.transform.position, horse.transform.rotation);
+        if (spawnedHorse.TryGetComponent(out HorseItem horseItem))
+        {
+            horseItem.dontRespawn = true;
+            horseItem.AssignMaterials(bodyMesh.material, hairMesh.material);
+            horseItem.Cooldown(cooldownTimeAfterDismount);
+        }
+        racer.SetMovementMode(Mode.Running);
+        //racer.transform.position = dismountPos.position;
+        racer.WarpTo(dismountPos.position, true);
     }
 
     public override void StartSpeedBoost(float magnitude)
@@ -212,5 +236,12 @@ public class Horseback : Movement
     {
         Jump(true);
         Launch(force);
+    }
+
+    public void InitializeHorse(Material bodyMat, Material hairMat, Vector3 horseForward)
+    {
+        horse.transform.forward = horseForward;
+        bodyMesh.material = bodyMat;
+        hairMesh.material = hairMat;
     }
 }

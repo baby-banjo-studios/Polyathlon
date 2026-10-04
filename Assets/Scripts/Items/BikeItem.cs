@@ -6,5 +6,10 @@ public class BikeItem : Item
     {
         racer.SetMovementMode(Movement.Mode.Biking);
         base.Pickup(racer);
+
+        if (dontRespawn)
+        {
+            Destroy(this.gameObject);
+        }
     }
 }

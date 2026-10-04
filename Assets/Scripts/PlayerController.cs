@@ -26,37 +26,50 @@ public class PlayerController : Racer
 
     /* -------------- INPUT EVENTS ---------------- */
 
-    // Running
-    public void OnRunningMovement(InputAction.CallbackContext ctx)
+#region Movement Controls
+
+    public void OnMove(InputAction.CallbackContext ctx)
     {
         if (canMove && !RaceManager.IsPaused)
         {
             if (ctx.performed)
+            {
                 move = ctx.ReadValue<Vector2>();
+            }
             else if (ctx.canceled)
+            {
                 move = Vector2.zero;
+            }
         }
     }
 
-    public void OnRunningLook(InputAction.CallbackContext ctx)
+    public void OnLook(InputAction.CallbackContext ctx)
     {
         if (canLook && !RaceManager.IsPaused)
         {
             if (ctx.performed)
+            {
                 look = ctx.ReadValue<Vector2>() * (ctx.control.device is Gamepad ? Time.deltaTime * gamepadLookSensititvity : keyboardSchemeSensitivity);
+            }
             else if (ctx.canceled)
+            {
                 look = Vector2.zero;
+            }
         }
     }
 
-    public void OnRunningJump(InputAction.CallbackContext ctx)
+    public void OnJump(InputAction.CallbackContext ctx)
     {
         if (canMove && !RaceManager.IsPaused)
         {
             if (ctx.performed)
+            {
                 movement.Jump(true);
+            }
             else if (ctx.canceled)
+            {
                 movement.Jump(false);
+            }
         }
     }
 
@@ -78,216 +91,33 @@ public class PlayerController : Racer
         }
     }
 
-    // Swimming
-    public void OnSwimmingMovement(InputAction.CallbackContext ctx)
-    {
-        if (canMove && !RaceManager.IsPaused)
-        {
-            if (ctx.performed)
-                move = ctx.ReadValue<Vector2>();
-            else if (ctx.canceled)
-                move = Vector2.zero;
-        }
-    }
-
-    public void OnSwimmingLook(InputAction.CallbackContext ctx)
-    {
-        if (canLook && !RaceManager.IsPaused)
-        {
-            if (ctx.performed)
-                look = ctx.ReadValue<Vector2>() * (ctx.control.device is Gamepad ? Time.deltaTime * gamepadLookSensititvity : keyboardSchemeSensitivity);
-            else if (ctx.canceled)
-                look = Vector2.zero;
-        }
-    }
-
-    public void OnSwimmingJump(InputAction.CallbackContext ctx)
-    {
-        if (canMove)
-        {
-            if (ctx.performed)
-                movement.Jump(true);
-            else if (ctx.canceled)
-                movement.Jump(false);
-        }
-    }
-
-    // Biking
-    public void OnBikingMovement(InputAction.CallbackContext ctx)
-    {
-        if (canMove && !RaceManager.IsPaused)
-        {
-            if (ctx.performed)
-                move = ctx.ReadValue<Vector2>();
-            else if (ctx.canceled)
-                move = Vector2.zero;
-        }
-    }
-
-    public void OnBikingLook(InputAction.CallbackContext ctx)
-    {
-        if (canLook && !RaceManager.IsPaused)
-        {
-            if (ctx.performed)
-                look = ctx.ReadValue<Vector2>() * (ctx.control.device is Gamepad ? Time.deltaTime * gamepadLookSensititvity : keyboardSchemeSensitivity);
-            else if (ctx.canceled)
-                look = Vector2.zero;
-        }
-    }
-
-    public void OnBikingJump(InputAction.CallbackContext ctx)
-    {
-        if (canMove)
-        {
-            if (ctx.performed)
-                movement.Jump(true);
-            else if (ctx.canceled)
-                movement.Jump(false);
-        }
-    }
-
-    // Jetpacking
-    public void OnJetpackingMovement(InputAction.CallbackContext ctx)
-    {
-        if (canMove && !RaceManager.IsPaused)
-        {
-            if (ctx.performed)
-                move = ctx.ReadValue<Vector2>();
-            else if (ctx.canceled)
-                move = Vector2.zero;
-        }
-    }
-
-    public void OnJetpackingLook(InputAction.CallbackContext ctx)
-    {
-        if (canLook && !RaceManager.IsPaused)
-        {
-            if (ctx.performed)
-                look = ctx.ReadValue<Vector2>() * (ctx.control.device is Gamepad ? Time.deltaTime * gamepadLookSensititvity : keyboardSchemeSensitivity);
-            else if (ctx.canceled)
-                look = Vector2.zero;
-        }
-    }
-
-    public void OnJetpackingJump(InputAction.CallbackContext ctx)
-    {
-        if (canMove && !RaceManager.IsPaused)
-        {
-            if (ctx.performed)
-                movement.Jump(true);
-            else if (ctx.canceled)
-                movement.Jump(false);
-        }
-    }
-
-    // Gliding
-    public void OnGlidingMovement(InputAction.CallbackContext ctx)
-    {
-        if (canMove && !RaceManager.IsPaused)
-        {
-            if (ctx.performed)
-                move = ctx.ReadValue<Vector2>();
-            else if (ctx.canceled)
-                move = Vector2.zero;
-        }
-    }
-
-    public void OnGlidingLook(InputAction.CallbackContext ctx)
-    {
-        if (canLook && !RaceManager.IsPaused)
-        {
-            if (ctx.performed)
-                look = ctx.ReadValue<Vector2>() * (ctx.control.device is Gamepad ? Time.deltaTime * gamepadLookSensititvity : keyboardSchemeSensitivity);
-            else if (ctx.canceled)
-                look = Vector2.zero;
-        }
-    }
-
-    public void OnGlidingJump(InputAction.CallbackContext ctx)
-    {
-        if (canMove && !RaceManager.IsPaused)
-        {
-            if (ctx.performed)
-                movement.Jump(true);
-            else if (ctx.canceled)
-                movement.Jump(false);
-        }
-    }
-
-    // Wheeling
-    public void OnWheelingMovement(InputAction.CallbackContext ctx)
-    {
-        if (canMove && !RaceManager.IsPaused)
-        {
-            if (ctx.performed)
-                move = ctx.ReadValue<Vector2>();
-            else if (ctx.canceled)
-                move = Vector2.zero;
-        }
-    }
-
-    public void OnWheelingLook(InputAction.CallbackContext ctx)
-    {
-        if (canLook && !RaceManager.IsPaused)
-        {
-            if (ctx.performed)
-                look = ctx.ReadValue<Vector2>() * (ctx.control.device is Gamepad ? Time.deltaTime * gamepadLookSensititvity : keyboardSchemeSensitivity);
-            else if (ctx.canceled)
-                look = Vector2.zero;
-        }
-    }
-
-    public void OnWheelingJump(InputAction.CallbackContext ctx)
-    {
-        if (canMove && !RaceManager.IsPaused)
-        {
-            if (ctx.performed)
-                movement.Jump(true);
-            else if (ctx.canceled)
-                movement.Jump(false);
-        }
-    }
-
-    // Horse
-    public void OnHorsebackMovement(InputAction.CallbackContext ctx)
-    {
-        if (canMove && !RaceManager.IsPaused)
-        {
-            if (ctx.performed)
-                move = ctx.ReadValue<Vector2>();
-            else if (ctx.canceled)
-                move = Vector2.zero;
-        }
-    }
-
-    public void OnHorsebackLook(InputAction.CallbackContext ctx)
-    {
-        if (canLook && !RaceManager.IsPaused)
-        {
-            if (ctx.performed)
-                look = ctx.ReadValue<Vector2>() * (ctx.control.device is Gamepad ? Time.deltaTime * gamepadLookSensititvity : keyboardSchemeSensitivity);
-            else if (ctx.canceled)
-                look = Vector2.zero;
-        }
-    }
-
-    public void OnHorsebackJump(InputAction.CallbackContext ctx)
-    {
-        if (canMove && !RaceManager.IsPaused)
-        {
-            if (ctx.performed)
-                movement.Jump(true);
-            else if (ctx.canceled)
-                movement.Jump(false);
-        }
-    }
-
-    public void OnHorsebackDismount(InputAction.CallbackContext ctx)
+    public void OnDismount(InputAction.CallbackContext ctx)
     {
         if (canMove && !RaceManager.IsPaused)
         {
             if (ctx.performed)
                 movement.Dismount();
+        }
+    }
+
+    public void OnNoclipUp(InputAction.CallbackContext ctx)
+    {
+        if (canMove && !RaceManager.IsPaused)
+        {
+            if (ctx.performed)
+                moveUp = ctx.ReadValue<float>();
+            else if (ctx.canceled)
+                moveUp = 0f;
+        }
+    }
+    public void OnNoclipDown(InputAction.CallbackContext ctx)
+    {
+        if (canMove && !RaceManager.IsPaused)
+        {
+            if (ctx.performed)
+                moveDown = ctx.ReadValue<float>();
+            else if (ctx.canceled)
+                moveDown = 0f;
         }
     }
     
@@ -311,6 +141,9 @@ public class PlayerController : Racer
         }
     }
 
+#endregion
+
+#region Photo Mode Controls
     public void OnPhotoModeMovement(InputAction.CallbackContext ctx)
     {
         if (photoModeController != null)
@@ -416,6 +249,10 @@ public class PlayerController : Racer
         }
     }
 
+#endregion
+
+#region UI Controls
+
     public void OnPausedNavigate(InputAction.CallbackContext ctx)
     {
         if (RaceManager.IsPaused)
@@ -459,47 +296,7 @@ public class PlayerController : Racer
         }
     }
 
-    public void OnNoclipMovement(InputAction.CallbackContext ctx)
-    {
-        if (canMove && !RaceManager.IsPaused)
-        {
-            if (ctx.performed)
-                move = ctx.ReadValue<Vector2>();
-            else if (ctx.canceled)
-                move = Vector2.zero;
-        }
-    }
-
-    public void OnNoclipLook(InputAction.CallbackContext ctx)
-    {
-        if (canLook && !RaceManager.IsPaused)
-        {
-            if (ctx.performed)
-                look = ctx.ReadValue<Vector2>() * (ctx.control.device is Gamepad ? Time.deltaTime * gamepadLookSensititvity : keyboardSchemeSensitivity);
-            else if (ctx.canceled)
-                look = Vector2.zero;
-        }
-    }
-    public void OnNoclipUp(InputAction.CallbackContext ctx)
-    {
-        if (canMove && !RaceManager.IsPaused)
-        {
-            if (ctx.performed)
-                moveUp = ctx.ReadValue<float>();
-            else if (ctx.canceled)
-                moveUp = 0f;
-        }
-    }
-    public void OnNoclipDown(InputAction.CallbackContext ctx)
-    {
-        if (canMove && !RaceManager.IsPaused)
-        {
-            if (ctx.performed)
-                moveDown = ctx.ReadValue<float>();
-            else if (ctx.canceled)
-                moveDown = 0f;
-        }
-    }
+#endregion
 
     protected override void Awake() 
     {

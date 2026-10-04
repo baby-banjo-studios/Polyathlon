@@ -16,6 +16,9 @@ public class Wheeler : Movement
     private Vector3 defaultCOM;
     private Rigidbody leftWheel;
     private Rigidbody rightWheel;
+    [SerializeField]
+    private Transform dismountPos;
+
 
     void Start()
     {
@@ -205,6 +208,21 @@ public class Wheeler : Movement
     public override void Jump(bool hold)
     {
         base.Jump(hold);
+    }
+
+    public override void Dismount()
+    {
+        if (itemSpawnPrefab != null)
+        {
+            GameObject spawnedWheeler = Instantiate(itemSpawnPrefab, wheeler.transform.position, wheeler.transform.rotation);
+            if (spawnedWheeler.TryGetComponent(out WheelerItem wheelerItem))
+            {
+                wheelerItem.dontRespawn = true;
+                wheelerItem.Cooldown(cooldownTimeAfterDismount);
+            }
+        }
+        racer.SetMovementMode(Mode.Running);
+        racer.WarpTo(dismountPos.position, true);
     }
 
     public override void ApplyJumpSplosion(Vector3 force)

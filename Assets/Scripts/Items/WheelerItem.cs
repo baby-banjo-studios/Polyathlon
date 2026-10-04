@@ -6,5 +6,10 @@ public class WheelerItem : Item
     {
         racer.SetMovementMode(Movement.Mode.Wheeling);
         base.Pickup(racer);
+
+        if (dontRespawn)
+        {
+            Destroy(this.gameObject);
+        }
     }
 }

@@ -40,6 +40,8 @@ public abstract class Movement : MonoBehaviour
     public float acceleration;
     public float angularSpeed;
     public Transform itemDropPoint;
+    public GameObject itemSpawnPrefab = null; // iteme that will be spawned if this movement mode is exited
+    public float cooldownTimeAfterDismount = 1f;
 
     protected CameraController cameraController;
 

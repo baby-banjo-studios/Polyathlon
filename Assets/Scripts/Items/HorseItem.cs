@@ -11,8 +11,6 @@ public class HorseItem : Item
     public SkinnedMeshRenderer bodyMesh;
     public SkinnedMeshRenderer hairMesh;
     private bool materialsAssigned = false;
-    private bool pickupDisabled = false;
-
     /// <summary>
     /// Awake is called when the script instance is being loaded.
     /// </summary>
@@ -63,17 +61,5 @@ public class HorseItem : Item
         bodyMesh.material = hairMat;
         hairMesh.material = bodyMat;
         materialsAssigned = true;
-    }
-
-    public void Cooldown(float cooldownTime)
-    {
-        StartCoroutine(CooldownCoroutine(cooldownTime));
-    }
-
-    private IEnumerator CooldownCoroutine(float cooldownTime)
-    {
-        pickupDisabled = true;
-        yield return new WaitForSeconds(cooldownTime);
-        pickupDisabled = false;
     }
 }

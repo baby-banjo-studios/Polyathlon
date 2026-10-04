@@ -4,8 +4,10 @@ using System.Collections;
 public class Item : MonoBehaviour
 {
     public float itemRespawnTime = 3;
-    public bool consumable = false;
-    public bool dontRespawn = false;
+    public bool consumable = false;         // for single-use (mystery box) items
+    public bool dontRespawn = false;        // for items / equipment dropped by player (or one-time use equipment)
+    protected bool pickupDisabled = false;  // for items that were just placed, to ensure player does not pick them up immediately after dropping
+
 
     public Sprite icon;
     public AudioClip soundWhenUsed;
@@ -75,5 +77,17 @@ public class Item : MonoBehaviour
     public virtual void Use(Racer racer)
     {
 
+    }
+
+    public void Cooldown(float cooldownTime)
+    {
+        StartCoroutine(CooldownCoroutine(cooldownTime));
+    }
+
+    protected IEnumerator CooldownCoroutine(float cooldownTime)
+    {
+        pickupDisabled = true;
+        yield return new WaitForSeconds(cooldownTime);
+        pickupDisabled = false;
     }
 }

@@ -1497,6 +1497,15 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Dismount"",
+                    ""type"": ""Button"",
+                    ""id"": ""f92fc59c-0431-4d5b-b77d-155760a8ef86"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -1785,6 +1794,28 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""action"": ""Pause"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ffb73332-5c6b-4799-8aab-0bc88fa7fc86"",
+                    ""path"": ""<Keyboard>/shift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Dismount"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c93ae96f-0c67-4588-a0bf-7186cf629744"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Dismount"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -1842,6 +1873,15 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""type"": ""Button"",
                     ""id"": ""25397818-9a4f-44d2-b085-bb9157364e19"",
                     ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Dismount"",
+                    ""type"": ""Button"",
+                    ""id"": ""4a0cbdc8-7984-49c2-8276-617fcf2cbd4a"",
+                    ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
@@ -2131,6 +2171,28 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": ""Gamepad"",
                     ""action"": ""StartButton"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8810b6cd-2dea-4449-a0b0-3ad414846305"",
+                    ""path"": ""<Keyboard>/shift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Dismount"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""64febc64-2ca3-489e-b889-1472098c1814"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Dismount"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -4974,6 +5036,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         m_Biking_Item = m_Biking.FindAction("Item", throwIfNotFound: true);
         m_Biking_StartButton = m_Biking.FindAction("StartButton", throwIfNotFound: true);
         m_Biking_Pause = m_Biking.FindAction("Pause", throwIfNotFound: true);
+        m_Biking_Dismount = m_Biking.FindAction("Dismount", throwIfNotFound: true);
         // Wheeling
         m_Wheeling = asset.FindActionMap("Wheeling", throwIfNotFound: true);
         m_Wheeling_Movement = m_Wheeling.FindAction("Movement", throwIfNotFound: true);
@@ -4982,6 +5045,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         m_Wheeling_Jump = m_Wheeling.FindAction("Jump", throwIfNotFound: true);
         m_Wheeling_Item = m_Wheeling.FindAction("Item", throwIfNotFound: true);
         m_Wheeling_StartButton = m_Wheeling.FindAction("StartButton", throwIfNotFound: true);
+        m_Wheeling_Dismount = m_Wheeling.FindAction("Dismount", throwIfNotFound: true);
         // Horseback
         m_Horseback = asset.FindActionMap("Horseback", throwIfNotFound: true);
         m_Horseback_Movement = m_Horseback.FindAction("Movement", throwIfNotFound: true);
@@ -5736,6 +5800,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Biking_Item;
     private readonly InputAction m_Biking_StartButton;
     private readonly InputAction m_Biking_Pause;
+    private readonly InputAction m_Biking_Dismount;
     /// <summary>
     /// Provides access to input actions defined in input action map "Biking".
     /// </summary>
@@ -5771,6 +5836,10 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Biking/Pause".
         /// </summary>
         public InputAction @Pause => m_Wrapper.m_Biking_Pause;
+        /// <summary>
+        /// Provides access to the underlying input action "Biking/Dismount".
+        /// </summary>
+        public InputAction @Dismount => m_Wrapper.m_Biking_Dismount;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -5815,6 +5884,9 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
             @Pause.started += instance.OnPause;
             @Pause.performed += instance.OnPause;
             @Pause.canceled += instance.OnPause;
+            @Dismount.started += instance.OnDismount;
+            @Dismount.performed += instance.OnDismount;
+            @Dismount.canceled += instance.OnDismount;
         }
 
         /// <summary>
@@ -5844,6 +5916,9 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
             @Pause.started -= instance.OnPause;
             @Pause.performed -= instance.OnPause;
             @Pause.canceled -= instance.OnPause;
+            @Dismount.started -= instance.OnDismount;
+            @Dismount.performed -= instance.OnDismount;
+            @Dismount.canceled -= instance.OnDismount;
         }
 
         /// <summary>
@@ -5887,6 +5962,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Wheeling_Jump;
     private readonly InputAction m_Wheeling_Item;
     private readonly InputAction m_Wheeling_StartButton;
+    private readonly InputAction m_Wheeling_Dismount;
     /// <summary>
     /// Provides access to input actions defined in input action map "Wheeling".
     /// </summary>
@@ -5922,6 +5998,10 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Wheeling/StartButton".
         /// </summary>
         public InputAction @StartButton => m_Wrapper.m_Wheeling_StartButton;
+        /// <summary>
+        /// Provides access to the underlying input action "Wheeling/Dismount".
+        /// </summary>
+        public InputAction @Dismount => m_Wrapper.m_Wheeling_Dismount;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -5966,6 +6046,9 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
             @StartButton.started += instance.OnStartButton;
             @StartButton.performed += instance.OnStartButton;
             @StartButton.canceled += instance.OnStartButton;
+            @Dismount.started += instance.OnDismount;
+            @Dismount.performed += instance.OnDismount;
+            @Dismount.canceled += instance.OnDismount;
         }
 
         /// <summary>
@@ -5995,6 +6078,9 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
             @StartButton.started -= instance.OnStartButton;
             @StartButton.performed -= instance.OnStartButton;
             @StartButton.canceled -= instance.OnStartButton;
+            @Dismount.started -= instance.OnDismount;
+            @Dismount.performed -= instance.OnDismount;
+            @Dismount.canceled -= instance.OnDismount;
         }
 
         /// <summary>
@@ -7648,6 +7734,13 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnPause(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Dismount" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnDismount(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Wheeling" which allows adding and removing callbacks.
@@ -7698,6 +7791,13 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnStartButton(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Dismount" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnDismount(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Horseback" which allows adding and removing callbacks.

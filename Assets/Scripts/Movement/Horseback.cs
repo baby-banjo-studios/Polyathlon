@@ -12,8 +12,6 @@ public class Horseback : Movement
     [SerializeField]
     private GameObject horse;
     [SerializeField]
-    private GameObject horsePrefab;
-    [SerializeField]
     private SkinnedMeshRenderer bodyMesh, hairMesh;
     private Animator horseAnim;
     [SerializeField]
@@ -27,8 +25,6 @@ public class Horseback : Movement
     private float rotationValue = 0f;
     [SerializeField]
     private float rotSpeed = 45;
-    [SerializeField]
-    private float cooldownTimeAfterDismount = 1f;
 
     // IK
     [SerializeField]
@@ -208,12 +204,15 @@ public class Horseback : Movement
 
     public override void Dismount()
     {
-        GameObject spawnedHorse = Instantiate(horsePrefab, horse.transform.position, horse.transform.rotation);
+        if (itemSpawnPrefab != null)
+        {
+        GameObject spawnedHorse = Instantiate(itemSpawnPrefab, horse.transform.position, horse.transform.rotation);
         if (spawnedHorse.TryGetComponent(out HorseItem horseItem))
         {
             horseItem.dontRespawn = true;
             horseItem.AssignMaterials(bodyMesh.material, hairMesh.material);
             horseItem.Cooldown(cooldownTimeAfterDismount);
+        }
         }
         racer.SetMovementMode(Mode.Running);
         //racer.transform.position = dismountPos.position;

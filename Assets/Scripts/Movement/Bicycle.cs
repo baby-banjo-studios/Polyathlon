@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -17,6 +18,9 @@ public class Bicycle : Movement
     private GameObject rPedal;
     public GameObject fork;
     public Transform centerOfMass;
+    
+    [SerializeField]
+    private Transform dismountPos;
 
     [Header("Values")]
     public float oneRotationSpeed = 2.7f;
@@ -155,6 +159,21 @@ public class Bicycle : Movement
     void Lean()
     {
         upDirection = Vector3.Normalize(Vector3.up + transform.right * maxSteeringAngle * lean * rotationValue* rb.linearVelocity.magnitude / 100);
+    }
+
+    public override void Dismount()
+    {
+        if (itemSpawnPrefab != null)
+        {
+            GameObject spawnedBike = Instantiate(itemSpawnPrefab, bike.transform.position, bike.transform.rotation);
+            if (spawnedBike.TryGetComponent(out BikeItem bikeItem))
+            {
+                bikeItem.dontRespawn = true;
+                bikeItem.Cooldown(cooldownTimeAfterDismount);
+            }
+        }
+        racer.SetMovementMode(Mode.Running);
+        racer.WarpTo(dismountPos.position, true);
     }
     
     //rotates the meshes

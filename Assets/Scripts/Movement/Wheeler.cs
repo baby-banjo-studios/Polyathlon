@@ -212,17 +212,20 @@ public class Wheeler : Movement
 
     public override void Dismount()
     {
-        if (itemSpawnPrefab != null)
+        if (grounded)
         {
-            GameObject spawnedWheeler = Instantiate(itemSpawnPrefab, wheeler.transform.position, wheeler.transform.rotation);
-            if (spawnedWheeler.TryGetComponent(out WheelerItem wheelerItem))
+            if (itemSpawnPrefab != null)
             {
-                wheelerItem.dontRespawn = true;
-                wheelerItem.Cooldown(cooldownTimeAfterDismount);
+                GameObject spawnedWheeler = Instantiate(itemSpawnPrefab, wheeler.transform.position, wheeler.transform.rotation);
+                if (spawnedWheeler.TryGetComponent(out WheelerItem wheelerItem))
+                {
+                    wheelerItem.dontRespawn = true;
+                    wheelerItem.Cooldown(cooldownTimeAfterDismount);
+                }
             }
+            racer.SetMovementMode(Mode.Running);
+            racer.WarpTo(dismountPos.position, true);
         }
-        racer.SetMovementMode(Mode.Running);
-        racer.WarpTo(dismountPos.position, true);
     }
 
     public override void ApplyJumpSplosion(Vector3 force)

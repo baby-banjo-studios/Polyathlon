@@ -204,19 +204,21 @@ public class Horseback : Movement
 
     public override void Dismount()
     {
-        if (itemSpawnPrefab != null)
+        if (grounded)
         {
-        GameObject spawnedHorse = Instantiate(itemSpawnPrefab, horse.transform.position, horse.transform.rotation);
-        if (spawnedHorse.TryGetComponent(out HorseItem horseItem))
-        {
-            horseItem.dontRespawn = true;
-            horseItem.AssignMaterials(bodyMesh.material, hairMesh.material);
-            horseItem.Cooldown(cooldownTimeAfterDismount);
+            if (itemSpawnPrefab != null)
+            {
+            GameObject spawnedHorse = Instantiate(itemSpawnPrefab, horse.transform.position, horse.transform.rotation);
+            if (spawnedHorse.TryGetComponent(out HorseItem horseItem))
+            {
+                horseItem.dontRespawn = true;
+                horseItem.AssignMaterials(bodyMesh.material, hairMesh.material);
+                horseItem.Cooldown(cooldownTimeAfterDismount);
+            }
+            }
+            racer.SetMovementMode(Mode.Running);
+            racer.WarpTo(dismountPos.position, true);
         }
-        }
-        racer.SetMovementMode(Mode.Running);
-        //racer.transform.position = dismountPos.position;
-        racer.WarpTo(dismountPos.position, true);
     }
 
     public override void StartSpeedBoost(float magnitude)

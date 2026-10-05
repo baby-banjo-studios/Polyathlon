@@ -163,17 +163,20 @@ public class Bicycle : Movement
 
     public override void Dismount()
     {
-        if (itemSpawnPrefab != null)
+        if (grounded)
         {
-            GameObject spawnedBike = Instantiate(itemSpawnPrefab, bike.transform.position, bike.transform.rotation);
-            if (spawnedBike.TryGetComponent(out BikeItem bikeItem))
+            if (itemSpawnPrefab != null)
             {
-                bikeItem.dontRespawn = true;
-                bikeItem.Cooldown(cooldownTimeAfterDismount);
+                GameObject spawnedBike = Instantiate(itemSpawnPrefab, bike.transform.position, bike.transform.rotation);
+                if (spawnedBike.TryGetComponent(out BikeItem bikeItem))
+                {
+                    bikeItem.dontRespawn = true;
+                    bikeItem.Cooldown(cooldownTimeAfterDismount);
+                }
             }
+            racer.SetMovementMode(Mode.Running);
+            racer.WarpTo(dismountPos.position, true);
         }
-        racer.SetMovementMode(Mode.Running);
-        racer.WarpTo(dismountPos.position, true);
     }
     
     //rotates the meshes

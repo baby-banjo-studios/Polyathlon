@@ -312,7 +312,8 @@ MonoBehaviour:
   acceleration: 0
   angularSpeed: 0
   itemDropPoint: {fileID: 0}
-  itemSpawnPrefab: {fileID: 0}
+  itemSpawnPrefab: {fileID: 7116867428402970890, guid: 0adfbfc132d92164db1537674f071f93,
+    type: 3}
   cooldownTimeAfterDismount: 1
   bike: {fileID: 411290083597394961}
   rearWheel: {fileID: 411290083488516401}
@@ -1276,7 +1277,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 5786434344950617427}
         m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
-        m_MethodName: OnLook
+        m_MethodName: OnMove
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1469,7 +1470,8 @@ MonoBehaviour:
   acceleration: 0
   angularSpeed: 0
   itemDropPoint: {fileID: 424302892559984191}
-  itemSpawnPrefab: {fileID: 0}
+  itemSpawnPrefab: {fileID: 302141857273329986, guid: 80c3187970209c648a5818537b3abc3f,
+    type: 3}
   cooldownTimeAfterDismount: 1
   horse: {fileID: 913914947542184340}
   bodyMesh: {fileID: 4707901453523752554}

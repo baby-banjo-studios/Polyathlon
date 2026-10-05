@@ -25,6 +25,10 @@ public class Horseback : Movement
     private float rotationValue = 0f;
     [SerializeField]
     private float rotSpeed = 45;
+    
+    private bool backingUp = false;
+    [SerializeField]
+    private float backupSpeed = -1.8f;
 
     // IK
     [SerializeField]
@@ -82,8 +86,13 @@ public class Horseback : Movement
             
             if (right > 0)
             {
-                translation += right * transform.forward;
+                backingUp = false;
             }
+            else if (right < 0)
+            {
+                backingUp = true;
+            }
+            translation += right * transform.forward;
             rot += forward * rotSpeed;
             
             translation.y = 0;
@@ -100,11 +109,18 @@ public class Horseback : Movement
             if (velocity.magnitude > 0)
             {
                 rb.linearVelocity = new Vector3(velocity.normalized.x * smoothSpeed, rb.linearVelocity.y, velocity.normalized.z * smoothSpeed);
-                smoothSpeed = Mathf.Lerp(smoothSpeed, maxSpeed * boostSpeedScale * PermanentSpeedScale * PhysicalSpeedScale, Time.deltaTime);
-                // rotate the character mesh if enabled
-                
-                horse.transform.rotation = Quaternion.Lerp(horse.transform.rotation, Quaternion.LookRotation(velocity), Time.deltaTime * rotationSpeed);
-                
+                if (backingUp)
+                {
+                    smoothSpeed = Mathf.Lerp(smoothSpeed, backupSpeed * boostSpeedScale * PermanentSpeedScale * PhysicalSpeedScale, Time.deltaTime);
+                    horse.transform.rotation = Quaternion.Lerp(horse.transform.rotation, Quaternion.LookRotation(-velocity), Time.deltaTime * rotationSpeed);
+                }
+                else
+                {
+                    smoothSpeed = Mathf.Lerp(smoothSpeed, maxSpeed * boostSpeedScale * PermanentSpeedScale * PhysicalSpeedScale, Time.deltaTime);
+                    // rotate the character mesh if enabled
+                    
+                    horse.transform.rotation = Quaternion.Lerp(horse.transform.rotation, Quaternion.LookRotation(velocity), Time.deltaTime * rotationSpeed);
+                }
             }
             else
             {
@@ -135,9 +151,11 @@ public class Horseback : Movement
         // blend speed in animator to match pace of footsteps
         // normal movement (character moves independent of camera)
         
-        speed = Mathf.SmoothStep(speed, actualVelocity.magnitude, Time.deltaTime * 20);
+        float signedVelocity = Vector3.Dot(horse.transform.forward, actualVelocity);
+        speed = Mathf.SmoothStep(speed, signedVelocity, Time.deltaTime * 20);
     
         //anim.SetFloat("speed", speed / PhysicalSpeedScale, dampTime, Time.deltaTime);
+
         anim.SetBool("grounded", grounded);
         horseAnim.SetBool("grounded", grounded);
         float animSpeed = speed / PhysicalSpeedScale;

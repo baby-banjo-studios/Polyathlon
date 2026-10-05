@@ -1486,6 +1486,7 @@ MonoBehaviour:
   charMountPos: {fileID: 5061040134161032037}
   dismountPos: {fileID: 8236924058645887522}
   rotSpeed: 100
+  backupSpeed: 1.8
   leftHandIK: {fileID: 0}
   rightHandIK: {fileID: 0}
 --- !u!114 &3826419593597496676

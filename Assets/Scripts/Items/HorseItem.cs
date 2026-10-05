@@ -10,6 +10,7 @@ public class HorseItem : Item
 
     public SkinnedMeshRenderer bodyMesh;
     public SkinnedMeshRenderer hairMesh;
+    [SerializeField]
     private bool materialsAssigned = false;
     /// <summary>
     /// Awake is called when the script instance is being loaded.

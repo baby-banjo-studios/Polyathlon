@@ -69,9 +69,16 @@ public class Racer : Entity
         //     }
         // }
 
-        if (!dead && RaceManager.IsRaceActive && !RaceManager.IsPaused)
+        if (RaceManager.IsRaceActive && !RaceManager.IsPaused)
         {
-            movement.AddMovement(move.x, moveUp - moveDown, move.y);
+            if (!dead)
+            {
+                movement.AddMovement(move.x, moveUp - moveDown, move.y);
+            }
+            else if (movement.continueMotionAfterDeath)
+            {
+                movement.AddMovement(0f, 0f, 0f);
+            }
         }
 
         Debug.DrawRay(transform.position, rb.linearVelocity.normalized * 3f, Color.green);
@@ -207,8 +214,11 @@ public class Racer : Entity
         if (!invincible)
         {
             anim.enabled = false;
-            rb.isKinematic = true;
-            GetComponent<Collider>().enabled = false;
+            if (!movement.continueMotionAfterDeath)
+            {
+                rb.isKinematic = true;
+                GetComponent<Collider>().enabled = false;
+            }
             ragdoll.SetRagdoll(true);
             Vector3 momentum;
             if (newMomentum == Vector3.zero)

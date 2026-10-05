@@ -257,6 +257,7 @@ MonoBehaviour:
   itemDropPoint: {fileID: 0}
   itemSpawnPrefab: {fileID: 0}
   cooldownTimeAfterDismount: 1
+  continueMotionAfterDeath: 0
 --- !u!114 &664463851632276183
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -275,6 +276,7 @@ MonoBehaviour:
   itemDropPoint: {fileID: 0}
   itemSpawnPrefab: {fileID: 0}
   cooldownTimeAfterDismount: 1
+  continueMotionAfterDeath: 0
   thrustSound: {fileID: 8300000, guid: 891d8623a26a972409aebacf22875004, type: 3}
   launchDuration: 0.8
   launchCooldown: 0.8
@@ -296,6 +298,7 @@ MonoBehaviour:
   itemDropPoint: {fileID: 0}
   itemSpawnPrefab: {fileID: 0}
   cooldownTimeAfterDismount: 1
+  continueMotionAfterDeath: 0
 --- !u!114 &411290082333151928
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -315,6 +318,7 @@ MonoBehaviour:
   itemSpawnPrefab: {fileID: 7116867428402970890, guid: 0adfbfc132d92164db1537674f071f93,
     type: 3}
   cooldownTimeAfterDismount: 1
+  continueMotionAfterDeath: 0
   bike: {fileID: 411290083597394961}
   rearWheel: {fileID: 411290083488516401}
   frontWheel: {fileID: 411290082585942096}
@@ -1428,6 +1432,7 @@ MonoBehaviour:
   itemDropPoint: {fileID: 0}
   itemSpawnPrefab: {fileID: 0}
   cooldownTimeAfterDismount: 1
+  continueMotionAfterDeath: 0
   liftFactor: 50
   rollSpeed: 100
   pitchSpeed: 100
@@ -1451,6 +1456,7 @@ MonoBehaviour:
   itemSpawnPrefab: {fileID: 3894335483883860464, guid: 0e1cdc08e6938e14090121e131cd3b23,
     type: 3}
   cooldownTimeAfterDismount: 1
+  continueMotionAfterDeath: 0
   driveForce: 800
   wheeler: {fileID: 7652232265114800504}
   dismountPos: {fileID: 1652831626742023328}
@@ -1473,6 +1479,7 @@ MonoBehaviour:
   itemSpawnPrefab: {fileID: 302141857273329986, guid: 80c3187970209c648a5818537b3abc3f,
     type: 3}
   cooldownTimeAfterDismount: 1
+  continueMotionAfterDeath: 1
   horse: {fileID: 913914947542184340}
   bodyMesh: {fileID: 4707901453523752554}
   hairMesh: {fileID: 4707901453523752552}
@@ -1499,6 +1506,7 @@ MonoBehaviour:
   itemDropPoint: {fileID: 0}
   itemSpawnPrefab: {fileID: 0}
   cooldownTimeAfterDismount: 1
+  continueMotionAfterDeath: 0
 --- !u!1 &2523938578279368412
 GameObject:
   m_ObjectHideFlags: 0

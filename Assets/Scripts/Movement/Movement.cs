@@ -75,6 +75,8 @@ public abstract class Movement : MonoBehaviour
     private Vector3 defaultCharacterMeshPos;
     private Vector3 defaultCharacterMeshRot;
 
+    public bool continueMotionAfterDeath = false;
+
 
     // used to determine when jumping can occur
     protected bool grounded = true;
